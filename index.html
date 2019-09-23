@@ -26,6 +26,17 @@
   <meta name="robots" content="index, follow">
   <meta name="language" content="English">
 
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="194x194" href="/favicon-194x194.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+  <meta name="theme-color" content="#ffffff">
+
   <style>
     body,
     html {
@@ -102,8 +113,14 @@
     h2 {
       -webkit-box-ordinal-group: 2;
       -ms-flex-order: 1;
-      order: 1;
       margin: 0;
+      font-size: 42px;
+      line-height: 1.114;
+    }
+    p {
+      font-size: 22px;
+      opacity: .8;
+      margin-top: 40px;
     }
 
     svg {
@@ -136,11 +153,6 @@
       top: 100%;
     }
 
-    h2 {
-      font-size: 42px;
-      line-height: 1.114;
-    }
-
     @media screen and (min-width: 320px) {
       h2 {
         font-size: calc(42px + 100 * (100vw - 320px) / 1120);
@@ -167,20 +179,74 @@
       font-size: 0.1px;
       z-index: -2;
     }
+    span {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+      /* min-width: 1ch; */
+    }
+    span:after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #131415;
+      top: 0; left: 0;
+      position: absolute;
+      transform: translate3d(0, 0, 0.1px);
+      animation-name: becomes;
+      animation-timing-function: ease;
+      animation-fill-mode: forwards;
+      animation-duration: .66s;
+    }
+    /* span:nth-child(1):after  { animation-delay: 1.1s; }
+    span:nth-child(2):after  { animation-delay: 1.2s; }
+    span:nth-child(3):after  { animation-delay: 1.3s; }
+    span:nth-child(4):after  { animation-delay: 1.4s; }
+    span:nth-child(5):after  { animation-delay: 1.5s; }
+    span:nth-child(6):after  { animation-delay: 1.6s; }
+    span:nth-child(7):after  { animation-delay: 1.7s; }
+    span:nth-child(8):after  { animation-delay: 1.8s; }
+    span:nth-child(9):after  { animation-delay: 1.9s; }
+    span:nth-child(10):after { animation-delay: 1.10s; }
+    span:nth-child(11):after { animation-delay: 1.11s; }
+    span:nth-child(12):after { animation-delay: 1.12s; }
+    span:nth-child(13):after { animation-delay: 1.13s; }
+    span:nth-child(14):after { animation-delay: 1.14s; }
+    span:nth-child(15):after { animation-delay: 1.15s; }
+    span:nth-child(16):after { animation-delay: 1.16s; }
+    span:nth-child(17):after { animation-delay: 1.17s; }
+    span:nth-child(18):after { animation-delay: 1.18s; }
+    span:nth-child(19):after { animation-delay: 1.19s; }
+    span:nth-child(20):after { animation-delay: 1.20s; }
+    span:nth-child(21):after { animation-delay: 1.21s; }
+    span:nth-child(22):after { animation-delay: 1.22s; }
+    span:nth-child(23):after { animation-delay: 1.23s; }
+    span:nth-child(24):after { animation-delay: 1.24s; }
+    span:nth-child(25):after { animation-delay: 1.25s; }
+    span:nth-child(26):after { animation-delay: 1.26s; }
+    span:nth-child(27):after { animation-delay: 1.27s; }
+    span:nth-child(28):after { animation-delay: 1.28s; }
+    span:nth-child(29):after { animation-delay: 1.29s; }
+    span:nth-child(30):after { animation-delay: 1.30s; }
+    span:nth-child(31):after { animation-delay: 1.31s; }
+    span:nth-child(32):after { animation-delay: 1.32s; }
+    span:nth-child(33):after { animation-delay: 1.33s; }
+    span:nth-child(34):after { animation-delay: 1.34s; }
+    span:nth-child(35):after { animation-delay: 1.35s; }
+    span:nth-child(36):after { animation-delay: 1.36s; }
+    span:nth-child(37):after { animation-delay: 1.37s; }
+    span:nth-child(38):after { animation-delay: 1.38s; }
+    span:nth-child(39):after { animation-delay: 1.39s; }
+    span:nth-child(40):after { animation-delay: 1.40s; } */
 
-    .example {
-      display: -ms-grid;
-      display: grid;
-      -webkit-transition: all .5s;
-      -o-transition: all .5s;
-      transition: all .5s;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      background: -webkit-gradient(linear, left top, left bottom, from(white), to(black));
-      background: -o-linear-gradient(top, white, black);
-      background: linear-gradient(to bottom, white, black);
+    @keyframes becomes {
+      0% {
+        transform: translate3d(0, 0%, 0.1px);
+      }
+      100% {
+        transform: translate3d(0, -100%, 0.1px);
+      }
     }
   </style>
 </head>
@@ -190,7 +256,10 @@
     <h1 id="title">Becomes</h1>
   </header>
   <main class="becomes co">
-    <h2>We're <br>digital product development studio.</h2>
+    <h2>
+        We're a <br>digital product development studio
+    </h2>
+    <p>Specialized in mvp and full product development for startups and innovative companies.</p>
   </main>
   <footer>
     <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title" viewBox="0 0 355.37 116.86">
