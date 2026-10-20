@@ -10,12 +10,46 @@ import { computeLayout, type HomeLayout, type Placement, type SectionInput } fro
 const COPIES = 4;
 const CUT_FADE = 0.2;
 const HOVER_SCALE = 0.035;
+/** How far each manifesto line sits below rest before the Loader wipe uncovers it, px. */
+const RISE = 24;
 
 interface Title {
   el: HTMLElement;
   work: Work | null;
   transform: string;
   opacity: string;
+}
+
+interface Line {
+  words: HTMLElement[];
+  /** Bottom edge, relative to the landing title. */
+  bottom: number;
+  spring: Spring;
+  transform: string;
+}
+
+/** Wraps each word so manifesto lines can move on their own. */
+function splitWords(el: HTMLElement): HTMLElement[] {
+  const words: HTMLElement[] = [];
+  for (const node of Array.from(el.childNodes)) {
+    if (node.nodeType !== Node.TEXT_NODE) continue;
+    const parts = (node.textContent ?? '').split(/(\s+)/);
+    const fragment = document.createDocumentFragment();
+    for (const part of parts) {
+      if (!part) continue;
+      if (/^\s+$/.test(part)) {
+        fragment.append(part);
+        continue;
+      }
+      const word = document.createElement('span');
+      word.className = 'home-title__word';
+      word.textContent = part;
+      fragment.append(word);
+      words.push(word);
+    }
+    node.replaceWith(fragment);
+  }
+  return words;
 }
 
 function fadeFor(asset: Asset): EdgeFade {
@@ -70,11 +104,16 @@ export class HomeView implements View {
   private visible: Placement[] = [];
   private lastPrefetch = Number.NaN;
   private cursor = '';
-  private intro = 1;
+  private words: HTMLElement[];
+  private lines: Line[] = [];
+  private landingTop = 0;
+  private revealEdge = -Infinity;
+  private armed = false;
 
   constructor(private ctx: AppContext) {
     this.root = document.querySelector<HTMLElement>('[data-view="home"]')!;
     const landing = this.root.querySelector<HTMLElement>('.home-title--landing')!;
+    this.words = splitWords(landing.querySelector<HTMLElement>('.home-title__manifesto')!);
     this.titles.push({ el: landing, work: null, transform: '', opacity: '' });
     for (const work of works) {
       const el = titleElement(work);
@@ -85,9 +124,17 @@ export class HomeView implements View {
     this.root.addEventListener('focusin', this.onFocus);
   }
 
-  /** Landing reveal after the loader, 0 → 1. */
-  setIntro(value: number): void {
-    this.intro = value;
+  /** Hold the manifesto lines low until the Loader wipe uncovers them. */
+  armIntro(): void {
+    this.armed = true;
+    this.revealEdge = Infinity;
+    for (const line of this.lines) line.spring.set(RISE);
+  }
+
+  /** Screen y of the Loader wipe edge; lines whose bottom it has passed rise to rest. */
+  setReveal(edge: number): void {
+    this.revealEdge = edge;
+    if (edge === -Infinity) this.armed = false;
   }
 
   layout(): void {
@@ -107,6 +154,7 @@ export class HomeView implements View {
         assets: title.work ? (this.assets.get(title.work) ?? []) : [],
       };
     });
+    this.measureLines();
 
     const t0 = performance.now();
     this.layoutState = computeLayout(this.sections, { width, height, reducedMotion, copies: COPIES });
@@ -132,6 +180,7 @@ export class HomeView implements View {
     const { height: vh, reducedMotion } = this.ctx.viewport.state;
 
     this.updateTitles(layout, s, vh);
+    if (this.updateLines(frame.dt, reducedMotion)) active = true;
     this.visible = this.query(layout, s, s);
 
     if (!(Math.abs(s - this.lastPrefetch) < vh * 0.25)) {
@@ -310,16 +359,13 @@ export class HomeView implements View {
       const title = this.titles[i];
       const section = layout.sections[i];
       if (!section) continue;
-      let off = s < section.p0 ? section.p0 - s : s > section.p1 ? section.p1 - s : 0;
+      const off = s < section.p0 ? section.p0 - s : s > section.p1 ? section.p1 - s : 0;
       const reach = vh / 2 + section.title.height / 2;
       const onScreen = Math.abs(off) < reach && presence > 0.001;
-      let opacity = (1 - smoothstep(vh * 0.16, vh * 0.5, Math.abs(off))) * presence;
-      if (i === 0) {
-        opacity *= this.intro;
-        off += (1 - this.intro) * 40;
-      }
+      const opacity = (1 - smoothstep(vh * 0.16, vh * 0.5, Math.abs(off))) * presence;
       // Off-screen titles park below the fold but stay focusable for keyboard users.
       const y = onScreen ? off - section.title.height / 2 : vh * 2;
+      if (i === 0) this.landingTop = vh / 2 + y;
       const transform = `translate3d(0, ${y.toFixed(2)}px, 0)`;
       const opacityValue = onScreen ? opacity.toFixed(3) : '0';
       if (transform !== title.transform) {
@@ -333,6 +379,38 @@ export class HomeView implements View {
         title.el.style.pointerEvents = opacity > 0.4 ? '' : 'none';
       }
     }
+  }
+
+  private measureLines(): void {
+    const lines: Line[] = [];
+    let last: Line | null = null;
+    let lastTop = Number.NaN;
+    for (const word of this.words) {
+      const top = word.offsetTop;
+      if (!last || Math.abs(top - lastTop) > 2) {
+        last = { words: [], bottom: 0, spring: new Spring(this.armed ? RISE : 0, 120, 20), transform: '' };
+        lines.push(last);
+        lastTop = top;
+      }
+      last.words.push(word);
+      last.bottom = Math.max(last.bottom, top + word.offsetHeight);
+    }
+    this.lines = lines;
+  }
+
+  private updateLines(dt: number, reduced: boolean): boolean {
+    let active = false;
+    for (const line of this.lines) {
+      if (this.landingTop + line.bottom >= this.revealEdge) line.spring.target = 0;
+      if (reduced) line.spring.set(line.spring.target);
+      if (line.spring.update(dt)) active = true;
+      const transform = line.spring.value ? `translate3d(0, ${line.spring.value.toFixed(2)}px, 0)` : '';
+      if (transform !== line.transform) {
+        line.transform = transform;
+        for (const word of line.words) word.style.transform = transform;
+      }
+    }
+    return active;
   }
 
   private onFocus = (event: FocusEvent): void => {

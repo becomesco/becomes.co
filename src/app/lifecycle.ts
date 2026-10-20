@@ -5,7 +5,7 @@ import { Viewport } from '../core/viewport';
 import { Engine } from '../graphics/engine';
 import { Chrome } from '../ui/chrome';
 import { Loader } from '../ui/overlays/loader';
-import { saturate, easeOutCubic } from '../utils/math';
+import { saturate } from '../utils/math';
 import { AboutView } from './about/about-view';
 import { ContactView } from './contact/contact-view';
 import { assetsOf, works } from './data/works';
@@ -61,7 +61,11 @@ export class App {
   }
 
   async start(): Promise<void> {
-    this.scheduler.add('loader', (frame) => this.loader.update(frame) || this.introActive(frame));
+    this.scheduler.add('loader', (frame) => {
+      const active = this.loader.update(frame);
+      this.landing();
+      return active;
+    });
     this.scheduler.wake();
 
     const fonts = document.fonts.ready.then(() => this.loader.setProgress(0.45));
@@ -126,19 +130,16 @@ export class App {
     this.scheduler.wake();
   };
 
-  private introStart = -1;
+  private chromeIn = false;
 
-  /** Landing reveal; overlaps the loader outro so the hand-off reads as one move. */
-  private introActive(frame: FrameTime): boolean {
-    if (!this.ready || this.current !== this.home) return false;
-    if (this.introStart < 0) {
-      if (this.loader.active && this.loader.outro < 0.35) return false;
-      this.introStart = frame.elapsed;
+  /** The Loader wipe uncovers the manifesto; Chrome settles in once it has cleared. */
+  private landing(): void {
+    if (!this.ready || this.current !== this.home) return;
+    this.home.setReveal(this.loader.edge);
+    if (!this.loader.active && !this.chromeIn) {
+      this.chromeIn = true;
       this.chrome.reveal();
     }
-    const t = this.viewport.state.reducedMotion ? 1 : saturate((frame.elapsed - this.introStart) / 1.1);
-    this.home.setIntro(easeOutCubic(t));
-    return t < 1;
   }
 
   private onRoute = (route: Route, intent: NavigationIntent, kind: 'initial' | 'push' | 'pop'): void => {
@@ -150,7 +151,7 @@ export class App {
       this.show(next, route);
       next.presence = 1;
       if (next === this.home) {
-        this.home.setIntro(0);
+        this.home.armIntro();
       } else {
         this.loader.dismiss();
         this.chrome.reveal();

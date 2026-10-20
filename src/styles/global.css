@@ -205,6 +205,10 @@ a {
   max-width: 100%;
 }
 
+.home-title__word {
+  display: inline-block;
+}
+
 .home-title__headline {
   font-size: clamp(26px, 3.47vw, 64px);
   width: 12.84em;
@@ -571,7 +575,13 @@ a {
 .loader__stage {
   position: absolute;
   inset: 0;
-  will-change: transform, opacity;
+  will-change: clip-path, opacity;
+}
+
+.loader__ground {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
 }
 
 .loader__mark {
@@ -592,16 +602,32 @@ a {
 .loader__word {
   position: absolute;
   inset: 0;
-  -webkit-mask: url('/brand/becomes-wordmark.svg') center / clamp(200px, 33.2vw, 600px) auto no-repeat;
-  mask: url('/brand/becomes-wordmark.svg') center / clamp(200px, 33.2vw, 600px) auto no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  visibility: hidden;
 }
 
-.loader__word--dark {
-  background: var(--ink);
+.intro-seen .loader__word,
+.loader--live .loader__word {
+  visibility: visible;
+}
+
+.loader__word svg {
+  width: clamp(200px, 33.2vw, 600px);
+  height: auto;
+  overflow: visible;
+  /* Hard cut at the baseline; room above for the letters' overshoot. */
+  clip-path: inset(-60% -10% 0 -10%);
+}
+
+.loader__word path {
+  fill: currentColor;
 }
 
 .loader__word--light {
-  background: var(--paper);
+  color: var(--paper);
 }
 
 .noscript {
