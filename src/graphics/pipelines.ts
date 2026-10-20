@@ -1,7 +1,7 @@
 import spriteSource from './shaders/sprite.wgsl?raw';
 import backgroundSource from './shaders/background.wgsl?raw';
 
-export const SPRITE_FLOATS = 20;
+export const SPRITE_FLOATS = 28;
 export const SPRITE_STRIDE = SPRITE_FLOATS * 4;
 export const SPRITE_VERTICES = 16 * 6;
 export const FRAME_BYTES = 16;

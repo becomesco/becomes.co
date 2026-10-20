@@ -62,15 +62,6 @@
     "src": "/media/basket/frame-12447.webp",
     "half": "/media/basket/frame-12447.half.webp"
   },
-  "basket/note": {
-    "px": [
-      528,
-      577
-    ],
-    "alpha": true,
-    "src": "/media/basket/note.webp",
-    "half": "/media/basket/note.half.webp"
-  },
   "basket/screen": {
     "px": [
       596,
@@ -134,15 +125,6 @@
     "src": "/media/bcms/group-1220.webp",
     "half": "/media/bcms/group-1220.half.webp"
   },
-  "bcms/note": {
-    "px": [
-      528,
-      577
-    ],
-    "alpha": true,
-    "src": "/media/bcms/note.webp",
-    "half": "/media/bcms/note.half.webp"
-  },
   "bcms/properties": {
     "px": [
       681,
@@ -160,6 +142,15 @@
     "alpha": true,
     "src": "/media/bcms/turn-into-menu.webp",
     "half": "/media/bcms/turn-into-menu.half.webp"
+  },
+  "brand/glass-mark-model": {
+    "px": [
+      1442,
+      1462
+    ],
+    "alpha": true,
+    "src": "/media/brand/glass-mark-model.webp",
+    "half": "/media/brand/glass-mark-model.half.webp"
   },
   "brand/glass-mark": {
     "px": [
@@ -187,15 +178,6 @@
     "alpha": true,
     "src": "/media/getcv/illustration.webp",
     "half": "/media/getcv/illustration.half.webp"
-  },
-  "getcv/note": {
-    "px": [
-      528,
-      577
-    ],
-    "alpha": true,
-    "src": "/media/getcv/note.webp",
-    "half": "/media/getcv/note.half.webp"
   },
   "getcv/phone": {
     "px": [
@@ -278,15 +260,6 @@
     "src": "/media/heroic-rankings/laptop.webp",
     "half": "/media/heroic-rankings/laptop.half.webp"
   },
-  "heroic-rankings/note": {
-    "px": [
-      528,
-      577
-    ],
-    "alpha": true,
-    "src": "/media/heroic-rankings/note.webp",
-    "half": "/media/heroic-rankings/note.half.webp"
-  },
   "heroic-rankings/stats": {
     "px": [
       768,
@@ -350,15 +323,6 @@
     "src": "/media/kooper/level-up.webp",
     "half": "/media/kooper/level-up.half.webp"
   },
-  "kooper/note": {
-    "px": [
-      528,
-      577
-    ],
-    "alpha": true,
-    "src": "/media/kooper/note.webp",
-    "half": "/media/kooper/note.half.webp"
-  },
   "milmedic/frame-15": {
     "px": [
       1096,
@@ -386,15 +350,6 @@
     "src": "/media/milmedic/group-1222.webp",
     "half": "/media/milmedic/group-1222.half.webp"
   },
-  "milmedic/note": {
-    "px": [
-      528,
-      577
-    ],
-    "alpha": true,
-    "src": "/media/milmedic/note.webp",
-    "half": "/media/milmedic/note.half.webp"
-  },
   "milmedic/photo": {
     "px": [
       802,
@@ -403,6 +358,15 @@
     "alpha": true,
     "src": "/media/milmedic/photo.webp",
     "half": "/media/milmedic/photo.half.webp"
+  },
+  "note/paper": {
+    "px": [
+      521,
+      510
+    ],
+    "alpha": true,
+    "src": "/media/note/paper.webp",
+    "half": "/media/note/paper.half.webp"
   },
   "pov/app-clip": {
     "px": [
@@ -448,15 +412,6 @@
     "alpha": true,
     "src": "/media/pov/group-730.webp",
     "half": "/media/pov/group-730.half.webp"
-  },
-  "pov/note": {
-    "px": [
-      528,
-      577
-    ],
-    "alpha": true,
-    "src": "/media/pov/note.webp",
-    "half": "/media/pov/note.half.webp"
   },
   "pov/phone-grid": {
     "px": [
@@ -566,15 +521,6 @@
     "src": "/media/pyure/leaf-card.webp",
     "half": "/media/pyure/leaf-card.half.webp"
   },
-  "pyure/note": {
-    "px": [
-      528,
-      577
-    ],
-    "alpha": true,
-    "src": "/media/pyure/note.webp",
-    "half": "/media/pyure/note.half.webp"
-  },
   "videotoflip/confetti": {
     "px": [
       281,
@@ -619,14 +565,5 @@
     "alpha": true,
     "src": "/media/videotoflip/group-3.webp",
     "half": "/media/videotoflip/group-3.half.webp"
-  },
-  "videotoflip/note": {
-    "px": [
-      528,
-      577
-    ],
-    "alpha": true,
-    "src": "/media/videotoflip/note.webp",
-    "half": "/media/videotoflip/note.half.webp"
   }
 }

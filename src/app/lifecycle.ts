@@ -27,7 +27,7 @@ interface Fade {
 }
 
 const TITLES: Record<Exclude<ViewName, 'work'>, string> = {
-  home: 'Becomes — the digital systems brilliant companies are built on',
+  home: 'Becomes: a design and technology studio for a more interesting internet.',
   about: 'About — Becomes',
   contact: 'Contact — Becomes',
 };
@@ -66,6 +66,7 @@ export class App {
       this.landing();
       return active;
     });
+    this.scheduler.onRender(() => this.loader.draw());
     this.scheduler.wake();
 
     const fonts = document.fonts.ready.then(() => this.loader.setProgress(0.45));
@@ -75,6 +76,10 @@ export class App {
       invalidate: this.wake,
       onBackendChange: (kind) => document.documentElement.classList.toggle('no-webgpu', kind === 'dom'),
     });
+    engine.then(
+      (created) => this.loader.attach(created),
+      () => undefined,
+    );
     const [created] = await Promise.all([engine, fonts]);
     this.engine = created;
     this.loader.setProgress(0.7);
@@ -93,6 +98,7 @@ export class App {
     this.views = { home: this.home, work: this.work, about: this.about, contact: this.contact };
     this.current = this.home;
     this.loader.landOn(() => (this.current === this.home ? this.home.landingWord() : null));
+    this.loader.restOn(this.home);
 
     const { width, height, dpr } = this.viewport.state;
     this.engine.resize(width, height, dpr);

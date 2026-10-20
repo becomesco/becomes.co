@@ -2,6 +2,7 @@ import type { FrameTime } from '../core/scheduler';
 import type { RenderBackend } from './backend';
 import { detectCapabilities } from './capabilities';
 import { DomRenderer } from './dom-renderer';
+import { GlassMark } from './layers/glass-mark';
 import { AdaptiveQuality } from './quality';
 import { WebGpuRenderer } from './renderer';
 import type { SceneFrame, TextureRef } from './scene/types';
@@ -61,6 +62,12 @@ export class Engine {
 
   prefetch(ref: TextureRef, cssWidth: number): void {
     this.backend.prefetch(ref, cssWidth * this.renderRatio());
+  }
+
+  /** The Glass mark on its own canvas, on this session's device. Null without WebGPU. */
+  async glassMark(canvas: HTMLCanvasElement, mesh: ArrayBuffer): Promise<GlassMark | null> {
+    if (!(this.backend instanceof WebGpuRenderer)) return null;
+    return GlassMark.create(this.backend.device, canvas, mesh);
   }
 
   render(scene: SceneFrame, frame: FrameTime): void {

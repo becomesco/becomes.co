@@ -1,11 +1,29 @@
-/** Delivery variants for one piece of media. `src` is 2x, `half` is 1x. */
-export interface TextureRef {
+interface TextureBase {
   key: string;
-  src: string;
-  half: string;
-  /** Pixel size of `src`. */
+  /** Pixel size of the 2x variant. */
   px: readonly [number, number];
 }
+
+/** Delivery variants for one piece of media. `src` is 2x, `half` is 1x. */
+export interface FileTexture extends TextureBase {
+  src: string;
+  half: string;
+}
+
+/** Rows of clear pixels between the two layers of a `shadowed` texture. */
+export const LAYER_GAP = 4;
+
+/**
+ * Media drawn at runtime, at any scale of its 1x size (`draw(2)` is `px`). A `shadowed`
+ * texture stacks two layers of that size, LAYER_GAP rows apart: the image on top, its
+ * shadow below, so the shadow can be scaled by `Sprite.lift` when drawn.
+ */
+export interface DrawnTexture extends TextureBase {
+  draw: (scale: number) => Promise<HTMLCanvasElement>;
+  shadowed?: boolean;
+}
+
+export type TextureRef = FileTexture | DrawnTexture;
 
 /** Fade lengths per edge as a fraction of the image size: top, right, bottom, left. */
 export type EdgeFade = readonly [number, number, number, number];
@@ -35,8 +53,15 @@ export interface Sprite {
   /** Image-only opacity, so a card can show before its image has loaded. */
   image: number;
   fade: EdgeFade;
-  /** Vertical bend at the horizontal center, in px (scroll velocity). */
+  /** Vertical bend at the horizontal center, in px (View morph arc). */
   bend: number;
+  /** Hover, 0 to 1: a halftone vignette around the edges and the image pushed in behind its frame. */
+  hover: number;
+  /** Cursor across the sprite, -1 to 1 per axis. The hover vignette thins on that side and deepens opposite. */
+  focusX: number;
+  focusY: number;
+  /** Strength of a `shadowed` texture's shadow, 0 to 1: lower presses the Asset flat. */
+  lift: number;
 }
 
 export interface Glow {
@@ -73,5 +98,9 @@ export function createSprite(id: string, texture: TextureRef | null): Sprite {
     image: 1,
     fade: NO_FADE,
     bend: 0,
+    hover: 0,
+    focusX: 0,
+    focusY: 0,
+    lift: 1,
   };
 }

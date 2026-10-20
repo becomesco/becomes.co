@@ -4,6 +4,7 @@ import { createSprite, NO_FADE, type EdgeFade, type Sprite } from '../../graphic
 import { clamp, easeOutCubic, saturate } from '../../utils/math';
 import { assetsOf, type Asset, type Work } from '../data/works';
 import { createGrid } from '../home/grid';
+import { NotePress } from '../note';
 import type { AppContext, DrawList, View } from '../view';
 
 interface Card {
@@ -40,6 +41,7 @@ export class WorkView implements View {
 
   private header: HTMLElement;
   private cards: Card[] = [];
+  private press = new NotePress();
   private openedAt = 0;
   private now = 0;
   private headerStyle = '';
@@ -124,6 +126,7 @@ export class WorkView implements View {
 
     const headerIn = reducedMotion ? 1 : easeOutCubic(saturate((t - 0.3) / 0.7));
     if (headerIn < 1) active = true;
+    if (this.press.update(this.scroll.velocity, frame.dt, reducedMotion)) active = true;
     const headerStyle = `${(headerIn * this.presence).toFixed(3)}|${((1 - headerIn) * 28).toFixed(2)}`;
     if (headerStyle !== this.headerStyle) {
       this.headerStyle = headerStyle;
@@ -143,6 +146,7 @@ export class WorkView implements View {
       this.position(card, s, (1 - reveal) * 48);
       card.sprite.opacity = reveal * this.presence;
       card.sprite.image = appear;
+      card.sprite.lift = this.press.lift;
     }
     return active;
   }

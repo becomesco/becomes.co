@@ -1,6 +1,6 @@
 import type { RenderBackend } from './backend';
-import { pickVariant } from './resources';
-import type { EdgeFade, SceneFrame, Sprite, TextureRef } from './scene/types';
+import { pickLevel } from './resources';
+import { LAYER_GAP, type EdgeFade, type SceneFrame, type Sprite, type TextureRef } from './scene/types';
 
 interface Node {
   root: HTMLDivElement;
@@ -11,7 +11,15 @@ interface Node {
 }
 
 interface ImageState {
+  /** Null until a drawn texture has its blob URL, or when it failed. */
+  url: string | null;
   loaded: boolean;
+}
+
+/** The sharpest loaded image of a texture, and when the texture first appeared. */
+interface Best {
+  level: number;
+  url: string;
   readyAt: number;
 }
 
@@ -33,6 +41,8 @@ export class DomRenderer implements RenderBackend {
   readonly kind = 'dom';
   private nodes = new Map<string, Node>();
   private images = new Map<string, ImageState>();
+  private best = new Map<string, Best>();
+  private failed = new Set<string>();
   private frame = 0;
   private now = 0;
   private glow: HTMLDivElement;
@@ -55,13 +65,13 @@ export class DomRenderer implements RenderBackend {
   resize(): void {}
 
   appear(ref: TextureRef): number {
-    const state = this.images.get(ref.src) ?? this.images.get(ref.half);
-    if (!state?.loaded) return 0;
-    return Math.min(1, (this.now - state.readyAt) / FADE_IN);
+    const best = this.best.get(ref.key);
+    if (!best) return this.failed.has(ref.key) ? 1 : 0;
+    return Math.min(1, (this.now - best.readyAt) / FADE_IN);
   }
 
   prefetch(ref: TextureRef, devicePx: number): void {
-    this.track(pickVariant(ref, devicePx) === 'full' ? ref.src : ref.half);
+    this.track(ref, pickLevel(ref, devicePx));
   }
 
   render(scene: SceneFrame, seconds: number): void {
@@ -98,25 +108,53 @@ export class DomRenderer implements RenderBackend {
   destroy(): void {
     for (const node of this.nodes.values()) node.root.remove();
     this.nodes.clear();
+    for (const state of this.images.values()) if (state.url?.startsWith('blob:')) URL.revokeObjectURL(state.url);
+    this.images.clear();
+    this.best.clear();
+    this.failed.clear();
     this.glow.remove();
     this.host.classList.remove('dom-stage');
   }
 
-  private track(url: string): ImageState {
-    let state = this.images.get(url);
-    if (state) return state;
-    const created: ImageState = { loaded: false, readyAt: 0 };
-    state = created;
-    this.images.set(url, state);
-    const img = new Image();
-    img.decoding = 'async';
-    img.onload = img.onerror = () => {
-      created.loaded = true;
-      created.readyAt = this.now;
+  /** Loads a texture at a level unless a level at least as sharp is already loaded. */
+  private track(ref: TextureRef, level: number): void {
+    const best = this.best.get(ref.key);
+    if (best && best.level >= level) return;
+    const id = `${ref.key}:${level}`;
+    if (this.images.has(id)) return;
+    const state: ImageState = { url: null, loaded: false };
+    this.images.set(id, state);
+    const done = (ok: boolean) => {
+      state.loaded = true;
+      const current = this.best.get(ref.key);
+      if (ok && state.url && (!current || current.level < level)) {
+        this.best.set(ref.key, { level, url: state.url, readyAt: current?.readyAt ?? this.now });
+      } else if (!ok && !current) {
+        this.failed.add(ref.key);
+      }
       this.onLoad();
     };
-    img.src = url;
-    return state;
+    const load = (url: string) => {
+      state.url = url;
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = () => done(true);
+      img.onerror = () => done(false);
+      img.src = url;
+    };
+    if ('draw' in ref) {
+      ref
+        .draw(level)
+        .then((canvas) => (ref.shadowed ? flatten(canvas) : canvas))
+        .then((canvas) => new Promise<Blob | null>((resolve) => canvas.toBlob(resolve)))
+        .then((blob) => (blob ? load(URL.createObjectURL(blob)) : done(false)))
+        .catch((error) => {
+          console.warn('[textures] failed', ref.key, error);
+          done(false);
+        });
+    } else {
+      load(level === 2 ? ref.src : ref.half);
+    }
   }
 
   private draw(s: Sprite, order: number, dpr: number): void {
@@ -141,18 +179,17 @@ export class DomRenderer implements RenderBackend {
     style.setProperty('--card', String(s.card));
 
     if (s.texture) {
-      const variant = pickVariant(s.texture, s.iw * dpr);
-      const url = variant === 'full' ? s.texture.src : s.texture.half;
-      const state = this.track(url);
+      this.track(s.texture, pickLevel(s.texture, s.iw * dpr));
+      const best = this.best.get(s.texture.key);
       if (!node.img) {
         node.img = document.createElement('img');
         node.img.alt = '';
         node.img.decoding = 'async';
         root.append(node.img);
       }
-      if (state.loaded && node.src !== url) {
-        node.img.src = url;
-        node.src = url;
+      if (best && node.src !== best.url) {
+        node.img.src = best.url;
+        node.src = best.url;
       }
       const img = node.img.style;
       img.width = `${s.iw}px`;
@@ -169,4 +206,17 @@ export class DomRenderer implements RenderBackend {
       }
     }
   }
+}
+
+/** One image from a shadowed texture: its shadow layer under its image layer. */
+function flatten(source: HTMLCanvasElement): HTMLCanvasElement {
+  const rows = (source.height - LAYER_GAP) / 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = source.width;
+  canvas.height = rows;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('No 2D canvas context');
+  ctx.drawImage(source, 0, rows + LAYER_GAP, source.width, rows, 0, 0, source.width, rows);
+  ctx.drawImage(source, 0, 0, source.width, rows, 0, 0, source.width, rows);
+  return canvas;
 }

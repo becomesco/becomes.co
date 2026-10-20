@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Becomes — the digital systems brilliant companies are built on</title>
+    <title>Becomes: a design and technology studio for a more interesting internet.</title>
     <meta
       name="description"
       content="Becomes is a small creative web development studio delivering the fastest websites and web apps. Strategy, brand, web and product, carried by one team."
@@ -13,7 +13,7 @@
     <link rel="preload" href="/fonts/grillmaster-extwide-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/grillmaster-extwide-medium.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/grillmaster-wide-regular.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/media/brand/glass-mark.half.webp" as="image" fetchpriority="high" />
+    <link rel="preload" href="/media/brand/glass-mark.mesh" as="fetch" type="application/octet-stream" crossorigin />
     <script>
       try {
         if (sessionStorage.getItem('becomes:intro')) document.documentElement.classList.add('intro-seen');
@@ -30,7 +30,7 @@
     <main class="views">
       <section class="view view--home" data-view="home" aria-label="Works">
         <div class="home-title home-title--landing">
-          <h1 class="home-title__manifesto">becomes creates <br />the digital systems brilliant companies are built on.</h1>
+          <h1 class="home-title__manifesto">becomes is a design and technology studio <br />for a more interesting internet.</h1>
         </div>
       </section>
 
@@ -51,7 +51,7 @@
             <p class="about__text">
               We are Becomes, a small creative web development studio, delivering the fastest websites &amp; web
               apps. Strategy, brand, web and product, carried by one team from direction to build, so everything we
-              do supports and informs the other.
+              do supports and informs the otherrr.
             </p>
           </div>
         </div>
@@ -116,8 +116,11 @@
             </g>
           </svg>
         </div>
-        <img class="loader__mark" src="/media/brand/glass-mark.half.webp" alt="" fetchpriority="high" />
       </div>
+    </div>
+    <div class="loader__mark" aria-hidden="true">
+      <canvas class="loader__mark-canvas"></canvas>
+      <div class="loader__mark-box"><img class="loader__mark-poster" alt="" /></div>
     </div>
 
     <noscript>

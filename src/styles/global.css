@@ -26,6 +26,10 @@
   --glass: rgb(255 255 255 / 0.3);
   --font-display: 'Grillmaster ExtWide', 'Helvetica Neue', Arial, sans-serif;
   --font-text: 'Grillmaster Wide', 'Helvetica Neue', Arial, sans-serif;
+  /* Figma sets display copy with thin spaces (0.2em). The ExtWide builds have no thin-space
+     glyph and set spaces at 0.5em (Regular) and 0.522em (Medium), so word-spacing narrows them. */
+  --thin-space: -0.3em;
+  --thin-space-medium: -0.322em;
   /* Mirrors the modular grid in src/app/home/grid.ts. */
   --margin: 16px;
   --gutter: 12px;
@@ -58,6 +62,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  cursor: default;
 }
 
 html,
@@ -185,7 +190,7 @@ a {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  will-change: transform, opacity;
+  will-change: transform, opacity, filter;
   opacity: 0;
 }
 
@@ -196,6 +201,7 @@ a {
   font-weight: 400;
   line-height: 1.1;
   letter-spacing: -0.01em;
+  word-spacing: var(--thin-space);
   text-transform: lowercase;
 }
 
@@ -215,10 +221,6 @@ a {
   max-width: 100%;
 }
 
-.home-title__headline a {
-  text-decoration: none;
-}
-
 .home-title__logo,
 .work-header__logo {
   display: block;
@@ -232,6 +234,7 @@ a {
   font-family: var(--font-display);
   font-weight: 500;
   font-size: clamp(14px, 1.25vw, 20px);
+  word-spacing: var(--thin-space-medium);
   text-decoration: none;
   white-space: nowrap;
   background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
@@ -240,10 +243,6 @@ a {
 
 .visit-link:hover {
   background-size: 100% 1px;
-}
-
-.home-title .visit-link {
-  margin-top: clamp(14px, 1.9vw, 32px);
 }
 
 /* Work View */
@@ -271,9 +270,10 @@ a {
   font-size: clamp(32px, 4.86vw, 92px);
   line-height: 1.1;
   letter-spacing: -0.01em;
+  word-spacing: var(--thin-space);
   text-transform: lowercase;
-  /* Figma's 1182px measure; our font build sets about 4% wider. */
-  max-width: 17.6em;
+  /* Figma's 1182px measure at 70px. */
+  max-width: 16.9em;
   text-wrap: pretty;
   outline: none;
 }
@@ -348,6 +348,7 @@ a {
   font-size: clamp(30px, 3.47vw, 64px);
   line-height: 1.1;
   letter-spacing: -0.01em;
+  word-spacing: var(--thin-space);
   outline: none;
 }
 
@@ -401,14 +402,13 @@ a {
 }
 
 .contact__submit {
+  word-spacing: var(--thin-space);
   border: 0;
-  cursor: pointer;
   color: var(--paper);
 }
 
 .contact__submit:disabled {
   opacity: 0.5;
-  cursor: progress;
 }
 
 .contact__status {
@@ -584,12 +584,48 @@ a {
   background: var(--bg);
 }
 
+/* Its own layer above the Loader, so the still can screen over whatever lies beneath. */
 .loader__mark {
+  position: fixed;
+  z-index: 11;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* The still's frame, and the live mark's size at rest: it stands about as tall as the Wordmark is wide. */
+.loader__mark-box {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: clamp(260px, 36vw, 560px);
+  width: clamp(360px, 50vw, 790px);
+  aspect-ratio: 1442 / 1462;
   transform: translate(-50%, -50%);
+}
+
+/* Once the intro is over the Glass mark stays on its own: over Home's text, under Chrome. */
+.loader__mark--rest {
+  z-index: 2;
+}
+
+.loader__mark-canvas,
+.loader__mark-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.loader__mark-canvas[hidden] {
+  display: none;
+}
+
+.loader__mark-poster {
+  opacity: 0;
+}
+
+/* The still is the live mark's reflections on black; screened, its body stays clear. */
+.loader__mark--poster {
+  mix-blend-mode: screen;
 }
 
 .loader__panel {
@@ -627,7 +663,7 @@ a {
 }
 
 .loader__word--light {
-  color: var(--paper);
+  color: var(--bg);
 }
 
 .noscript {

@@ -12,6 +12,10 @@ _Avoid_: project, product, case study, portfolio piece
 Media that belongs to a Work. Clicking an Asset on Home opens that Work. Figma is not the Asset inventory.
 _Avoid_: image, texture, attachment
 
+**Note**:
+An Asset drawn in code, not exported: the paper card with its shadow and the Work's copy typed on it (`note` in `works.ts`).
+_Avoid_: sticky, note image
+
 **View**:
 A routed state of the site: Home, a Work, About, or Contact.
 _Avoid_: page (use View for scene state; URL for the path)
@@ -29,7 +33,7 @@ The `/contact` View. Native HTML form; GPU for background and transition only.
 The intro into Home: the Glass mark and Wordmark on black, ending in the landing manifesto. Plays in full once per browser session; later loads get a short version. Not a View and not a URL.
 
 **Glass mark**:
-The 3D glass "b" brand mark. Shown in the Loader and on About.
+The 3D glass "b" brand mark. Shown in the Loader, over the top of Home until scrolling turns it away, and on About.
 _Avoid_: logomark, glass logo, logo
 
 **Wordmark**:

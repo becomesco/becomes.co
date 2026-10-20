@@ -49,7 +49,7 @@ export class WebGpuRenderer implements RenderBackend {
   }
 
   private constructor(
-    private device: GPUDevice,
+    readonly device: GPUDevice,
     private context: GPUCanvasContext,
     options: RendererOptions,
   ) {
@@ -218,6 +218,12 @@ export class WebGpuRenderer implements RenderBackend {
       data[o + 17] = group === this.textures.empty ? 0 : 1;
       data[o + 18] = 1;
       data[o + 19] = s.image;
+      data[o + 20] = 0;
+      data[o + 21] = s.hover;
+      data[o + 22] = s.focusX;
+      data[o + 23] = s.focusY;
+      data[o + 24] = s.lift;
+      data[o + 25] = s.texture && 'shadowed' in s.texture && s.texture.shadowed ? 1 : 0;
       this.drawGroups[n] = group;
       n++;
     }

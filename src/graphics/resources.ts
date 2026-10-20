@@ -1,14 +1,13 @@
 import type { TextureRef } from './scene/types';
 
-type Variant = 'half' | 'full';
-
 interface Entry {
   ref: TextureRef;
-  variant: Variant | null;
+  /** Loaded resolution, see `pickLevel`; 0 when nothing is uploaded. */
+  level: number;
   texture: GPUTexture | null;
   bindGroup: GPUBindGroup | null;
   bytes: number;
-  loading: Variant | null;
+  loading: number;
   readyAt: number;
   lastUsed: number;
   failed: boolean;
@@ -16,15 +15,25 @@ interface Entry {
 
 interface Job {
   entry: Entry;
-  variant: Variant;
+  level: number;
   priority: number;
 }
 
 const FADE_IN = 0.35;
 const MAX_PARALLEL = 6;
+/** Drawn textures render in quarter steps of their 1x size, up to this. */
+const DRAW_STEP = 0.25;
+const MAX_DRAW_SCALE = 4;
 
-export const pickVariant = (ref: TextureRef, devicePx: number): Variant =>
-  devicePx <= ref.px[0] * 0.5 * 1.15 ? 'half' : 'full';
+/**
+ * Resolution to load for a display width: 1 (`half`) or 2 (`src`) for files; for drawn
+ * textures, the scale to draw at, so they stay 1:1 with device pixels when shown large.
+ */
+export function pickLevel(ref: TextureRef, devicePx: number): number {
+  const ratio = devicePx / (ref.px[0] * 0.5);
+  if ('draw' in ref) return Math.min(MAX_DRAW_SCALE, Math.max(1, Math.ceil(ratio / DRAW_STEP - 0.01) * DRAW_STEP));
+  return ratio <= 1.15 ? 1 : 2;
+}
 
 async function decode(url: string, signal: AbortSignal): Promise<ImageBitmap> {
   const response = await fetch(url, { signal });
@@ -70,14 +79,14 @@ export class TextureStore {
   use(ref: TextureRef, devicePx: number, priority = 1): GPUBindGroup | null {
     const entry = this.entry(ref);
     entry.lastUsed = this.now;
-    this.want(entry, pickVariant(ref, devicePx), priority);
+    this.want(entry, pickLevel(ref, devicePx), priority);
     return entry.bindGroup;
   }
 
   prefetch(ref: TextureRef, devicePx: number): void {
     const entry = this.entry(ref);
     entry.lastUsed = Math.max(entry.lastUsed, this.now - 1);
-    this.want(entry, pickVariant(ref, devicePx), 0);
+    this.want(entry, pickLevel(ref, devicePx), 0);
   }
 
   /** 0→1 since the texture became drawable; drives the Layer fade-in. */
@@ -104,11 +113,11 @@ export class TextureStore {
     if (!entry) {
       entry = {
         ref,
-        variant: null,
+        level: 0,
         texture: null,
         bindGroup: null,
         bytes: 0,
-        loading: null,
+        loading: 0,
         readyAt: 0,
         lastUsed: this.now,
         failed: false,
@@ -118,18 +127,18 @@ export class TextureStore {
     return entry;
   }
 
-  private want(entry: Entry, variant: Variant, priority: number): void {
+  private want(entry: Entry, level: number, priority: number): void {
     if (entry.failed) return;
-    // Never downgrade a loaded texture; half already drawn while full loads.
-    if (entry.variant === 'full' || entry.variant === variant) return;
-    if (entry.loading === 'full' || entry.loading === variant) {
+    // Never downgrade a loaded texture; the lower level stays drawn while a higher one loads.
+    if (entry.level >= level) return;
+    if (entry.loading >= level) {
       const job = this.queue.find((j) => j.entry === entry);
       if (job && priority > job.priority) job.priority = priority;
       return;
     }
     if (entry.loading) return;
-    entry.loading = variant;
-    this.queue.push({ entry, variant, priority });
+    entry.loading = level;
+    this.queue.push({ entry, level, priority });
     this.pump();
   }
 
@@ -146,26 +155,27 @@ export class TextureStore {
     }
   }
 
-  private async load({ entry, variant }: Job): Promise<void> {
-    const url = variant === 'full' ? entry.ref.src : entry.ref.half;
+  private async load({ entry, level }: Job): Promise<void> {
+    const { ref } = entry;
+    const url = 'draw' in ref ? ref.key : level === 2 ? ref.src : ref.half;
     try {
-      const bitmap = await decode(url, this.abort.signal);
+      const source = 'draw' in ref ? await ref.draw(level) : await decode(url, this.abort.signal);
       if (this.abort.signal.aborted) {
-        bitmap.close();
+        if (source instanceof ImageBitmap) source.close();
         return;
       }
       const texture = this.device.createTexture({
-        size: [bitmap.width, bitmap.height],
+        size: [source.width, source.height],
         format: 'rgba8unorm',
         usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
       });
       this.device.queue.copyExternalImageToTexture(
-        { source: bitmap },
+        { source },
         { texture, premultipliedAlpha: true },
-        [bitmap.width, bitmap.height],
+        [source.width, source.height],
       );
-      const bytes = bitmap.width * bitmap.height * 4;
-      bitmap.close();
+      const bytes = source.width * source.height * 4;
+      if (source instanceof ImageBitmap) source.close();
 
       if (entry.texture) {
         entry.texture.destroy();
@@ -175,7 +185,7 @@ export class TextureStore {
       }
       entry.texture = texture;
       entry.bytes = bytes;
-      entry.variant = variant;
+      entry.level = level;
       entry.bindGroup = this.device.createBindGroup({
         layout: this.layout,
         entries: [{ binding: 0, resource: texture.createView() }],
@@ -190,7 +200,7 @@ export class TextureStore {
         this.onLoad();
       }
     } finally {
-      entry.loading = null;
+      entry.loading = 0;
     }
   }
 
@@ -205,7 +215,7 @@ export class TextureStore {
       this.bytes -= entry.bytes;
       entry.texture = null;
       entry.bindGroup = null;
-      entry.variant = null;
+      entry.level = 0;
       entry.bytes = 0;
     }
   }

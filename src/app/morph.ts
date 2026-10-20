@@ -47,6 +47,8 @@ export class Morph {
     s.card = lerp(a.card, to.card, t);
     s.opacity = lerp(a.opacity, to.opacity, t);
     s.image = lerp(a.image, to.image, t);
+    s.hover = lerp(a.hover, to.hover, t);
+    s.lift = lerp(a.lift, to.lift, t);
     s.fade = t < 0.5 ? a.fade : to.fade;
     // A soft arc through the move so the Asset feels carried, not slid.
     s.bend = Math.sin(t * Math.PI) * Math.min(28, Math.abs(to.y - a.y) * 0.05);
