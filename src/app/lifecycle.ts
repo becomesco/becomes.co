@@ -51,7 +51,7 @@ export class App {
   /** Home placement that opened the current Work, for the morph back. */
   private openedFrom: { placement: number; assetId: string } | null = null;
   private layoutKeys = new Map<View, string>();
-  private list: DrawList = { sprites: [], glows: [] };
+  private list: DrawList = { sprites: [], glows: [], glass: [] };
   private ready = false;
 
   constructor() {
@@ -282,11 +282,12 @@ export class App {
     const list = this.list;
     list.sprites.length = 0;
     list.glows.length = 0;
+    list.glass.length = 0;
     for (const view of Object.values(this.views)) {
       if (view !== this.current && !view.root.hidden) view.draw(list);
     }
     this.current.draw(list);
     if (this.morph) list.sprites.push(this.morph.sprite);
-    this.engine.render({ sprites: list.sprites, background: BACKGROUND, glows: list.glows }, frame);
+    this.engine.render({ sprites: list.sprites, background: BACKGROUND, glows: list.glows, glass: list.glass }, frame);
   };
 }

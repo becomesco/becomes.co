@@ -16,6 +16,10 @@ _Avoid_: image, texture, attachment
 An Asset drawn in code, not exported: the paper card with its shadow and the Work's copy typed on it (`note` in `works.ts`).
 _Avoid_: sticky, note image
 
+**Other**:
+The grid that closes Home, under the "other projects" title: media in glass frames drawn in code (`others` in `works.ts`). Not Assets: no Work, no View, not clickable.
+_Avoid_: archive, gallery
+
 **View**:
 A routed state of the site: Home, a Work, About, or Contact.
 _Avoid_: page (use View for scene state; URL for the path)
@@ -33,7 +37,7 @@ The `/contact` View. Native HTML form; GPU for background and transition only.
 The intro into Home: the Glass mark and Wordmark on black, ending in the landing manifesto. Plays in full once per browser session; later loads get a short version. Not a View and not a URL.
 
 **Glass mark**:
-The 3D glass "b" brand mark. Shown in the Loader, over the top of Home until scrolling turns it away, and on About.
+The 3D glass "b" brand mark. Shown in the Loader, over the top of Home until scrolling turns it away, back over the end of Home, and on About.
 _Avoid_: logomark, glass logo, logo
 
 **Wordmark**:

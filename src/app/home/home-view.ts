@@ -1,21 +1,22 @@
 import { Spring } from '../../core/motion';
 import type { FrameTime } from '../../core/scheduler';
 import { VirtualScroll } from '../../core/scroll';
-import { createSprite, NO_FADE, type EdgeFade, type Sprite } from '../../graphics/scene/types';
+import { createSprite, NO_FADE, type EdgeFade, type GlassBox, type Sprite } from '../../graphics/scene/types';
 import type { LandingWord } from '../../ui/overlays/loader';
 import { clamp, damp, easeInOutCubic, lerp, saturate, smoothstep } from '../../utils/math';
-import { assetsOf, works, type Asset, type Work } from '../data/works';
+import { assetsOf, others, textureFor, works, type Asset, type Work } from '../data/works';
 import { NotePress } from '../note';
 import type { AppContext, DrawList, View } from '../view';
 import { computeLayout, type HomeLayout, type Placement, type SectionInput } from './layout';
+import { OTHER_IMAGE_RADIUS, OTHER_INSET, OTHER_RADIUS } from './other';
 
 const COPIES = 4;
 const CUT_FADE = 0.2;
 /** Hover spring: just under critical damping, so it glides in over ~0.6 s and settles without a bounce. */
 const HOVER_STIFFNESS = 70;
 const HOVER_DAMPING = 16;
-/** Rate the hover vignette follows the cursor at, per second. Low enough to trail it a little. */
-const FOCUS_RATE = 7;
+/** How far an Asset grows at full hover. */
+const HOVER_SCALE = 0.05;
 /** How much smaller Assets get at full scroll speed (Notes excepted). */
 const SCROLL_SHRINK = 0.025;
 /** Scroll speeds, px/s, between which Assets go from rest to fully shrunk. */
@@ -49,6 +50,15 @@ const MORPH_BLUR_MAX = 6;
 const GOO_CUT = 0.35;
 const GOO_SLOPE = 30;
 const GOO_ID = 'home-title-morph';
+/**
+ * Glass under each title, as shares of its font size: how far outside the text it eases
+ * out over (with a floor, px), and how far inside the text it reaches full strength.
+ */
+const GLASS_FEATHER = 1.5;
+const GLASS_FEATHER_MIN = 64;
+const GLASS_INSET = 0.15;
+/** Text lines a title's glass follows; further lines join the last. Two titles' lines and logos fit MAX_GLASS. */
+const GLASS_LINES = 5;
 
 interface Title {
   el: HTMLElement;
@@ -57,6 +67,10 @@ interface Title {
   blur: number;
   /** Headline center below the title's top edge, px. Every title pins this point to the viewport center. */
   anchor: number;
+  /** Its lines of text and its logo where the title is pinned, for Assets passing behind it. */
+  glass: GlassBox[];
+  /** Scroll offset past which the title scrolls with the page instead of staying pinned. */
+  follow: number;
   alpha: number;
   transform: string;
   opacity: string;
@@ -132,7 +146,68 @@ function thresholdsOf(layout: HomeLayout): number[] {
 }
 
 function newTitle(el: HTMLElement, work: Work | null): Title {
-  return { el, work, blur: 0, anchor: 0, alpha: 0, transform: '', opacity: '', filter: '' };
+  return { el, work, blur: 0, anchor: 0, glass: [], follow: Infinity, alpha: 0, transform: '', opacity: '', filter: '' };
+}
+
+/**
+ * A title's glass: one pill per line of text, then its logo, where the title sits once pinned.
+ * Measure with the title and its words untransformed.
+ */
+function glassOf(title: Title): GlassBox[] {
+  const text = title.el.querySelector<HTMLElement>('.home-title__headline, .home-title__manifesto');
+  if (!text) return [];
+  const size = parseFloat(getComputedStyle(text).fontSize);
+  const feather = Math.max(GLASS_FEATHER_MIN, size * GLASS_FEATHER);
+  const inset = size * GLASS_INSET;
+
+  // A range's client rects are one per line of plain text, or one per word and gap in the
+  // manifesto; either way, rects whose centers share a line are merged into it.
+  const range = document.createRange();
+  range.selectNodeContents(text);
+  const lines: { x0: number; y0: number; x1: number; y1: number }[] = [];
+  for (const r of Array.from(range.getClientRects())) {
+    if (r.width < 1 || r.height < 1) continue;
+    const cy = r.top + r.height / 2;
+    const line = lines.find((l) => Math.abs((l.y0 + l.y1) / 2 - cy) < r.height / 2);
+    if (line) {
+      line.x0 = Math.min(line.x0, r.left);
+      line.x1 = Math.max(line.x1, r.right);
+      line.y0 = Math.min(line.y0, r.top);
+      line.y1 = Math.max(line.y1, r.bottom);
+    } else {
+      lines.push({ x0: r.left, y0: r.top, x1: r.right, y1: r.bottom });
+    }
+  }
+  lines.sort((a, b) => a.y0 - b.y0);
+  while (lines.length > GLASS_LINES) {
+    const extra = lines.pop()!;
+    const last = lines[lines.length - 1];
+    last.x0 = Math.min(last.x0, extra.x0);
+    last.x1 = Math.max(last.x1, extra.x1);
+    last.y1 = Math.max(last.y1, extra.y1);
+  }
+
+  const box = (x0: number, y0: number, x1: number, y1: number): GlassBox => ({
+    x: (x0 + x1) / 2,
+    y: (y0 + y1) / 2 - title.anchor,
+    hw: (x1 - x0) / 2,
+    hh: (y1 - y0) / 2,
+    radius: (y1 - y0) / 2,
+    feather,
+    inset,
+    weight: 0,
+  });
+  const out = lines.map((l) => box(l.x0, l.y0, l.x1, l.y1));
+
+  const logo = title.el.querySelector<HTMLElement>('.home-title__logo');
+  if (logo && title.work) {
+    // Width from the logo's aspect, since the image may not have loaded yet.
+    const rect = logo.getBoundingClientRect();
+    const half = (rect.height * title.work.logo.width) / title.work.logo.height / 2;
+    const cx = rect.left + rect.width / 2;
+    if (rect.height > 0) out.push(box(cx - half, rect.top, cx + half, rect.bottom));
+  }
+  return out;
 }
 
 function fadeFor(asset: Asset): EdgeFade {
@@ -157,6 +232,25 @@ function titleElement(work: Work): HTMLElement {
   return el;
 }
 
+function otherTitleElement(): HTMLElement {
+  const el = document.createElement('article');
+  el.className = 'home-title';
+  const heading = document.createElement('h2');
+  heading.className = 'home-title__headline';
+  heading.textContent = 'other projects';
+  el.append(heading);
+  return el;
+}
+
+/** An Other piece: the image inset in a glass frame the sprite shader draws. */
+function otherSprite(key: (typeof others)[number], i: number): Sprite {
+  const sprite = createSprite(`home:other:${i}`, textureFor(key));
+  sprite.card = 1;
+  sprite.radius = OTHER_RADIUS;
+  sprite.innerRadius = OTHER_IMAGE_RADIUS;
+  return sprite;
+}
+
 export class HomeView implements View {
   readonly name = 'home';
   readonly scroll = new VirtualScroll();
@@ -170,10 +264,11 @@ export class HomeView implements View {
   private layoutState: HomeLayout | null = null;
   private sprites = new Map<number, Sprite>();
   private hover = new Map<number, Spring>();
-  /** Cursor over each hovered placement, -1 to 1 across it; held after the cursor leaves so the fade-out keeps its shape. */
-  private focus = new Map<number, { x: number; y: number }>();
   private hovered = -1;
   private visible: Placement[] = [];
+  private otherTitle: Title;
+  private otherSprites = others.map(otherSprite);
+  private otherVisible: Sprite[] = [];
   private lastPrefetch = Number.NaN;
   /** Scroll shrink of each placement, 0 to 1. */
   private shrink = new Map<number, number>();
@@ -217,6 +312,10 @@ export class HomeView implements View {
       this.titles.push(newTitle(el, work));
       this.assets.set(work, assetsOf(work));
     }
+    const other = otherTitleElement();
+    this.root.append(other);
+    this.otherTitle = newTitle(other, null);
+    this.titles.push(this.otherTitle);
   }
 
   /** Hide the manifesto and hold its lines low until the Loader hands over. */
@@ -302,17 +401,21 @@ export class HomeView implements View {
       // The logo hangs off the headline, so titles with or without one line up.
       title.anchor = text.top - rect.top + text.height / 2;
       return {
-        key: title.work?.slug ?? 'landing',
+        key: title.work?.slug ?? (title === this.otherTitle ? 'other' : 'landing'),
         // Symmetric about the anchor, since that is the point the layout centers.
         title: { width: text.width, height: 2 * Math.max(title.anchor, rect.height - title.anchor) },
         assets: title.work ? (this.assets.get(title.work) ?? []) : [],
       };
     });
     this.measureSpots();
+    // Nothing passes behind the Other title: the grid only ever sits below it.
+    for (const title of this.titles) title.glass = title === this.otherTitle ? [] : glassOf(title);
     this.measureLines();
 
     const t0 = performance.now();
-    this.layoutState = computeLayout(this.sections, { width, height, reducedMotion, copies: COPIES });
+    const other = this.otherSprites.map((s) => s.texture!.px[1] / s.texture!.px[0]);
+    this.layoutState = computeLayout(this.sections, { width, height, reducedMotion, copies: COPIES, other });
+    this.otherTitle.follow = this.layoutState.other?.follow ?? Infinity;
     if (import.meta.env.DEV) {
       const l = this.layoutState;
       console.debug(
@@ -327,7 +430,6 @@ export class HomeView implements View {
     this.settle();
     this.sprites.clear();
     this.hover.clear();
-    this.focus.clear();
     this.shrink.clear();
     this.lastPrefetch = Number.NaN;
   }
@@ -340,13 +442,22 @@ export class HomeView implements View {
     const { height: vh, reducedMotion } = this.ctx.viewport.state;
 
     this.visible = this.query(layout, s, s);
-    if (this.updateTitles(layout, s, vh, frame.dt, reducedMotion)) active = true;
+    if (this.updateTitles(layout, s, frame.dt, reducedMotion)) active = true;
     if (this.updateLines(frame.dt, reducedMotion)) active = true;
 
     if (!(Math.abs(s - this.lastPrefetch) < vh * 0.25)) {
       this.lastPrefetch = s;
       for (const p of this.query(layout, s - vh * 0.5, s + vh * 1.75)) this.ctx.engine.prefetch(p.asset.texture, p.w);
+      this.otherCells(layout, s, -vh * 0.5, vh * 1.75, (sprite) => this.ctx.engine.prefetch(sprite.texture!, sprite.iw));
     }
+    this.otherVisible.length = 0;
+    this.otherCells(layout, s, 0, vh, (sprite) => {
+      const appear = this.ctx.engine.appear(sprite.texture!);
+      if (appear < 1) active = true;
+      sprite.opacity = 1;
+      sprite.image = appear;
+      this.otherVisible.push(sprite);
+    });
 
     const pointer = this.ctx.pointer.state;
     const hovered = this.presence > 0.9 && pointer.inside ? this.hitTest(pointer.x, pointer.y, s) : -1;
@@ -367,7 +478,6 @@ export class HomeView implements View {
       if (spring.update(frame.dt)) active = true;
       if (this.updateShrink(p, s, vh, speed, frame.dt)) active = true;
       const sprite = this.place(p, s, vh, spring.value, this.shrink.get(p.index) ?? 0, reducedMotion);
-      if (this.updateFocus(p, s, vh, p.index === hovered, frame.dt, sprite)) active = true;
       if (this.ctx.engine.appear(p.asset.texture) < 1) active = true;
       sprite.opacity *= this.ctx.engine.appear(p.asset.texture);
     }
@@ -382,6 +492,17 @@ export class HomeView implements View {
       if (!sprite || sprite.id === this.hidden) continue;
       sprite.opacity *= this.presence;
       out.sprites.push(sprite);
+    }
+    for (const sprite of this.otherVisible) {
+      sprite.opacity *= this.presence;
+      out.sprites.push(sprite);
+    }
+    for (const title of this.titles) {
+      if (title.alpha <= 0.002) continue;
+      for (const box of title.glass) {
+        box.weight = title.alpha;
+        out.glass.push(box);
+      }
     }
     const vh = layout.height;
     const s = this.scroll.current;
@@ -468,7 +589,7 @@ export class HomeView implements View {
     }
     const cy = vh / 2 + (p.anchor - s) * p.speed;
     const edge = reduced ? 0 : smoothstep(vh * 0.28, vh * 0.62, Math.abs(cy - vh / 2));
-    const scale = (1 - 0.07 * edge) * (1 - SCROLL_SHRINK * shrink);
+    const scale = (1 - 0.07 * edge) * (1 - SCROLL_SHRINK * shrink) * (1 + HOVER_SCALE * hover);
     const w = p.w * scale;
     const h = p.h * scale;
     sprite.x = p.x + (p.w - w) / 2;
@@ -482,6 +603,27 @@ export class HomeView implements View {
     sprite.opacity = 1;
     sprite.image = 1;
     return sprite;
+  }
+
+  /** Places the Other frames for scroll `s` and calls `each` for those overlapping screen rows `from` to `to`. */
+  private otherCells(layout: HomeLayout, s: number, from: number, to: number, each: (sprite: Sprite) => void): void {
+    const other = layout.other;
+    if (!other) return;
+    const top = other.top + other.follow - s;
+    other.cells.forEach((cell, i) => {
+      const y = top + cell.y;
+      if (y > to || y + cell.h < from) return;
+      const sprite = this.otherSprites[i];
+      sprite.x = cell.x;
+      sprite.y = y;
+      sprite.w = cell.w;
+      sprite.h = cell.h;
+      sprite.ix = cell.x + OTHER_INSET;
+      sprite.iy = y + OTHER_INSET;
+      sprite.iw = cell.w - OTHER_INSET * 2;
+      sprite.ih = cell.h - OTHER_INSET * 2;
+      each(sprite);
+    });
   }
 
   private query(layout: HomeLayout, from: number, to: number): Placement[] {
@@ -517,29 +659,6 @@ export class HomeView implements View {
     return next !== speed;
   }
 
-  /** Eases the vignette's lean towards the cursor while hovered. Returns true while it is still catching up. */
-  private updateFocus(p: Placement, s: number, vh: number, hovered: boolean, dt: number, sprite: Sprite): boolean {
-    let focus = this.focus.get(p.index);
-    if (!focus) {
-      if (!hovered) return false;
-      focus = { x: 0, y: 0 };
-      this.focus.set(p.index, focus);
-    }
-    let moving = false;
-    if (hovered) {
-      const pointer = this.ctx.pointer.state;
-      const cy = vh / 2 + (p.anchor - s) * p.speed;
-      const tx = clamp((pointer.x - (p.x + p.w / 2)) / (p.w / 2), -1, 1);
-      const ty = clamp((pointer.y - cy) / (p.h / 2), -1, 1);
-      focus.x = damp(focus.x, tx, FOCUS_RATE, dt);
-      focus.y = damp(focus.y, ty, FOCUS_RATE, dt);
-      moving = Math.abs(focus.x - tx) > 1e-3 || Math.abs(focus.y - ty) > 1e-3;
-    }
-    sprite.focusX = focus.x;
-    sprite.focusY = focus.y;
-    return moving;
-  }
-
   private hitTest(x: number, y: number, s: number): number {
     const layout = this.layoutState;
     if (!layout) return -1;
@@ -571,7 +690,7 @@ export class HomeView implements View {
    * Titles stay fixed at the viewport center. Crossing a threshold starts a timed morph
    * from the current title to the next; scrolling only decides when, never how far along.
    */
-  private updateTitles(layout: HomeLayout, s: number, vh: number, dt: number, reduced: boolean): boolean {
+  private updateTitles(layout: HomeLayout, s: number, dt: number, reduced: boolean): boolean {
     const presence = this.presence;
     this.wanted = this.sectionAt(s, this.wanted);
 
@@ -597,7 +716,6 @@ export class HomeView implements View {
     const t = morphing ? easeInOutCubic(this.morph) : 1;
     // The threshold only welds blurred shapes; let go of it before either title is sharp, or its hard alpha edge shows.
     this.setGoo(morphing ? smoothstep(0.04, 0.3, Math.min(t, 1 - t)) : 0);
-    const dim = layout.mode === 'stack' ? this.covered(layout, s, vh) : 0;
     const visibility = presence > 0.001 ? 'visible' : 'hidden';
 
     for (let i = 0; i < this.titles.length; i++) {
@@ -606,11 +724,11 @@ export class HomeView implements View {
       if (!section) continue;
       const weight = i === this.shown ? t : i === this.leaving ? 1 - t : 0;
       // Full strength through the middle, where the threshold needs mass; gone by the tails so no haze outlives it.
-      const opacity = smoothstep(0, 0.6, weight) * presence * (1 - dim);
+      const opacity = smoothstep(0, 0.6, weight) * presence;
       title.alpha = opacity;
       const blur = weight > 0 && weight < 1 ? Math.min(title.blur / weight - title.blur, title.blur * MORPH_BLUR_MAX) : 0;
 
-      const transform = `translate3d(0, ${(-title.anchor).toFixed(2)}px, 0)`;
+      const transform = `translate3d(0, ${(-title.anchor - Math.max(0, s - title.follow)).toFixed(2)}px, 0)`;
       if (transform !== title.transform) {
         title.transform = transform;
         title.el.style.transform = transform;
@@ -640,26 +758,6 @@ export class HomeView implements View {
     const a = lerp(1, GOO_SLOPE, strength);
     const b = lerp(0, 0.5 - GOO_SLOPE * GOO_CUT, strength);
     this.goo.setAttribute('values', `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${a.toFixed(3)} ${b.toFixed(3)}`);
-  }
-
-  /**
-   * In the stacked layout Assets pass behind the centered title; fade it while one does.
-   * 0 when nothing is near, 1 when an Asset covers the title's band.
-   */
-  private covered(layout: HomeLayout, s: number, vh: number): number {
-    const box = layout.sections[this.shown]?.title;
-    if (!box) return 0;
-    const x0 = (layout.width - box.width) / 2;
-    const x1 = x0 + box.width;
-    const margin = vh * 0.08;
-    let dim = 0;
-    for (const p of this.visible) {
-      if (p.x + p.w <= x0 || p.x >= x1) continue;
-      const cy = vh / 2 + (p.anchor - s) * p.speed;
-      const gap = Math.abs(cy - vh / 2) - (p.h + box.height) / 2;
-      dim = Math.max(dim, 1 - smoothstep(0, margin, gap));
-    }
-    return dim;
   }
 
   /**

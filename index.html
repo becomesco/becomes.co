@@ -59,29 +59,99 @@
 
       <section class="view view--contact" data-view="contact" hidden inert>
         <div class="contact__content">
-          <h1 class="contact__title" tabindex="-1" data-focus>let's build something.</h1>
-          <form class="contact__form" method="post">
-            <label class="field">
-              <span class="field__label">name</span>
-              <input class="field__input" name="name" autocomplete="name" required />
-            </label>
-            <label class="field">
-              <span class="field__label">email</span>
-              <input class="field__input" type="email" name="email" autocomplete="email" required />
-            </label>
-            <label class="field">
-              <span class="field__label">company <span class="field__hint">(optional)</span></span>
-              <input class="field__input" name="company" autocomplete="organization" />
-            </label>
-            <label class="field">
-              <span class="field__label">message</span>
-              <textarea class="field__input field__input--area" name="message" rows="5" required></textarea>
-            </label>
-            <div class="contact__actions">
-              <button class="pill pill--dark contact__submit" type="submit">send →</button>
-              <p class="contact__status" role="status" aria-live="polite"></p>
+          <h1 class="contact__title" tabindex="-1" data-focus>The best work begins with the right introduction</h1>
+          <div class="contact__cards">
+            <div class="contact-card" data-brief-card>
+              <div class="contact-card__inner">
+                <div class="contact-row">
+                  <p class="contact-row__label">Start a project</p>
+                  <button class="contact-link" type="button" data-open-brief aria-expanded="false">submit brief →</button>
+                </div>
+                <form class="contact__form" method="post">
+                  <label class="field">
+                    <span class="field__label">What’s your name?</span>
+                    <input class="field__input" name="name" autocomplete="name" required />
+                  </label>
+                  <label class="field">
+                    <span class="field__label">What’s your company’s name?</span>
+                    <input class="field__input" name="company" autocomplete="organization" placeholder="Company name" />
+                  </label>
+                  <label class="field">
+                    <span class="field__label">Email address</span>
+                    <input
+                      class="field__input"
+                      type="email"
+                      name="email"
+                      autocomplete="email"
+                      placeholder="Email address"
+                      required
+                    />
+                  </label>
+                  <fieldset class="field contact-help">
+                    <legend class="field__label">How can we help? (select all that applies)</legend>
+                    <div class="contact-help__pills">
+                      <label class="contact-help__option">
+                        <input type="checkbox" name="help" value="strategy" />
+                        <span>strategy</span>
+                      </label>
+                      <label class="contact-help__option">
+                        <input type="checkbox" name="help" value="website" />
+                        <span>website</span>
+                      </label>
+                      <label class="contact-help__option">
+                        <input type="checkbox" name="help" value="product" />
+                        <span>product</span>
+                      </label>
+                      <label class="contact-help__option">
+                        <input type="checkbox" name="help" value="development" />
+                        <span>development</span>
+                      </label>
+                    </div>
+                  </fieldset>
+                  <label class="field">
+                    <span class="field__label">Tell us about your project</span>
+                    <textarea
+                      class="field__input field__input--area"
+                      name="message"
+                      rows="3"
+                      placeholder="What are you trying to achieve"
+                      required
+                    ></textarea>
+                  </label>
+                  <button class="contact-link contact__submit" type="submit">submit brief →</button>
+                  <p class="contact__status" role="status" aria-live="polite"></p>
+                </form>
+                <div class="contact-row contact-row--rule">
+                  <p class="contact-row__label">Business enquiries</p>
+                  <a class="contact-link" href="mailto:business@becomes.co">business@becomes.co</a>
+                </div>
+              </div>
             </div>
-          </form>
+            <div class="contact-card">
+              <div class="contact-card__inner contact-card__inner--copy">
+                <p class="contact-row__label">Address</p>
+                <p class="contact-card__copy">
+                  We’re a remote native company spread across the globe, orchestrated from our Serbian office.
+                </p>
+              </div>
+            </div>
+            <div class="contact-card">
+              <div class="contact-card__inner">
+                <div class="contact-row">
+                  <p class="contact-row__label">Join us</p>
+                  <a class="contact-link" href="mailto:careers@becomes.co">careers →</a>
+                </div>
+                <div class="contact-row contact-row--rule">
+                  <p class="contact-row__label">Socials</p>
+                  <div class="contact-socials">
+                    <a class="contact-link" href="https://x.com/becomesco" target="_blank" rel="noopener">x</a>
+                    <a class="contact-link" href="https://github.com/becomesco" target="_blank" rel="noopener">github</a>
+                    <a class="contact-link" href="https://www.linkedin.com/company/becomesco" target="_blank" rel="noopener">linkedin</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>

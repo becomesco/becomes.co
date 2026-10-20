@@ -4,7 +4,11 @@ import backgroundSource from './shaders/background.wgsl?raw';
 export const SPRITE_FLOATS = 28;
 export const SPRITE_STRIDE = SPRITE_FLOATS * 4;
 export const SPRITE_VERTICES = 16 * 6;
-export const FRAME_BYTES = 16;
+/** Glass boxes the frame uniform holds; MAX_GLASS in sprite.wgsl. */
+export const MAX_GLASS = 12;
+/** CSS px a sprite's quad grows by under glass, so bent content can spill past its edges. Covers the bend, warp and blur in sprite.wgsl. */
+export const GLASS_REACH = 64;
+export const FRAME_BYTES = (12 + MAX_GLASS * 8) * 4;
 export const BACKGROUND_BYTES = 96;
 
 export interface Pipelines {

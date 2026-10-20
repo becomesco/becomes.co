@@ -368,6 +368,15 @@
     "src": "/media/note/paper.webp",
     "half": "/media/note/paper.half.webp"
   },
+  "other/placeholder": {
+    "px": [
+      1120,
+      770
+    ],
+    "alpha": false,
+    "src": "/media/other/placeholder.webp",
+    "half": "/media/other/placeholder.half.webp"
+  },
   "pov/app-clip": {
     "px": [
       503,

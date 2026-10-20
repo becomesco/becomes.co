@@ -3,7 +3,7 @@ import type { VirtualScroll } from '../core/scroll';
 import type { Pointer } from '../core/pointer';
 import type { Viewport } from '../core/viewport';
 import type { Engine } from '../graphics/engine';
-import type { Glow, Sprite } from '../graphics/scene/types';
+import type { GlassBox, Glow, Sprite } from '../graphics/scene/types';
 
 export type ViewName = 'home' | 'work' | 'about' | 'contact';
 
@@ -23,6 +23,7 @@ export interface NavigationIntent {
 export interface DrawList {
   sprites: Sprite[];
   glows: Glow[];
+  glass: GlassBox[];
 }
 
 export interface View {

@@ -55,9 +55,9 @@ export interface Sprite {
   fade: EdgeFade;
   /** Vertical bend at the horizontal center, in px (View morph arc). */
   bend: number;
-  /** Hover, 0 to 1: a halftone vignette around the edges and the image pushed in behind its frame. */
+  /** Hover, 0 to 1. Home grows the Asset with this. */
   hover: number;
-  /** Cursor across the sprite, -1 to 1 per axis. The hover vignette thins on that side and deepens opposite. */
+  /** Cursor across the sprite, -1 to 1 per axis. */
   focusX: number;
   focusY: number;
   /** Strength of a `shadowed` texture's shadow, 0 to 1: lower presses the Asset flat. */
@@ -73,10 +73,29 @@ export interface Glow {
   strength: number;
 }
 
+/**
+ * A rounded box of browser-layer text that Assets passing behind it are seen through glass at:
+ * bent towards the text, diffused, blurred and washed towards the background, so the text
+ * stays readable. Full strength inside the box less `inset`, gone `feather` outside it.
+ */
+export interface GlassBox {
+  /** Center and half size, CSS px. */
+  x: number;
+  y: number;
+  hw: number;
+  hh: number;
+  radius: number;
+  feather: number;
+  inset: number;
+  /** 0 to 1. */
+  weight: number;
+}
+
 export interface SceneFrame {
   sprites: readonly Sprite[];
   background: readonly [number, number, number];
   glows: readonly Glow[];
+  glass: readonly GlassBox[];
 }
 
 export function createSprite(id: string, texture: TextureRef | null): Sprite {

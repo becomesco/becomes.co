@@ -172,6 +172,7 @@ a {
 .view button,
 .view input,
 .view textarea,
+.view label,
 .view form {
   pointer-events: auto;
 }
@@ -330,81 +331,213 @@ a {
   line-height: 1.25;
 }
 
-/* Contact View */
+/* Contact View — Figma 196:845 directory, 196:915 brief. */
 
 .contact__content {
   position: relative;
-  width: min(640px, calc(100vw - var(--margin) * 2));
+  width: min(679px, calc(100vw - var(--margin) * 2));
   margin: 0 auto;
-  padding: clamp(120px, 20vh, 220px) 0 80px;
+  padding: clamp(120px, 19.9vh, 204px) 0 80px;
   opacity: 0;
   will-change: transform, opacity;
+  pointer-events: auto;
 }
 
 .contact__title {
-  margin: 0 0 clamp(28px, 3.5vw, 56px);
+  margin: 0 auto;
+  max-width: 13.6em;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(30px, 3.47vw, 64px);
+  font-size: clamp(28px, 3.47vw, 50px);
   line-height: 1.1;
   letter-spacing: -0.01em;
   word-spacing: var(--thin-space);
+  text-align: center;
+  text-transform: lowercase;
+  text-wrap: pretty;
   outline: none;
 }
 
-.contact__form {
+.contact__cards {
   display: grid;
-  gap: 18px;
+  gap: 20px;
+  width: min(512px, 100%);
+  margin: clamp(36px, 5.9vw, 60px) auto 0;
+}
+
+.contact-card {
+  padding: 6px;
+  background: rgb(255 255 255 / 0.5);
+  border: 1px solid var(--paper);
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+}
+
+.contact-card__inner {
+  background: var(--paper);
+  border-radius: 8px;
+}
+
+.contact-card__inner--copy {
+  display: grid;
+  gap: 20px;
+  padding: 21px 21px 24px;
+}
+
+.contact-card__copy {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 61px;
+  padding: 0 20px;
+}
+
+.contact-row--rule {
+  border-top: 1px solid var(--bg);
+}
+
+.contact-row__label {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.contact-link {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  text-align: right;
+  text-decoration: none;
+  word-spacing: var(--thin-space-medium);
+  white-space: nowrap;
+}
+
+.contact-socials {
+  display: flex;
+  gap: 10px;
+}
+
+.contact-card--open [data-open-brief] {
+  display: none;
+}
+
+.contact__form {
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 21px 8px;
+}
+
+.contact-card--open .contact__form {
+  display: flex;
 }
 
 .field {
   display: grid;
   gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
 }
 
 .field__label {
-  font-family: var(--font-display);
   font-size: 14px;
-}
-
-.field__hint {
-  opacity: 0.5;
+  line-height: 1.25;
 }
 
 .field__input {
   width: 100%;
-  padding: 15px 16px;
+  height: 40px;
+  padding: 8px 12px;
   font: inherit;
-  font-size: 16px;
+  font-size: 14px;
   color: var(--ink);
-  background: var(--glass);
-  border: 1px solid var(--paper);
-  border-radius: 12px;
+  background: rgb(228 226 220 / 0.5);
+  border: 1px solid #e4e4e7;
+  border-radius: 6px;
   outline: none;
-  transition: background-color 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+  transition: border-color 0.3s var(--ease-out);
+}
+
+.field__input::placeholder {
+  color: var(--ink);
+  opacity: 0.4;
 }
 
 .field__input:focus {
-  background: rgb(255 255 255 / 0.6);
   border-color: var(--ink);
 }
 
 .field__input--area {
-  resize: vertical;
-  min-height: 140px;
+  height: 90px;
+  min-height: 90px;
+  padding-top: 10px;
+  resize: none;
 }
 
-.contact__actions {
+.contact-help__pills {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 20px;
-  margin-top: 8px;
+  gap: 12px 20px;
+  padding: 16px 20px;
+  background: var(--paper);
+  border-radius: 20px;
+}
+
+.contact-help__option {
+  display: grid;
+}
+
+.contact-help__option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.contact-help__option span {
+  display: block;
+  padding: 8px 0;
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  line-height: 1;
+  transition:
+    background-color 0.35s var(--ease-out),
+    color 0.35s var(--ease-out),
+    padding 0.35s var(--ease-out);
+}
+
+.contact-help__option input:checked + span {
+  padding: 8px 10px;
+  margin-inline: -10px;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.contact-help__option input:focus-visible + span {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
 }
 
 .contact__submit {
-  word-spacing: var(--thin-space);
-  border: 0;
-  color: var(--paper);
+  align-self: flex-start;
 }
 
 .contact__submit:disabled {
@@ -418,6 +551,20 @@ a {
 
 .contact__status--error {
   color: #b3261e;
+}
+
+@media (min-width: 900px) {
+  .contact-help__pills {
+    flex-wrap: nowrap;
+    gap: 30px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 519px) {
+  .contact-link {
+    font-size: 14px;
+  }
 }
 
 /* Chrome */

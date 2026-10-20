@@ -120,7 +120,7 @@ export const works: readonly Work[] = [
     slug: 'milmedic',
     name: 'Milmedic',
     headline: 'A leading ophthalmology clinic, modernised. Bookings went through the roof.',
-    logo: { src: '/logos/milmedic.svg', width: 170, height: 76 },
+    logo: { src: '/logos/milmedic.svg', width: 47, height: 76 },
     assets: [
       { media: 'milmedic/group-1222' },
       { media: 'milmedic/photo' },
@@ -238,6 +238,9 @@ export const works: readonly Work[] = [
 for (const work of works) {
   if (RESERVED_SLUGS.has(work.slug)) throw new Error(`"${work.slug}" is reserved and cannot name a Work`);
 }
+
+/** Media in the Other grid that closes Home. Not Assets: no Work, no View, not clickable. */
+export const others: readonly (keyof typeof media)[] = Array.from({ length: 80 }, () => 'other/placeholder');
 
 export function textureFor(key: keyof typeof media): FileTexture {
   const entry = media[key];

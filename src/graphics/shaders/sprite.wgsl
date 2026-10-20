@@ -1,12 +1,20 @@
 // Textured Asset Layer. One instance per sprite; geometry is generated from
 // vertex_index as a strip of columns so the quad can bend (View morph arc).
-// Hover breaks the edges into a print halftone vignette that leans after the cursor.
+// Behind browser-layer text the sprite is seen through glass: bent towards the text, swirled,
+// blurred and washed towards the paper, easing back to normal a feather outside the text.
 // Colors are premultiplied and blended in gamma space to match the browser layer.
+
+/** Glass boxes in the frame uniform; MAX_GLASS in pipelines.ts. */
+const MAX_GLASS: u32 = 12u;
 
 struct Frame {
   viewport: vec2f,
   dpr: f32,
   time: f32,
+  glass: vec4f,                          // box count, unused x3
+  paper: vec4f,                          // background sRGB, 1
+  boxes: array<vec4f, MAX_GLASS>,        // center x, y, half w, h (css px)
+  shapes: array<vec4f, MAX_GLASS>,       // corner radius, weight 0..1, feather, inset (css px)
 };
 
 struct Sprite {
@@ -15,8 +23,8 @@ struct Sprite {
   shape: vec4f,  // outer radius, inner radius, card amount, opacity
   fade: vec4f,   // edge fade top, right, bottom, left (fraction of image)
   extra: vec4f,  // bend px, has texture, border px, image opacity
-  motion: vec4f, // unused, hover 0..1, cursor x, y (-1..1)
-  layer: vec4f,  // shadow strength 0..1, shadowed texture (image above, shadow below), unused, unused
+  motion: vec4f, // unused x4; hover scale is applied to the sprite rect on the CPU
+  layer: vec4f,  // shadow strength 0..1, shadowed texture (image above, shadow below), under glass, quad reach px
 };
 
 @group(0) @binding(0) var<uniform> frame: Frame;
@@ -28,19 +36,28 @@ const COLUMNS: u32 = 16u;
 const PI: f32 = 3.14159265;
 const PAD: f32 = 1.5;
 
-/** Halftone cell pitch, css px. The screen sits at 45 degrees, like a black plate. */
-const DOT_PITCH: f32 = 4.5;
-/** Dot radius at full tone, in pitches. Clear of 1/sqrt(2) so merged dots leave no lattice. */
-const DOT_FULL: f32 = 0.8;
-/** Hover vignette depth as a share of the Asset's short side, capped in css px. */
-const VIGNETTE_SHARE: f32 = 0.16;
-const VIGNETTE_MAX: f32 = 48.0;
-/** How far the vignette leans away from the cursor: at an edge, that band is (1 - lean) deep and the opposite (1 + lean). */
-const VIGNETTE_LEAN: f32 = 0.55;
-/** How far the image pushes in behind its still frame on hover. */
-const HOVER_ZOOM: f32 = 0.045;
 /** Clear rows between the layers of a shadowed texture; LAYER_GAP in scene/types.ts. */
 const LAYER_GAP: f32 = 4.0;
+
+// Glass. The reach of the bend, swirl and blur together stays under GLASS_REACH in pipelines.ts.
+/** Lens strength, css px²: how far the slope of the glass bends what is behind it towards the text. */
+const GLASS_BEND: f32 = 1500.0;
+/** Swirl amplitude behind the text, css px, and the size of its cells. */
+const GLASS_SWIRL: f32 = 11.0;
+const GLASS_SWIRL_SCALE: f32 = 34.0;
+/** Blur radius behind the text, css px. */
+const GLASS_BLUR: f32 = 9.0;
+/** Spread of the bend across the spectrum: red bends least, blue most. */
+const GLASS_DISPERSION: f32 = 0.35;
+/** How far content behind the text is washed towards the paper; dark content is washed further. */
+const GLASS_WASH: f32 = 0.34;
+const GLASS_WASH_DARK: f32 = 0.3;
+/** Light caught where the glass is steepest, and the bend in css px at which it peaks. */
+const GLASS_RIM: f32 = 0.1;
+const GLASS_RIM_AT: f32 = 16.0;
+const GLASS_TAPS: u32 = 8u;
+const GOLDEN_ANGLE: f32 = 2.39996323;
+const LUMA: vec3f = vec3f(0.2126, 0.7152, 0.0722);
 
 struct VertexOut {
   @builtin(position) position: vec4f,
@@ -59,7 +76,8 @@ fn vs(@builtin(vertex_index) vertex: u32, @builtin(instance_index) instance: u32
   let v = cy[corner];
 
   let size = s.rect.zw;
-  let local = vec2f(u * (size.x + PAD * 2.0) - PAD, v * (size.y + PAD * 2.0) - PAD);
+  let pad = PAD + s.layer.w;
+  let local = vec2f(u * (size.x + pad * 2.0) - pad, v * (size.y + pad * 2.0) - pad);
   var p = s.rect.xy + local;
   let across = clamp(local.x / max(size.x, 1.0), 0.0, 1.0);
   p.y += s.extra.x * sin(across * PI);
@@ -102,58 +120,56 @@ fn edgeFade(uv: vec2f, fade: vec4f) -> f32 {
   return f;
 }
 
-/** Tone across a band: 0 at the edge, 1 past the band. Thin bands ease in instead of popping a row of dots. */
-fn bandTone(fromEdge: f32, band: f32) -> f32 {
-  return mix(1.0, clamp(fromEdge / max(band, 1e-3), 0.0, 1.0), smoothstep(0.5, 10.0, band));
+/** Share of full glass at screen point `p`: 1 behind the text, easing to 0 a feather outside it. Boxes combine like overlapping tints. */
+fn glassAt(p: vec2f) -> f32 {
+  var clear = 1.0;
+  let count = min(u32(frame.glass.x), MAX_GLASS);
+  for (var k = 0u; k < count; k++) {
+    let b = frame.boxes[k];
+    let m = frame.shapes[k];
+    let d = roundedBox(p - b.xy, b.zw, m.x);
+    clear *= 1.0 - m.y * (1.0 - smoothstep(-m.w, m.z, d));
+  }
+  return 1.0 - clear;
 }
 
 /**
- * Coverage of the hover vignette's halftone. `ip` is in image space, so the dots travel
- * with the Asset instead of crawling through it. Dense ink holds its dots longer than
- * pale tones, as on paper.
+ * The glass's own texture, -1 to 1 per axis: a domain-warped swirl whose cells read like a
+ * reaction-diffusion pattern. Fixed to the screen, so Assets slide through it as they scroll.
  */
-fn halftone(s: Sprite, ip: vec2f, texel: vec4f, aa: f32) -> f32 {
-  let size = s.inner.zw;
-  // One band per edge, multiplied, so the corners dissolve first like a lens vignette.
-  // The clear middle leans after the cursor: near edges thin, far edges deepen.
-  let vignette = max(s.motion.y, 0.0) * min(VIGNETTE_MAX, min(size.x, size.y) * VIGNETTE_SHARE);
-  let lean = s.motion.zw * VIGNETTE_LEAN;
-  let start = vignette * (1.0 + lean);
-  let end = vignette * (1.0 - lean);
-  let tone = bandTone(ip.x, start.x) * bandTone(size.x - ip.x, end.x)
-    * bandTone(ip.y, start.y) * bandTone(size.y - ip.y, end.y);
-  if (tone >= 1.0) { return 1.0; }
-
-  let ink = 1.0 - dot(texel.rgb / max(texel.a, 1e-3), vec3f(0.2126, 0.7152, 0.0722));
-  let r = vec2f(ip.x + ip.y, ip.y - ip.x) * 0.70710678 / DOT_PITCH;
-  let d = length(fract(r) - 0.5) * DOT_PITCH;
-  let radius = DOT_FULL * DOT_PITCH * sqrt(pow(tone, mix(1.6, 0.7, ink)));
-  return clamp((radius - d) / aa + 0.5, 0.0, 1.0);
+fn swirl(p: vec2f) -> vec2f {
+  let q = p / GLASS_SWIRL_SCALE;
+  let a = vec2f(sin(q.y * 1.7 + sin(q.x * 0.9)), cos(q.x * 1.3 + sin(q.y * 1.1)));
+  let b = vec2f(sin((q.x + a.y * 1.5) * 2.3), cos((q.y + a.x * 1.5) * 2.1));
+  return a * 0.55 + b * 0.45;
 }
 
-@fragment
-fn fs(in: VertexOut) -> @location(0) vec4f {
-  let s = sprites[in.id];
+/** Per-pixel rotation for the blur taps, 0..1, so too few taps read as frost rather than rings. */
+fn interleavedNoise(p: vec2f) -> f32 {
+  return fract(52.9829189 * fract(dot(p, vec2f(0.06711056, 0.00583715))));
+}
+
+/** Weight of one blur tap per channel, across the spectrum from red (0) to blue (1). */
+fn spectrum(u: f32) -> vec3f {
+  return vec3f(1.0 - u, 1.0 - abs(2.0 * u - 1.0), u) + 0.25;
+}
+
+/** The sprite at `local` (css px from its outer rect's corner), premultiplied. */
+fn shade(s: Sprite, local: vec2f, aa: f32) -> vec4f {
   let size = s.rect.zw;
-  let aa = 1.0 / frame.dpr;
   let card = s.shape.z;
 
-  let d = roundedBox(in.local - size * 0.5, size * 0.5, s.shape.x);
+  let d = roundedBox(local - size * 0.5, size * 0.5, s.shape.x);
   let coverage = clamp(0.5 - d / aa, 0.0, 1.0);
 
   // Image, positioned by the inner rect (object-fit is resolved on the CPU).
-  // Hover pushes the image in; the frame, its coverage and the dot grid stay put.
-  let ip = in.local + s.rect.xy - s.inner.xy;
+  let ip = local + s.rect.xy - s.inner.xy;
   let center = s.inner.zw * 0.5;
-  let zoomed = center + (ip - center) / (1.0 + HOVER_ZOOM * max(s.motion.y, 0.0));
-  let uv = zoomed / max(s.inner.zw, vec2f(1.0));
+  let uv = ip / max(s.inner.zw, vec2f(1.0));
   let texel = sampleImage(s, uv);
   let di = roundedBox(ip - center, center, s.shape.y);
   let innerCoverage = clamp(0.5 - di / aa, 0.0, 1.0);
   var img = texel * innerCoverage * edgeFade(uv, s.fade) * s.extra.y * s.extra.w;
-  if (s.motion.y > 0.0) {
-    img *= halftone(s, ip, texel, aa);
-  }
 
   // Glass card: 30% white fill, 1px white border.
   let fill = vec4f(0.3) * card;
@@ -164,4 +180,56 @@ fn fs(in: VertexOut) -> @location(0) vec4f {
   color = edge + color * (1.0 - edge.a);
 
   return color * coverage * s.shape.w;
+}
+
+@fragment
+fn fs(in: VertexOut) -> @location(0) vec4f {
+  let s = sprites[in.id];
+  let aa = 1.0 / frame.dpr;
+  if (s.layer.z < 0.5) {
+    return shade(s, in.local, aa);
+  }
+  let screen = in.position.xy / frame.dpr;
+  let glass = glassAt(screen);
+  if (glass <= 0.001) {
+    return shade(s, in.local, aa);
+  }
+
+  // The glass is a lens: its slope bends what is behind it towards the text, so the Asset
+  // swells into the text's edge; behind the text it swirls and blurs.
+  let e = 1.5;
+  let slope = vec2f(
+    glassAt(screen + vec2f(e, 0.0)) - glassAt(screen - vec2f(e, 0.0)),
+    glassAt(screen + vec2f(0.0, e)) - glassAt(screen - vec2f(0.0, e)),
+  ) / (2.0 * e);
+  let bend = slope * GLASS_BEND;
+  let swirled = swirl(screen) * GLASS_SWIRL * glass;
+  let radius = GLASS_BLUR * glass;
+  let spin = interleavedNoise(in.position.xy) * 6.2831853;
+
+  var rgb = vec3f(0.0);
+  var alpha = 0.0;
+  var weights = vec3f(0.0);
+  for (var i = 0u; i < GLASS_TAPS; i++) {
+    let t = (f32(i) + 0.5) / f32(GLASS_TAPS);
+    let a = f32(i) * GOLDEN_ANGLE + spin;
+    let disk = vec2f(cos(a), sin(a)) * sqrt(t) * radius;
+    // Spectral order is shuffled against the disk so hue doesn't ring with blur radius.
+    let u = f32((i * 3u) % GLASS_TAPS) / f32(GLASS_TAPS - 1u);
+    let c = shade(s, in.local + bend * (1.0 + GLASS_DISPERSION * (u - 0.5)) + swirled + disk, aa);
+    let w = spectrum(u);
+    rgb += c.rgb * w;
+    weights += w;
+    alpha += c.a;
+  }
+  alpha /= f32(GLASS_TAPS);
+  rgb = min(rgb / weights, vec3f(alpha));
+
+  // Washed towards the paper so the text over it keeps its contrast; dark content more so.
+  let lum = dot(rgb, LUMA) / max(alpha, 1e-3);
+  let wash = glass * (GLASS_WASH + GLASS_WASH_DARK * (1.0 - lum));
+  rgb = mix(rgb, frame.paper.rgb * alpha, wash);
+  let rim = smoothstep(0.35, 1.0, length(bend) / GLASS_RIM_AT) * GLASS_RIM;
+  rgb = min(rgb + vec3f(rim * alpha), vec3f(alpha));
+  return vec4f(rgb, alpha);
 }

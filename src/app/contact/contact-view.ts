@@ -6,7 +6,7 @@ import type { AppContext, DrawList, View } from '../view';
 const ENDPOINT = import.meta.env.VITE_CONTACT_ENDPOINT as string | undefined;
 const EMAIL = import.meta.env.VITE_CONTACT_EMAIL as string | undefined;
 
-/** Contact: a native HTML form. The GPU only paints the background. */
+/** Contact: directory cards and a native brief form. The GPU only paints the background. */
 export class ContactView implements View {
   readonly name = 'contact';
   readonly scroll = new VirtualScroll();
@@ -15,6 +15,8 @@ export class ContactView implements View {
   hidden: string | null = null;
 
   private content: HTMLElement;
+  private brief: HTMLElement;
+  private openBrief: HTMLButtonElement;
   private form: HTMLFormElement;
   private status: HTMLElement;
   private openedAt = 0;
@@ -24,8 +26,11 @@ export class ContactView implements View {
   constructor(private ctx: AppContext) {
     this.root = document.querySelector<HTMLElement>('[data-view="contact"]')!;
     this.content = this.root.querySelector<HTMLElement>('.contact__content')!;
+    this.brief = this.root.querySelector<HTMLElement>('[data-brief-card]')!;
+    this.openBrief = this.root.querySelector<HTMLButtonElement>('[data-open-brief]')!;
     this.form = this.root.querySelector<HTMLFormElement>('form')!;
     this.status = this.root.querySelector<HTMLElement>('.contact__status')!;
+    this.openBrief.addEventListener('click', this.showBrief);
     this.form.addEventListener('submit', this.onSubmit);
   }
 
@@ -33,6 +38,7 @@ export class ContactView implements View {
     this.openedAt = this.now;
     this.scroll.to(0, true);
     this.style = '';
+    this.setBriefOpen(false);
   }
 
   layout(): void {
@@ -70,6 +76,28 @@ export class ContactView implements View {
     });
   }
 
+  sleep(): void {
+    this.setBriefOpen(false);
+    this.form.reset();
+    this.setStatus('', false);
+    this.content.style.opacity = '0';
+    this.style = '';
+  }
+
+  private showBrief = (): void => {
+    this.setBriefOpen(true);
+    this.layout();
+    this.ctx.wake();
+    const first = this.form.querySelector<HTMLInputElement>('input[name="name"]');
+    first?.focus({ preventScroll: true });
+  };
+
+  private setBriefOpen(open: boolean): void {
+    this.brief.classList.toggle('contact-card--open', open);
+    this.openBrief.setAttribute('aria-expanded', String(open));
+    this.form.toggleAttribute('hidden', !open);
+  }
+
   private onSubmit = async (event: SubmitEvent): Promise<void> => {
     event.preventDefault();
     if (!this.form.reportValidity()) return;
@@ -78,8 +106,11 @@ export class ContactView implements View {
 
     if (!ENDPOINT) {
       if (EMAIL) {
-        const subject = encodeURIComponent(`Hello from ${data.get('name') ?? ''}`);
-        const body = encodeURIComponent(`${data.get('message') ?? ''}\n\n${data.get('name') ?? ''} <${data.get('email') ?? ''}>`);
+        const help = data.getAll('help').join(', ');
+        const subject = encodeURIComponent(`Brief from ${data.get('name') ?? ''}`);
+        const body = encodeURIComponent(
+          `${data.get('message') ?? ''}\n\nHelp: ${help || '—'}\n${data.get('name') ?? ''} <${data.get('email') ?? ''}>\n${data.get('company') ?? ''}`,
+        );
         location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`;
         return;
       }

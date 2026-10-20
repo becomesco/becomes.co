@@ -2,6 +2,8 @@ import type { RenderBackend } from './backend';
 import {
   BACKGROUND_BYTES,
   FRAME_BYTES,
+  GLASS_REACH,
+  MAX_GLASS,
   SPRITE_FLOATS,
   SPRITE_STRIDE,
   SPRITE_VERTICES,
@@ -9,7 +11,7 @@ import {
   type Pipelines,
 } from './pipelines';
 import { TextureStore } from './resources';
-import type { SceneFrame, Sprite, TextureRef } from './scene/types';
+import type { GlassBox, SceneFrame, Sprite, TextureRef } from './scene/types';
 
 export interface RendererOptions {
   onLost: (message: string) => void;
@@ -33,6 +35,8 @@ export class WebGpuRenderer implements RenderBackend {
   private frameData = new Float32Array(FRAME_BYTES / 4);
   private backgroundData = new Float32Array(BACKGROUND_BYTES / 4);
   private drawGroups: GPUBindGroup[] = [];
+  /** Screen bounds the glass reaches this frame, CSS px; empty when there is none. */
+  private glassBounds = [0, 0, 0, 0];
   private width = 1;
   private height = 1;
   private pixelRatio = 1;
@@ -120,6 +124,7 @@ export class WebGpuRenderer implements RenderBackend {
     f[1] = this.height;
     f[2] = this.pixelRatio;
     f[3] = seconds;
+    this.packGlass(scene.glass, scene.background);
     device.queue.writeBuffer(this.frameBuffer, 0, f);
 
     const b = this.backgroundData;
@@ -224,11 +229,38 @@ export class WebGpuRenderer implements RenderBackend {
       data[o + 23] = s.focusY;
       data[o + 24] = s.lift;
       data[o + 25] = s.texture && 'shadowed' in s.texture && s.texture.shadowed ? 1 : 0;
+      const [gx0, gy0, gx1, gy1] = this.glassBounds;
+      const glassed = gx1 > gx0 && s.x < gx1 && s.x + s.w > gx0 && s.y < gy1 && s.y + s.h + Math.abs(s.bend) > gy0;
+      data[o + 26] = glassed ? 1 : 0;
+      data[o + 27] = glassed ? GLASS_REACH : 0;
       this.drawGroups[n] = group;
       n++;
     }
     if (n) this.device.queue.writeBuffer(this.instanceBuffer, 0, data, 0, n * SPRITE_FLOATS);
     return n;
+  }
+
+  /** Glass boxes into the frame uniform after its first vec4, and the screen bounds they reach. */
+  private packGlass(glass: readonly GlassBox[], paper: readonly [number, number, number]): void {
+    const f = this.frameData;
+    const bounds = this.glassBounds;
+    bounds[0] = bounds[1] = Infinity;
+    bounds[2] = bounds[3] = -Infinity;
+    let n = 0;
+    for (const g of glass) {
+      if (n >= MAX_GLASS) break;
+      if (g.weight <= 0.002) continue;
+      f.set([g.x, g.y, g.hw, g.hh], 12 + n * 4);
+      f.set([g.radius, g.weight, g.feather, g.inset], 12 + (MAX_GLASS + n) * 4);
+      bounds[0] = Math.min(bounds[0], g.x - g.hw - g.feather);
+      bounds[1] = Math.min(bounds[1], g.y - g.hh - g.feather);
+      bounds[2] = Math.max(bounds[2], g.x + g.hw + g.feather);
+      bounds[3] = Math.max(bounds[3], g.y + g.hh + g.feather);
+      n++;
+    }
+    if (!n) bounds.fill(0);
+    f[4] = n;
+    f.set([paper[0], paper[1], paper[2], 1], 8);
   }
 
   private ensureCapacity(count: number): void {

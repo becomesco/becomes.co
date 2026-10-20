@@ -2,6 +2,7 @@ import type { Asset } from '../data/works';
 import { clamp } from '../../utils/math';
 import { createRandom, hashString, range, shuffle, type Random } from '../../utils/random';
 import { columnX, createGrid, spanFor, spanWidth, type Grid } from './grid';
+import { computeOther, type OtherLayout } from './other';
 
 /**
  * Home layout, in scroll space.
@@ -12,9 +13,18 @@ import { columnX, createGrid, spanFor, spanWidth, type Grid } from './grid';
  * `p0` and `p1`, then leave at speed 1. Because every motion is linear in `s`, two
  * objects can be tested for overlap exactly by checking the ends of the scroll range
  * where both are on screen.
+ *
+ * Wide screens lay Assets out as a field around the title: left, center and right zones,
+ * as in the Figma screens. The title is not an obstacle there; Assets pass behind it, and
+ * the renderer's glass keeps it readable. Narrow screens stack Assets in one column.
  */
 
-export type LayoutMode = 'flank' | 'stack';
+export type LayoutMode = 'field' | 'stack';
+
+type Zone = 'left' | 'center' | 'right';
+
+/** Chance the next Asset after a side one goes to the center; about 30% of a Work's Assets end up there. */
+const CENTER_CHANCE = 0.42;
 
 export interface TitleBox {
   width: number;
@@ -60,6 +70,8 @@ export interface HomeLayout {
   placements: Placement[];
   /** Longest visible window, for range queries. */
   span: number;
+  /** The Other grid under the last section's title, if any. */
+  other: OtherLayout | null;
   max: number;
 }
 
@@ -68,6 +80,8 @@ export interface LayoutOptions {
   height: number;
   reducedMotion: boolean;
   copies: number;
+  /** Height over width of each Other piece; the last section is then the Other title. */
+  other?: readonly number[];
 }
 
 interface Body {
@@ -81,6 +95,8 @@ interface Body {
 }
 
 const ENTRY_MARGIN = 48;
+/** Empty ground after the last section, in viewport heights, for the Glass mark to fly back in over. */
+const CLOSING = 1;
 
 const screenOffset = (b: Body, s: number): number => (b.a - s) * b.v;
 
@@ -107,13 +123,20 @@ function titleBodies(width: number, height: number, title: TitleBox, p0: number,
   ];
 }
 
-/** Copies of a Work's Assets, each copy shuffled, never the same Asset twice in a row. */
+/**
+ * Copies of a Work's Assets, each copy shuffled, never the same Asset again within three
+ * places (fewer for Works with fewer Assets), so one doesn't show up twice on screen.
+ */
 function sequence(assets: readonly Asset[], copies: number, random: Random): { asset: Asset; copy: number }[] {
   const out: { asset: Asset; copy: number }[] = [];
+  const spacing = Math.min(3, assets.length - 1);
   for (let copy = 0; copy < copies; copy++) {
     const order = shuffle(assets, random);
-    if (out.length && order.length > 1 && order[0] === out[out.length - 1].asset) {
-      [order[0], order[1]] = [order[1], order[0]];
+    for (let i = 0; i < spacing; i++) {
+      const recent = (a: Asset) => out.slice(out.length - (spacing - i)).some((o) => o.asset === a);
+      if (!recent(order[i])) continue;
+      const j = order.findIndex((a, k) => k > i && !recent(a));
+      if (j > 0) [order[i], order[j]] = [order[j], order[i]];
     }
     for (const asset of order) out.push({ asset, copy });
   }
@@ -124,17 +147,19 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
   const { width, height: vh } = options;
   const grid = createGrid(width);
 
-  // Side lanes beside the widest Work title; fall back to a single stacked column.
+  // Side zones beside the widest Work title; fall back to a single stacked column.
   const workTitleWidth = Math.max(0, ...sections.filter((s) => s.assets.length).map((s) => s.title.width));
   const laneEdge = (width - workTitleWidth) / 2 - grid.gutter;
   let laneCols = 0;
   while (laneCols < grid.columns / 2 && columnX(grid, laneCols) + grid.column <= laneEdge) laneCols++;
-  const mode: LayoutMode = laneCols >= 2 && vh >= 480 ? 'flank' : 'stack';
+  const mode: LayoutMode = laneCols >= 2 && vh >= 480 ? 'field' : 'stack';
   const laneRight = columnX(grid, laneCols - 1) + grid.column;
 
-  const depth = options.reducedMotion ? 0 : mode === 'flank' ? 0.12 : 0.05;
-  const sizeScale = mode === 'flank' ? clamp(width / 1440, 0.62, 1.3) : clamp(width / 620, 0.55, 1);
-  const maxH = vh * (mode === 'flank' ? 0.62 : 0.56);
+  const depth = options.reducedMotion ? 0 : mode === 'field' ? 0.12 : 0.05;
+  const sizeScale = mode === 'field' ? clamp(width / 1440, 0.62, 1.3) : clamp(width / 620, 0.55, 1);
+  const maxH = vh * (mode === 'field' ? 0.62 : 0.56);
+  // Center Assets cross the title, so they stay small, as they are in Figma.
+  const centerMaxH = vh * 0.42;
   const pinShort = vh * 0.28;
   const step = vh * 0.035;
 
@@ -149,31 +174,29 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
     const placed: Placement[] = [];
     const layout: SectionLayout = { key: section.key, p0, p1: p0, title: section.title, placements: placed };
 
-    let pinned: Body | null = null;
-    if (mode === 'stack' || !section.assets.length) {
+    const field = mode === 'field' && section.assets.length > 0;
+    if (!field) {
       layout.p1 = section.assets.length ? p0 + pinShort : p0;
-      bodies.push(...titleBodies(width, vh, section.title, layout.p0, layout.p1));
-    } else {
-      const [entry, hold] = titleBodies(width, vh, section.title, p0, Infinity);
-      pinned = hold;
-      bodies.push(entry, hold);
+      if (mode === 'stack') bodies.push(...titleBodies(width, vh, section.title, layout.p0, layout.p1));
     }
 
-    let cursor = mode === 'flank' ? p0 - vh * 0.22 : layout.p1 + vh * 0.2;
+    let cursor = mode === 'field' ? p0 - vh * 0.22 : layout.p1 + vh * 0.2;
     // A Work's Assets stay below the fold while the previous title is still pinned.
     const previousP1 = k > 0 ? out[k - 1].p1 : -Infinity;
-    let side: 'left' | 'right' = random() < 0.5 ? 'left' : 'right';
+    let zone: Zone = random() < 0.5 ? 'left' : 'right';
     const maxArea = Math.max(1, ...section.assets.map((a) => a.width * a.height));
 
     for (const { asset, copy } of sequence(section.assets, options.copies, random)) {
-      const forced = asset.cut.has('left') ? 'left' : asset.cut.has('right') ? 'right' : null;
-      if (mode === 'flank') side = forced ?? (random() < 0.72 ? (side === 'left' ? 'right' : 'left') : side);
+      const forced: Zone | null = asset.cut.has('left') ? 'left' : asset.cut.has('right') ? 'right' : null;
+      if (mode === 'field') zone = forced ?? nextZone(zone, random);
 
-      const box = mode === 'flank'
-        ? flankBox(asset, grid, laneCols, laneRight, sizeScale, maxH, random)
-        : stackBox(asset, grid, sizeScale, maxH, random);
+      const box = mode === 'stack'
+        ? stackBox(asset, grid, sizeScale, maxH, random)
+        : zone === 'center'
+          ? centerBox(asset, grid, sizeScale, centerMaxH, random)
+          : sideBox(asset, grid, laneCols, laneRight, sizeScale, maxH, random);
       let x = box.x;
-      if (mode === 'flank' && side === 'right') x = width - (x + box.w);
+      if (mode === 'field' && zone === 'right') x = width - (x + box.w);
 
       const z = clamp(0.5 * ((box.w * box.h) / (maxArea * sizeScale * sizeScale)) + 0.5 * random(), 0, 1);
       const v = 1 + depth * (z * 2 - 1);
@@ -204,22 +227,18 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
       };
       placements.push(placement);
       placed.push(placement);
-      cursor = body.a + vh * (mode === 'flank' ? range(random, 0.08, 0.2) : range(random, 0.04, 0.14));
+      cursor = body.a + vh * (mode === 'field' ? range(random, 0.08, 0.2) : range(random, 0.04, 0.14));
     }
 
     const lastAnchor = placed.length ? Math.max(...placed.map((p) => p.anchor)) : layout.p1;
-    if (pinned) {
-      layout.p1 = Math.max(p0 + pinShort, lastAnchor + vh * 0.15);
-      pinned.s1 = layout.p1;
-      bodies.push(titleBodies(width, vh, section.title, p0, layout.p1)[2]);
-    }
+    if (field) layout.p1 = Math.max(p0 + pinShort, lastAnchor + vh * 0.15);
     out.push(layout);
 
     const next = sections[k + 1];
     if (next) {
       const gap = Math.max(vh * 0.75, (section.title.height + next.title.height) / 2 + 160);
       let nextP0 = Math.max(layout.p1 + gap, mode === 'stack' ? lastAnchor + vh * 0.25 : 0);
-      for (let tries = 0; tries < 400; tries++) {
+      for (let tries = 0; mode === 'stack' && tries < 400; tries++) {
         const probe = titleBodies(width, vh, next.title, nextP0, nextP0 + pinShort).slice(0, 2);
         if (!placed.some((p) => probe.some((t) => collides(t, bodyOf(p), grid.gutter, grid.gutter * 2)))) break;
         nextP0 += step;
@@ -230,6 +249,7 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
 
   placements.sort((a, b) => a.sMin - b.sMin);
   const last = out[out.length - 1];
+  const other = last && options.other?.length ? computeOther(grid, vh, last.p0, last.title.height, options.other) : null;
   return {
     mode,
     grid,
@@ -238,7 +258,8 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
     sections: out,
     placements,
     span: Math.max(0, ...placements.map((p) => p.sMax - p.sMin)),
-    max: Math.max(0, last ? last.p1 : 0),
+    other,
+    max: last ? Math.max(last.p1, other ? other.max : 0) + vh * CLOSING : 0,
   };
 }
 
@@ -252,8 +273,29 @@ interface Box {
   h: number;
 }
 
-/** Left-lane box; the caller mirrors it for the right lane. */
-function flankBox(
+/** The zone after `zone`: never the same twice, so the field keeps moving around the title. */
+function nextZone(zone: Zone, random: Random): Zone {
+  if (zone === 'center') return random() < 0.5 ? 'left' : 'right';
+  if (random() < CENTER_CHANCE) return 'center';
+  return zone === 'left' ? 'right' : 'left';
+}
+
+/**
+ * Center box, up to a third of the grid wide, around the viewport center and nudged up to
+ * a column and a half either way on half-column steps.
+ */
+function centerBox(asset: Asset, grid: Grid, scale: number, maxH: number, random: Random): Box {
+  const aspect = asset.height / asset.width;
+  const maxSpan = Math.max(2, Math.round(grid.columns / 3));
+  let span = clamp(spanFor(grid, asset.width * scale * range(random, 0.8, 1.05)), 1, maxSpan);
+  while (span > 1 && spanWidth(grid, span) * aspect > maxH) span--;
+  const w = spanWidth(grid, span);
+  const nudge = (Math.floor(random() * 7) - 3) / 2;
+  return { x: columnX(grid, (grid.columns - span) / 2 + nudge), w, h: w * aspect };
+}
+
+/** Left-zone box; the caller mirrors it for the right zone. */
+function sideBox(
   asset: Asset,
   grid: Grid,
   laneCols: number,

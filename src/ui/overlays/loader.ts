@@ -35,7 +35,10 @@ const PANEL_MIN = 0.9;
 /** Panel progress at which the handoff begins, overlapping the panel's exit. */
 const HANDOFF_AT = 0.9;
 const REDUCED_FADE = 0.3;
-/** Home scroll, in viewport heights, over which the Glass mark turns and flies out past the viewer. */
+/**
+ * Home scroll, in viewport heights, over which the Glass mark turns and flies out past the viewer,
+ * and over which it flies back into place before the end of Home.
+ */
 const AWAY = 0.4;
 /**
  * The mark follows the scroll on a soft spring of its own, so it glides on after the page stops
@@ -79,7 +82,7 @@ export interface LandingWord {
 
 /** Home, as the Glass mark sees it once the Wordmark has handed over. */
 export interface MarkHost {
-  readonly scroll: { readonly current: number };
+  readonly scroll: { readonly current: number; readonly max: number };
   readonly presence: number;
   /** Changes whenever `drawUnderlay` would draw something different. */
   underlayKey(): string;
@@ -122,8 +125,8 @@ interface Carry {
  * Intro into Home. The Glass mark turns face-on alone on black, a glint crossing its rim, the
  * Wordmark letters rise from behind a baseline cut, and a black panel retracts to warm gray as
  * loading completes. Then the Wordmark glides into the manifesto's first word, handing over to the
- * live text, and the Glass mark stays over Home until the scroll turns it away. Later loads in the
- * session skip the Wordmark entrance. Not a View and not a URL.
+ * live text, and the Glass mark stays over Home until the scroll turns it away, returning at the end
+ * of Home. Later loads in the session skip the Wordmark entrance. Not a View and not a URL.
  */
 export class Loader {
   /** Seconds since the handoff into Home began: -Infinity before it, Infinity once the Loader is gone. */
@@ -321,7 +324,8 @@ export class Loader {
   /**
    * Once the Wordmark has handed over, Home's scroll takes the Glass mark away: it turns about its
    * vertical axis as fast as the page moves while its optical centre settles on the screen's centre
-   * and it flies straight at the viewer.
+   * and it flies straight at the viewer. Nearing the end of Home the same flight runs backwards: it
+   * comes from behind the viewer, unwinding its turns, and settles where it rested at the top.
    */
   private leave(): MarkPose {
     const pose = Object.assign(this.drawn, this.pose);
@@ -338,11 +342,13 @@ export class Loader {
     return pose;
   }
 
-  /** Eases the way out towards Home's scroll. True while it is still moving. */
+  /** Eases the way out towards Home's scroll, and back in towards its end. True while it is still moving. */
   private follow(dt: number): boolean {
     const host = this.host;
     if (!host || this.handoffTime === -Infinity) return false;
-    const goal = saturate(host.scroll.current / window.innerHeight / AWAY);
+    const { current, max } = host.scroll;
+    const span = window.innerHeight * AWAY;
+    const goal = Math.min(saturate(current / span), saturate((max - current) / span));
     if (this.reduced) {
       this.away.set(goal);
       return false;
