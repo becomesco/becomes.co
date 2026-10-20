@@ -1,6 +1,6 @@
 import { Spring } from '../../core/motion';
 import type { FrameTime } from '../../core/scheduler';
-import { saturate } from '../../utils/math';
+import { saturate, smoothstep } from '../../utils/math';
 
 const SEEN_KEY = 'becomes:intro';
 
@@ -8,13 +8,29 @@ const MARK_HOLD = 0.35;
 const SHORT_HOLD = 0.2;
 const RISE_STAGGER = 0.055;
 const PANEL_MIN = 0.9;
-const WIPE_HOLD = 0.12;
+/** Panel progress at which the handoff begins, overlapping the panel's exit. */
+const HANDOFF_AT = 0.9;
 const REDUCED_FADE = 0.3;
-/** Panel and wipe springs aim past the screen edge so they leave decisively instead of creeping out. */
+/**
+ * Springs aim slightly past their goal and are read clamped, so they arrive with a soft
+ * ease-out instead of creeping through the last pixels.
+ */
 const PAST = 1.04;
+const CARRY_PAST = 1.02;
 
-/** Wordmark viewBox height in SVG units. */
+/** Wordmark viewBox size, and its baseline (bottom of the b stem), in SVG units. */
+const WORD_W = 478.083;
 const WORD_H = 78.6151;
+const WORD_BASELINE = 77.2901;
+
+/** Where the Wordmark lands: the manifesto's first word, in screen px. */
+export interface LandingWord {
+  baseline: number;
+  /** Baseline to the top of the ink. */
+  ascent: number;
+  /** Ink centre of each letter. */
+  centers: number[];
+}
 
 /** sessionStorage throws in some privacy modes. */
 function storage<T>(fn: () => T): T | undefined {
@@ -28,27 +44,47 @@ function storage<T>(fn: () => T): T | undefined {
 const settled = (s: Spring): boolean =>
   s.target === 0 && Math.abs(s.value) < 0.01 && Math.abs(s.velocity) < 0.1;
 
-type Phase = 'mark' | 'word' | 'panel' | 'wipe';
+type Phase = 'mark' | 'word' | 'panel' | 'handoff';
+
+interface Carry {
+  dx: number;
+  dy: number;
+  scale: number;
+  /** Per letter, the extra x travel in SVG units: the Wordmark is tracked tighter than the live text. */
+  spread: number[];
+}
 
 /**
  * Intro into Home. The Glass mark sits alone on black, the Wordmark letters rise from behind a
- * baseline cut, a black panel retracts to warm gray as loading completes, then a hard upward wipe
- * erases both and uncovers the landing manifesto. Later loads in the session skip the Wordmark
- * entrance. Not a View and not a URL.
+ * baseline cut, and a black panel retracts to warm gray as loading completes. Then the Glass mark
+ * recedes and the Wordmark glides into the manifesto's first word, handing over to the live text.
+ * Later loads in the session skip the Wordmark entrance. Not a View and not a URL.
  */
 export class Loader {
-  /** Screen y of the wipe edge. Home is uncovered below it. */
-  edge = Infinity;
+  /** Seconds since the handoff into Home began: -Infinity before it, Infinity once the Loader is gone. */
+  handoffTime = -Infinity;
+  /** Opacity of the manifesto's own first word as the Wordmark settles onto it. */
+  landed = 0;
 
   private root: HTMLElement;
   private stage: HTMLElement;
+  private ground: HTMLElement;
   private panel: HTMLElement;
+  private mark: HTMLElement;
+  private word: SVGSVGElement;
   private light: HTMLElement;
   /** Per letter, the path in each Wordmark copy. */
   private letters: SVGPathElement[][];
   private rise: Spring[];
   private progress: Spring;
-  private wipe = new Spring(0, 140, 24);
+  /** Wordmark travel into the manifesto, 0 → 1. */
+  private carry = new Spring(0, 45, 13.4);
+  /** Glass mark and ground receding, 0 → 1. */
+  private recede = new Spring(0, 30, 11);
+  /** Wordmark fading out once it sits exactly on the live text, 0 → 1. */
+  private swap = new Spring(0, 160, 25);
+  private path: Carry | null = null;
+  private landing: (() => LandingWord | null) | null = null;
   private phase: Phase;
   private target = 0;
   private start = -1;
@@ -60,8 +96,11 @@ export class Loader {
   constructor(private reduced: boolean) {
     this.root = document.querySelector<HTMLElement>('.loader')!;
     this.stage = this.root.querySelector<HTMLElement>('.loader__stage')!;
+    this.ground = this.root.querySelector<HTMLElement>('.loader__ground')!;
     this.panel = this.root.querySelector<HTMLElement>('.loader__panel')!;
+    this.mark = this.root.querySelector<HTMLElement>('.loader__mark')!;
     const dark = this.root.querySelector<HTMLElement>('.loader__word--dark')!;
+    this.word = dark.querySelector('svg')!;
     this.light = dark.cloneNode(true) as HTMLElement;
     this.light.classList.replace('loader__word--dark', 'loader__word--light');
     dark.after(this.light);
@@ -92,6 +131,11 @@ export class Loader {
     this.target = Math.max(this.target, saturate(value));
   }
 
+  /** Where the Wordmark should land; read once, when the handoff starts. */
+  landOn(fn: () => LandingWord | null): void {
+    this.landing = fn;
+  }
+
   whenDone(fn: () => void): void {
     this.onDone = fn;
   }
@@ -104,7 +148,7 @@ export class Loader {
     const vh = window.innerHeight;
 
     if (this.phase === 'mark' && t >= this.hold) this.enter('word', t);
-    if (this.phase !== 'mark') {
+    if (this.phase === 'word' || this.phase === 'panel') {
       const risen = this.updateRise(this.phase === 'word' ? t - this.phaseAt : Infinity, dt);
       if (this.phase === 'word' && risen) this.enter('panel', t);
     }
@@ -113,12 +157,9 @@ export class Loader {
       const ramp = this.reduced ? 1 : saturate((t - Math.max(this.phaseAt, this.hold)) / PANEL_MIN);
       const goal = Math.min(this.target, ramp);
       this.progress.target = goal >= 1 ? PAST : goal;
-      this.progress.update(dt);
-      if (this.progress.value >= 1) {
-        this.progress.set(1);
-        this.enter('wipe', t);
-      }
+      if (goal >= 1 && this.progress.value >= HANDOFF_AT) this.enter('handoff', t);
     }
+    if (this.progress.value < 1) this.progress.update(dt);
     const p = saturate(this.progress.value);
     if (this.reduced) {
       this.panel.style.opacity = (1 - p).toFixed(3);
@@ -129,23 +170,79 @@ export class Loader {
       this.light.style.clipPath = `inset(0 0 ${(vh - covered).toFixed(2)}px 0)`;
     }
 
-    if (this.phase === 'wipe') {
-      const since = t - this.phaseAt - WIPE_HOLD;
-      if (since >= 0 && this.reduced) {
-        this.edge = -Infinity;
-        const o = saturate(since / REDUCED_FADE);
-        this.stage.style.opacity = (1 - o).toFixed(3);
-        if (o >= 1) return this.finish();
-      } else if (since >= 0) {
-        this.wipe.target = PAST;
-        this.wipe.update(dt);
-        const w = saturate(this.wipe.value);
-        this.edge = (1 - w) * vh;
-        this.stage.style.clipPath = `inset(0 0 ${(vh - this.edge).toFixed(2)}px 0)`;
-        if (w >= 1) return this.finish();
-      }
-    }
+    if (this.phase === 'handoff') return this.updateHandoff(t - this.phaseAt, dt);
     return true;
+  }
+
+  /** The Glass mark recedes while the Wordmark glides onto the manifesto's first word, then gives way to it. */
+  private updateHandoff(since: number, dt: number): boolean {
+    if (this.handoffTime === -Infinity) {
+      this.path = this.reduced ? null : this.measureCarry();
+      this.light.style.display = 'none';
+    }
+    this.handoffTime = since;
+
+    if (!this.path) {
+      const o = saturate(since / REDUCED_FADE);
+      this.landed = 1;
+      this.stage.style.opacity = (1 - o).toFixed(3);
+      return o >= 1 ? this.finish() : true;
+    }
+
+    this.recede.target = 1;
+    this.carry.target = CARRY_PAST;
+    this.recede.update(dt);
+    this.carry.update(dt);
+    const r = saturate(this.recede.value);
+    const c = saturate(this.carry.value);
+
+    this.ground.style.opacity = (1 - smoothstep(0, 0.6, r)).toFixed(3);
+    this.mark.style.opacity = (1 - r).toFixed(3);
+    this.mark.style.transform = `translate(-50%, -50%) scale(${(1 - 0.08 * r).toFixed(4)})`;
+
+    const { dx, dy, scale, spread } = this.path;
+    this.word.style.transform =
+      `translate(${(dx * c).toFixed(2)}px, ${(dy * c).toFixed(2)}px) scale(${(1 + (scale - 1) * c).toFixed(4)})`;
+    this.letters.forEach(([path], i) => path.setAttribute('transform', `translate(${(spread[i] * c).toFixed(3)} 0)`));
+
+    // Same letterforms, now in the same place: show the live word underneath and let the Wordmark go.
+    if (c >= 1) {
+      this.landed = 1;
+      this.swap.target = PAST;
+      this.swap.update(dt);
+    }
+    const s = saturate(this.swap.value);
+    this.word.style.opacity = (1 - s).toFixed(3);
+
+    return s >= 1 && r >= 0.97 ? this.finish() : true;
+  }
+
+  /**
+   * Scale that matches the landing word's glyph height, translation onto its baseline, and per-letter
+   * travel onto its letter centres.
+   */
+  private measureCarry(): Carry | null {
+    const to = this.landing?.();
+    if (!to || to.centers.length !== this.letters.length) return null;
+    const rect = this.word.getBoundingClientRect();
+    const unit = rect.width / WORD_W;
+    const baseline = WORD_BASELINE * unit;
+    const scale = to.ascent / baseline;
+    this.word.style.transformOrigin = `0 ${baseline.toFixed(2)}px`;
+
+    const k = unit * scale;
+    const centers = this.letters.map(([path]) => {
+      const box = path.getBBox();
+      return box.x + box.width / 2;
+    });
+    const gaps = centers.map((cx, i) => to.centers[i] - rect.left - cx * k);
+    const dx = gaps.reduce((sum, g) => sum + g, 0) / gaps.length;
+    return {
+      dx,
+      dy: to.baseline - (rect.top + baseline),
+      scale,
+      spread: gaps.map((g) => (g - dx) / k),
+    };
   }
 
   /** Releases letters left to right; `t` is seconds since the entrance began. True once all have settled. */
@@ -178,7 +275,8 @@ export class Loader {
   private finish(played = true): false {
     if (!this.finished) {
       this.finished = true;
-      this.edge = -Infinity;
+      this.handoffTime = Infinity;
+      this.landed = 1;
       this.root.remove();
       if (played) storage(() => sessionStorage.setItem(SEEN_KEY, '1'));
       this.onDone?.();

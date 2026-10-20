@@ -2,7 +2,8 @@ import { Spring } from '../../core/motion';
 import type { FrameTime } from '../../core/scheduler';
 import { VirtualScroll } from '../../core/scroll';
 import { createSprite, NO_FADE, type EdgeFade, type Sprite } from '../../graphics/scene/types';
-import { clamp, smoothstep } from '../../utils/math';
+import type { LandingWord } from '../../ui/overlays/loader';
+import { clamp, saturate, smoothstep } from '../../utils/math';
 import { assetsOf, works, type Asset, type Work } from '../data/works';
 import type { AppContext, DrawList, View } from '../view';
 import { computeLayout, type HomeLayout, type Placement, type SectionInput } from './layout';
@@ -10,8 +11,14 @@ import { computeLayout, type HomeLayout, type Placement, type SectionInput } fro
 const COPIES = 4;
 const CUT_FADE = 0.2;
 const HOVER_SCALE = 0.035;
-/** How far each manifesto line sits below rest before the Loader wipe uncovers it, px. */
-const RISE = 24;
+/** How far each manifesto line sits below rest before the intro brings it in, px. */
+const RISE = 28;
+/**
+ * Seconds into the Loader handoff when the first manifesto line starts to rise, then per line.
+ * Late enough that the Wordmark has mostly arrived and doesn't crowd its neighbours.
+ */
+const LINE_START = 0.45;
+const LINE_STAGGER = 0.12;
 
 interface Title {
   el: HTMLElement;
@@ -22,10 +29,8 @@ interface Title {
 
 interface Line {
   words: HTMLElement[];
-  /** Bottom edge, relative to the landing title. */
-  bottom: number;
   spring: Spring;
-  transform: string;
+  style: string;
 }
 
 /** Wraps each word so manifesto lines can move on their own. */
@@ -106,9 +111,13 @@ export class HomeView implements View {
   private cursor = '';
   private words: HTMLElement[];
   private lines: Line[] = [];
-  private landingTop = 0;
-  private revealEdge = -Infinity;
+  /** Seconds into the intro: -Infinity while armed and waiting, Infinity when there is no intro. */
+  private introClock = Infinity;
+  /** Opacity of the manifesto's first word, which the Loader Wordmark lands on. */
+  private landed = 1;
+  private landedStyle = '';
   private armed = false;
+  private measure: CanvasRenderingContext2D | null = null;
 
   constructor(private ctx: AppContext) {
     this.root = document.querySelector<HTMLElement>('[data-view="home"]')!;
@@ -124,17 +133,47 @@ export class HomeView implements View {
     this.root.addEventListener('focusin', this.onFocus);
   }
 
-  /** Hold the manifesto lines low until the Loader wipe uncovers them. */
+  /** Hide the manifesto and hold its lines low until the Loader hands over. */
   armIntro(): void {
     this.armed = true;
-    this.revealEdge = Infinity;
+    this.introClock = -Infinity;
+    this.landed = 0;
     for (const line of this.lines) line.spring.set(RISE);
   }
 
-  /** Screen y of the Loader wipe edge; lines whose bottom it has passed rise to rest. */
-  setReveal(edge: number): void {
-    this.revealEdge = edge;
-    if (edge === -Infinity) this.armed = false;
+  /** The Loader handoff has begun; lines rise in on their own clock from here. */
+  startIntro(): void {
+    if (this.introClock === -Infinity) this.introClock = 0;
+  }
+
+  setLanded(value: number): void {
+    this.landed = value;
+  }
+
+  /** Ink box and baseline of the manifesto's first word at rest, in screen px. */
+  landingWord(): LandingWord | null {
+    const word = this.words[0];
+    if (!word || !this.layoutState) return null;
+    // The first word never carries a line transform, so its client rect is its rest position.
+    const probe = document.createElement('span');
+    probe.style.cssText = 'display:inline-block;width:0;height:0';
+    word.append(probe);
+    const baseline = probe.getBoundingClientRect().top;
+    probe.remove();
+
+    const style = getComputedStyle(word);
+    const ctx = (this.measure ??= document.createElement('canvas').getContext('2d')!);
+    ctx.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+    ctx.letterSpacing = style.letterSpacing;
+    const text = word.textContent ?? '';
+    const left = word.getBoundingClientRect().left;
+    // A prefix's ink ends at its last glyph, so each letter's centre is that edge less half its own ink.
+    const centers = Array.from(text, (ch, i) => {
+      const glyph = ctx.measureText(ch);
+      const right = ctx.measureText(text.slice(0, i + 1)).actualBoundingBoxRight;
+      return left + right - (glyph.actualBoundingBoxLeft + glyph.actualBoundingBoxRight) / 2;
+    });
+    return { baseline, ascent: ctx.measureText(text).actualBoundingBoxAscent, centers };
   }
 
   layout(): void {
@@ -365,7 +404,6 @@ export class HomeView implements View {
       const opacity = (1 - smoothstep(vh * 0.16, vh * 0.5, Math.abs(off))) * presence;
       // Off-screen titles park below the fold but stay focusable for keyboard users.
       const y = onScreen ? off - section.title.height / 2 : vh * 2;
-      if (i === 0) this.landingTop = vh / 2 + y;
       const transform = `translate3d(0, ${y.toFixed(2)}px, 0)`;
       const opacityValue = onScreen ? opacity.toFixed(3) : '0';
       if (transform !== title.transform) {
@@ -381,36 +419,59 @@ export class HomeView implements View {
     }
   }
 
+  /** Groups the manifesto words (minus the first, which the Loader Wordmark lands on) into visual lines. */
   private measureLines(): void {
     const lines: Line[] = [];
     let last: Line | null = null;
-    let lastTop = Number.NaN;
-    for (const word of this.words) {
+    let lastTop = this.words[0]?.offsetTop ?? Number.NaN;
+    for (const word of this.words.slice(1)) {
       const top = word.offsetTop;
       if (!last || Math.abs(top - lastTop) > 2) {
-        last = { words: [], bottom: 0, spring: new Spring(this.armed ? RISE : 0, 120, 20), transform: '' };
+        const rest = this.armed && this.introClock < LINE_START + lines.length * LINE_STAGGER;
+        last = { words: [], spring: new Spring(rest ? RISE : 0, 60, 15.5), style: '' };
         lines.push(last);
         lastTop = top;
       }
       last.words.push(word);
-      last.bottom = Math.max(last.bottom, top + word.offsetHeight);
     }
     this.lines = lines;
   }
 
   private updateLines(dt: number, reduced: boolean): boolean {
-    let active = false;
-    for (const line of this.lines) {
-      if (this.landingTop + line.bottom >= this.revealEdge) line.spring.target = 0;
+    let moving = false;
+    const running = Number.isFinite(this.introClock);
+    if (running) this.introClock += dt;
+    this.lines.forEach((line, k) => {
+      if (this.introClock >= LINE_START + k * LINE_STAGGER) line.spring.target = 0;
       if (reduced) line.spring.set(line.spring.target);
-      if (line.spring.update(dt)) active = true;
-      const transform = line.spring.value ? `translate3d(0, ${line.spring.value.toFixed(2)}px, 0)` : '';
-      if (transform !== line.transform) {
-        line.transform = transform;
-        for (const word of line.words) word.style.transform = transform;
+      let live = line.spring.update(dt);
+      // Below a hundredth of the rise the tail is invisible; settle rather than inch on for seconds.
+      if (live && line.spring.target === 0 && Math.abs(line.spring.value) < RISE * 0.01 && Math.abs(line.spring.velocity) < 1) {
+        line.spring.set(0);
+        live = false;
       }
+      if (live) moving = true;
+      const rise = line.spring.value;
+      const style = rise ? `${rise.toFixed(2)}|${saturate(1 - rise / RISE).toFixed(3)}` : '';
+      if (style !== line.style) {
+        line.style = style;
+        for (const word of line.words) {
+          word.style.transform = rise ? `translate3d(0, ${rise.toFixed(2)}px, 0)` : '';
+          word.style.opacity = rise ? saturate(1 - rise / RISE).toFixed(3) : '';
+        }
+      }
+    });
+    if (running && this.introClock > LINE_START + this.lines.length * LINE_STAGGER && !moving) {
+      this.introClock = Infinity;
+      this.armed = false;
     }
-    return active;
+
+    const landed = this.landed >= 1 ? '' : this.landed.toFixed(3);
+    if (landed !== this.landedStyle && this.words[0]) {
+      this.landedStyle = landed;
+      this.words[0].style.opacity = landed;
+    }
+    return moving || Number.isFinite(this.introClock);
   }
 
   private onFocus = (event: FocusEvent): void => {

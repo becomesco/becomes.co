@@ -575,7 +575,7 @@ a {
 .loader__stage {
   position: absolute;
   inset: 0;
-  will-change: clip-path, opacity;
+  will-change: opacity;
 }
 
 .loader__ground {

@@ -92,6 +92,7 @@ export class App {
     this.contact = new ContactView(ctx);
     this.views = { home: this.home, work: this.work, about: this.about, contact: this.contact };
     this.current = this.home;
+    this.loader.landOn(() => (this.current === this.home ? this.home.landingWord() : null));
 
     const { width, height, dpr } = this.viewport.state;
     this.engine.resize(width, height, dpr);
@@ -132,10 +133,11 @@ export class App {
 
   private chromeIn = false;
 
-  /** The Loader wipe uncovers the manifesto; Chrome settles in once it has cleared. */
+  /** The Loader Wordmark glides into the manifesto as its lines rise in; Chrome settles in once the Loader is gone. */
   private landing(): void {
     if (!this.ready || this.current !== this.home) return;
-    this.home.setReveal(this.loader.edge);
+    if (this.loader.handoffTime >= 0) this.home.startIntro();
+    this.home.setLanded(this.loader.landed);
     if (!this.loader.active && !this.chromeIn) {
       this.chromeIn = true;
       this.chrome.reveal();
