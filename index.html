@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Becomes — the digital systems brilliant companies are built on</title>
+    <meta
+      name="description"
+      content="Becomes is a small creative web development studio delivering the fastest websites and web apps. Strategy, brand, web and product, carried by one team."
+    />
+    <meta name="theme-color" content="#e4e2dc" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/grillmaster-extwide-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/grillmaster-extwide-medium.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/grillmaster-wide-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/media/brand/glass-mark.half.webp" as="image" />
+    <script type="module" src="/src/app/main.ts"></script>
+  </head>
+  <body>
+    <div class="stage">
+      <canvas class="stage__canvas" aria-hidden="true"></canvas>
+      <div class="stage__fallback" aria-hidden="true"></div>
+    </div>
+
+    <main class="views">
+      <section class="view view--home" data-view="home" aria-label="Works">
+        <div class="home-title home-title--landing">
+          <h1 class="home-title__manifesto">becomes creates <br />the digital systems brilliant companies are built on.</h1>
+        </div>
+      </section>
+
+      <section class="view view--work" data-view="work" hidden inert>
+        <div class="work__content">
+          <header class="work-header">
+            <img class="work-header__logo" alt="" />
+            <h1 class="work-header__headline" tabindex="-1" data-focus></h1>
+            <a class="visit-link work-header__visit" target="_blank" rel="noopener">visit site →</a>
+          </header>
+        </div>
+      </section>
+
+      <section class="view view--about" data-view="about" hidden inert>
+        <div class="about__content">
+          <div class="about__copy">
+            <h1 class="about__title" tabindex="-1" data-focus>we are becomes.</h1>
+            <p class="about__text">
+              We are Becomes, a small creative web development studio, delivering the fastest websites &amp; web
+              apps. Strategy, brand, web and product, carried by one team from direction to build, so everything we
+              do supports and informs the other.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="view view--contact" data-view="contact" hidden inert>
+        <div class="contact__content">
+          <h1 class="contact__title" tabindex="-1" data-focus>let's build something.</h1>
+          <form class="contact__form" method="post">
+            <label class="field">
+              <span class="field__label">name</span>
+              <input class="field__input" name="name" autocomplete="name" required />
+            </label>
+            <label class="field">
+              <span class="field__label">email</span>
+              <input class="field__input" type="email" name="email" autocomplete="email" required />
+            </label>
+            <label class="field">
+              <span class="field__label">company <span class="field__hint">(optional)</span></span>
+              <input class="field__input" name="company" autocomplete="organization" />
+            </label>
+            <label class="field">
+              <span class="field__label">message</span>
+              <textarea class="field__input field__input--area" name="message" rows="5" required></textarea>
+            </label>
+            <div class="contact__actions">
+              <button class="pill pill--dark contact__submit" type="submit">send →</button>
+              <p class="contact__status" role="status" aria-live="polite"></p>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <header class="chrome">
+      <div class="chrome__left">
+        <a class="pill pill--light chrome__back" href="/" data-back inert><span aria-hidden="true">←</span>&nbsp;back</a>
+        <a class="pill pill--dark chrome__logo" href="/" aria-label="Becomes, home">
+          <img src="/brand/becomes-logo.svg" alt="" width="141" height="30" />
+        </a>
+      </div>
+      <nav class="pill pill--light chrome__nav" aria-label="Primary">
+        <a href="/about" data-nav="about">about</a>
+        <a href="/contact" data-nav="contact">contact</a>
+      </nav>
+    </header>
+
+    <div class="loader" aria-hidden="true">
+      <div class="loader__stage">
+        <img class="loader__mark" src="/media/brand/glass-mark.half.webp" alt="" />
+        <div class="loader__panel"></div>
+        <div class="loader__word loader__word--dark"></div>
+        <div class="loader__word loader__word--light"></div>
+      </div>
+    </div>
+
+    <noscript>
+      <p class="noscript">Becomes needs JavaScript for this site. Reach us through <a href="/contact">contact</a>.</p>
+    </noscript>
+  </body>
+</html>

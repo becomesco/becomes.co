@@ -1,0 +1,24 @@
+{
+  "name": "becomes.co",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "media": "node scripts/build-media.mjs",
+    "fonts": "node scripts/build-fonts.mjs"
+  },
+  "devDependencies": {
+    "@webgpu/types": "^0.1.60",
+    "sharp": "^0.34.0",
+    "typescript": "^5.8.0",
+    "vite": "^7.0.0",
+    "wawoff2": "^2.0.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "sharp"]
+  }
+}

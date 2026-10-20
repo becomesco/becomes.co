@@ -1,0 +1,626 @@
+@font-face {
+  font-family: 'Grillmaster ExtWide';
+  src: url('/fonts/grillmaster-extwide-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Grillmaster ExtWide';
+  src: url('/fonts/grillmaster-extwide-medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Grillmaster Wide';
+  src: url('/fonts/grillmaster-wide-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --bg: #e4e2dc;
+  --ink: #000;
+  --paper: #fff;
+  --glass: rgb(255 255 255 / 0.3);
+  --font-display: 'Grillmaster ExtWide', 'Helvetica Neue', Arial, sans-serif;
+  --font-text: 'Grillmaster Wide', 'Helvetica Neue', Arial, sans-serif;
+  /* Mirrors the modular grid in src/app/home/grid.ts. */
+  --margin: 16px;
+  --gutter: 12px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  color-scheme: light;
+}
+
+@media (min-width: 600px) {
+  :root {
+    --margin: 24px;
+    --gutter: 16px;
+  }
+}
+
+@media (min-width: 900px) {
+  :root {
+    --margin: 32px;
+    --gutter: 20px;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --margin: 40px;
+    --gutter: 20px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+html {
+  touch-action: pinch-zoom;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-text);
+  font-size: 16px;
+  line-height: 1.25;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Stage: the one canvas, plus the HTML/CSS fallback host. */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.stage__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.stage__canvas[hidden] {
+  display: none;
+}
+
+.stage__fallback {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.dom-stage__glow {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.dom-sprite {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  will-change: transform;
+  background: rgb(255 255 255 / calc(var(--card, 0) * 0.3));
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / var(--card, 0));
+}
+
+.dom-sprite img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  max-width: none;
+}
+
+/* Views: browser-layer content above the canvas. Empty areas pass pointer input
+   through to the stage so Assets stay clickable. */
+
+.views {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.view {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.view[hidden] {
+  display: none;
+}
+
+.view a,
+.view button,
+.view input,
+.view textarea,
+.view form {
+  pointer-events: auto;
+}
+
+/* Home titles */
+
+.home-title {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: max-content;
+  max-width: calc(100vw - var(--margin) * 2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  will-change: transform, opacity;
+  opacity: 0;
+}
+
+.home-title__manifesto,
+.home-title__headline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-transform: lowercase;
+}
+
+.home-title__manifesto {
+  font-size: clamp(30px, 4.86vw, 92px);
+  width: 13.9em;
+  max-width: 100%;
+}
+
+.home-title__headline {
+  font-size: clamp(26px, 3.47vw, 64px);
+  width: 12.84em;
+  max-width: 100%;
+}
+
+.home-title__headline a {
+  text-decoration: none;
+}
+
+.home-title__logo,
+.work-header__logo {
+  display: block;
+  width: auto;
+  height: clamp(calc(var(--logo-h) * 0.7px), calc(var(--logo-h) * 0.0694vw), calc(var(--logo-h) * 1.2px));
+  margin-bottom: clamp(16px, 2.4vw, 40px);
+}
+
+.visit-link {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(14px, 1.25vw, 20px);
+  text-decoration: none;
+  white-space: nowrap;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size 0.45s var(--ease-out);
+}
+
+.visit-link:hover {
+  background-size: 100% 1px;
+}
+
+.home-title .visit-link {
+  margin-top: clamp(14px, 1.9vw, 32px);
+}
+
+/* Work View */
+
+.work__content {
+  position: absolute;
+  inset: 0 0 auto;
+  will-change: transform;
+}
+
+.work-header {
+  padding: clamp(116px, 12.3vw, 210px) calc(var(--margin) + clamp(0px, 2.1vw, 36px)) 0;
+  opacity: 0;
+}
+
+.work-header__logo {
+  height: clamp(calc(var(--logo-h) * 0.5px), calc(var(--logo-h) * 0.05vw), calc(var(--logo-h) * 0.8px));
+  margin-bottom: clamp(16px, 1.8vw, 28px);
+}
+
+.work-header__headline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(32px, 4.86vw, 92px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-transform: lowercase;
+  /* Figma's 1182px measure; our font build sets about 4% wider. */
+  max-width: 17.6em;
+  text-wrap: pretty;
+  outline: none;
+}
+
+.work-header__visit {
+  margin-top: clamp(24px, 3.3vw, 52px);
+}
+
+.work-header__visit[hidden] {
+  display: none;
+}
+
+/* About View */
+
+.about__content {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 100%;
+  will-change: transform;
+}
+
+.about__copy {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% - clamp(60px, 8.1vh, 90px));
+  margin: 0 auto;
+  width: min(642px, calc(100vw - var(--margin) * 2));
+  text-align: center;
+  opacity: 0;
+  pointer-events: auto;
+}
+
+.about__copy--flow {
+  position: relative;
+  top: auto;
+  padding-top: clamp(120px, 22vh, 200px);
+}
+
+.about__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(30px, 3.47vw, 64px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  outline: none;
+}
+
+.about__text {
+  margin: clamp(20px, 2.1vw, 36px) auto 0;
+  max-width: 33.6em;
+  font-size: clamp(15px, 1.11vw, 19px);
+  line-height: 1.25;
+}
+
+/* Contact View */
+
+.contact__content {
+  position: relative;
+  width: min(640px, calc(100vw - var(--margin) * 2));
+  margin: 0 auto;
+  padding: clamp(120px, 20vh, 220px) 0 80px;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.contact__title {
+  margin: 0 0 clamp(28px, 3.5vw, 56px);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(30px, 3.47vw, 64px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  outline: none;
+}
+
+.contact__form {
+  display: grid;
+  gap: 18px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field__label {
+  font-family: var(--font-display);
+  font-size: 14px;
+}
+
+.field__hint {
+  opacity: 0.5;
+}
+
+.field__input {
+  width: 100%;
+  padding: 15px 16px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--glass);
+  border: 1px solid var(--paper);
+  border-radius: 12px;
+  outline: none;
+  transition: background-color 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+}
+
+.field__input:focus {
+  background: rgb(255 255 255 / 0.6);
+  border-color: var(--ink);
+}
+
+.field__input--area {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.contact__actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.contact__submit {
+  border: 0;
+  cursor: pointer;
+  color: var(--paper);
+}
+
+.contact__submit:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
+.contact__status {
+  margin: 0;
+  font-size: 14px;
+}
+
+.contact__status--error {
+  color: #b3261e;
+}
+
+/* Chrome */
+
+.chrome {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--margin);
+  pointer-events: none;
+}
+
+.chrome > * {
+  pointer-events: auto;
+  opacity: 0;
+  transform: translate3d(0, -14px, 0);
+  transition:
+    opacity 0.8s var(--ease-out),
+    transform 0.8s var(--ease-out);
+}
+
+.chrome > :last-child {
+  transition-delay: 0.08s;
+}
+
+.chrome--in > * {
+  opacity: 1;
+  transform: none;
+}
+
+.chrome__left {
+  display: flex;
+  align-items: center;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 16px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.pill--dark {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.pill--light {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.chrome__logo img {
+  display: block;
+  width: auto;
+  height: 22px;
+}
+
+.chrome__back {
+  max-width: 0;
+  padding-inline: 0;
+  margin-right: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-width 0.6s var(--ease-out),
+    padding 0.6s var(--ease-out),
+    margin 0.6s var(--ease-out),
+    opacity 0.4s var(--ease-out);
+}
+
+.chrome__back--in {
+  max-width: 160px;
+  padding-inline: 14px;
+  margin-right: 12px;
+  opacity: 1;
+}
+
+.chrome__nav {
+  gap: 0;
+  padding: 6px;
+}
+
+.chrome__nav a {
+  padding: 8px 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition:
+    background-color 0.35s var(--ease-out),
+    color 0.35s var(--ease-out);
+}
+
+.chrome__nav a:hover {
+  background: rgb(0 0 0 / 0.06);
+}
+
+.chrome__nav a[aria-current='page'] {
+  background: var(--ink);
+  color: var(--paper);
+  letter-spacing: -0.04em;
+}
+
+@media (min-width: 900px) {
+  .pill {
+    padding: 20px;
+    border-radius: 20px;
+    font-size: 18px;
+  }
+
+  .chrome {
+    padding: 40px var(--margin);
+  }
+
+  .chrome__logo img {
+    height: 30px;
+  }
+
+  .chrome__back--in {
+    padding-inline: 20px;
+    margin-right: 20px;
+  }
+
+  .chrome__nav {
+    padding: 8px;
+    margin-top: 4px;
+  }
+
+  .chrome__nav a {
+    padding: 12px 15px;
+    border-radius: 12px;
+  }
+}
+
+/* Loader */
+
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.loader__stage {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}
+
+.loader__mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: clamp(260px, 36vw, 560px);
+  transform: translate(-50%, -50%);
+}
+
+.loader__panel {
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  will-change: transform;
+}
+
+.loader__word {
+  position: absolute;
+  inset: 0;
+  -webkit-mask: url('/brand/becomes-wordmark.svg') center / clamp(200px, 33.2vw, 600px) auto no-repeat;
+  mask: url('/brand/becomes-wordmark.svg') center / clamp(200px, 33.2vw, 600px) auto no-repeat;
+}
+
+.loader__word--dark {
+  background: var(--ink);
+}
+
+.loader__word--light {
+  background: var(--paper);
+}
+
+.noscript {
+  position: fixed;
+  inset: auto 0 40px;
+  z-index: 20;
+  text-align: center;
+}
+
+.boot-failed .chrome > * {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
