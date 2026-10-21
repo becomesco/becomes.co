@@ -210,7 +210,7 @@ export const works: readonly Work[] = [
           'It walks patients to the right exam, or to a vision test they can take online. Scheduled appointments went up.',
         ],
       },
-      { media: 'milmedic/photo-autorefractor' },
+      { media: 'milmedic/photo-autorefractor', width: 400 },
       { media: 'milmedic/card-eye-exam', width: 280 },
       { media: 'milmedic/card-laser', width: 280 },
       { media: 'milmedic/test-color', width: 300 },

@@ -21,7 +21,6 @@ const FLOOD_DISTANCE = 26;
 // a smaller value keeps light photo edges from being treated as background.
 const MATTE_OVERRIDES = {
   'brand/glass-mark': Infinity,
-  'milmedic/photo-autorefractor': 10,
   'heroic-rankings/statue': 10,
 };
 
