@@ -196,7 +196,7 @@ export class WebGpuRenderer implements RenderBackend {
       if (s.x > this.width || s.y > this.height || s.x + s.w < 0 || s.y + s.h + Math.abs(s.bend) < 0) continue;
       let group: GPUBindGroup | null = this.textures.empty;
       if (s.texture) {
-        group = this.textures.use(s.texture, s.iw * this.pixelRatio, 1);
+        group = this.textures.use(s.texture, s.iw * Math.max(1, s.zoom) * this.pixelRatio, 1);
         if (!group) {
           if (s.card <= 0.001) continue;
           group = this.textures.empty;
@@ -223,7 +223,7 @@ export class WebGpuRenderer implements RenderBackend {
       data[o + 17] = group === this.textures.empty ? 0 : 1;
       data[o + 18] = 1;
       data[o + 19] = s.image;
-      data[o + 20] = 0;
+      data[o + 20] = s.zoom;
       data[o + 21] = s.hover;
       data[o + 22] = s.focusX;
       data[o + 23] = s.focusY;

@@ -35,46 +35,190 @@
     "src": "/media/about/photo-office.webp",
     "half": "/media/about/photo-office.half.webp"
   },
-  "basket/about-photo": {
+  "basket/cart-desktop": {
+    "px": [
+      2048,
+      1326
+    ],
+    "alpha": true,
+    "src": "/media/basket/cart-desktop.webp",
+    "half": "/media/basket/cart-desktop.half.webp"
+  },
+  "basket/cart-mobile": {
+    "px": [
+      780,
+      1140
+    ],
+    "alpha": true,
+    "src": "/media/basket/cart-mobile.webp",
+    "half": "/media/basket/cart-mobile.half.webp"
+  },
+  "basket/hero-landscape": {
+    "px": [
+      2048,
+      1097
+    ],
+    "alpha": true,
+    "src": "/media/basket/hero-landscape.webp",
+    "half": "/media/basket/hero-landscape.half.webp"
+  },
+  "basket/illustration-backpack": {
     "px": [
       404,
       480
     ],
     "alpha": true,
-    "src": "/media/basket/about-photo.webp",
-    "half": "/media/basket/about-photo.half.webp"
+    "src": "/media/basket/illustration-backpack.webp",
+    "half": "/media/basket/illustration-backpack.half.webp"
   },
-  "basket/frame-12446": {
+  "basket/illustration-baking": {
+    "px": [
+      700,
+      480
+    ],
+    "alpha": true,
+    "src": "/media/basket/illustration-baking.webp",
+    "half": "/media/basket/illustration-baking.half.webp"
+  },
+  "basket/illustration-boat": {
+    "px": [
+      836,
+      184
+    ],
+    "alpha": true,
+    "src": "/media/basket/illustration-boat.webp",
+    "half": "/media/basket/illustration-boat.half.webp"
+  },
+  "basket/illustration-ingredients": {
+    "px": [
+      1830,
+      1260
+    ],
+    "alpha": true,
+    "src": "/media/basket/illustration-ingredients.webp",
+    "half": "/media/basket/illustration-ingredients.half.webp"
+  },
+  "basket/illustration-mountain": {
     "px": [
       1046,
       574
     ],
     "alpha": true,
-    "src": "/media/basket/frame-12446.webp",
-    "half": "/media/basket/frame-12446.half.webp"
+    "src": "/media/basket/illustration-mountain.webp",
+    "half": "/media/basket/illustration-mountain.half.webp"
   },
-  "basket/frame-12447": {
+  "basket/illustration-picnic": {
     "px": [
-      593,
-      738
+      700,
+      480
     ],
     "alpha": true,
-    "src": "/media/basket/frame-12447.webp",
-    "half": "/media/basket/frame-12447.half.webp"
+    "src": "/media/basket/illustration-picnic.webp",
+    "half": "/media/basket/illustration-picnic.half.webp"
   },
-  "basket/screen": {
+  "basket/illustration-slope": {
+    "px": [
+      2048,
+      1092
+    ],
+    "alpha": true,
+    "src": "/media/basket/illustration-slope.webp",
+    "half": "/media/basket/illustration-slope.half.webp"
+  },
+  "basket/illustration-village": {
+    "px": [
+      1230,
+      2048
+    ],
+    "alpha": true,
+    "src": "/media/basket/illustration-village.webp",
+    "half": "/media/basket/illustration-village.half.webp"
+  },
+  "basket/illustration-winter": {
+    "px": [
+      1230,
+      2048
+    ],
+    "alpha": true,
+    "src": "/media/basket/illustration-winter.webp",
+    "half": "/media/basket/illustration-winter.half.webp"
+  },
+  "basket/mobile-product": {
     "px": [
       596,
       788
     ],
     "alpha": true,
-    "src": "/media/basket/screen.webp",
-    "half": "/media/basket/screen.half.webp"
+    "src": "/media/basket/mobile-product.webp",
+    "half": "/media/basket/mobile-product.half.webp"
+  },
+  "basket/product-apple-flour": {
+    "px": [
+      886,
+      886
+    ],
+    "alpha": true,
+    "src": "/media/basket/product-apple-flour.webp",
+    "half": "/media/basket/product-apple-flour.half.webp"
+  },
+  "basket/product-card": {
+    "px": [
+      593,
+      738
+    ],
+    "alpha": true,
+    "src": "/media/basket/product-card.webp",
+    "half": "/media/basket/product-card.half.webp"
+  },
+  "basket/product-crackers": {
+    "px": [
+      886,
+      886
+    ],
+    "alpha": true,
+    "src": "/media/basket/product-crackers.webp",
+    "half": "/media/basket/product-crackers.half.webp"
+  },
+  "basket/product-hazelnut": {
+    "px": [
+      886,
+      886
+    ],
+    "alpha": true,
+    "src": "/media/basket/product-hazelnut.webp",
+    "half": "/media/basket/product-hazelnut.half.webp"
+  },
+  "basket/product-page": {
+    "px": [
+      2048,
+      1063
+    ],
+    "alpha": true,
+    "src": "/media/basket/product-page.webp",
+    "half": "/media/basket/product-page.half.webp"
+  },
+  "basket/product-pumpkin-bars": {
+    "px": [
+      886,
+      886
+    ],
+    "alpha": true,
+    "src": "/media/basket/product-pumpkin-bars.webp",
+    "half": "/media/basket/product-pumpkin-bars.half.webp"
+  },
+  "basket/shop-grid": {
+    "px": [
+      1472,
+      1498
+    ],
+    "alpha": true,
+    "src": "/media/basket/shop-grid.webp",
+    "half": "/media/basket/shop-grid.half.webp"
   },
   "bcms/brand-glow": {
     "px": [
-      3095,
-      2423
+      2048,
+      1603
     ],
     "alpha": true,
     "src": "/media/bcms/brand-glow.webp",
@@ -109,8 +253,8 @@
   },
   "bcms/dashboard": {
     "px": [
-      2880,
-      1920
+      2048,
+      1365
     ],
     "alpha": false,
     "src": "/media/bcms/dashboard.webp",
@@ -190,8 +334,8 @@
   },
   "bcms/kanban": {
     "px": [
-      2880,
-      1920
+      2048,
+      1365
     ],
     "alpha": false,
     "src": "/media/bcms/kanban.webp",
@@ -271,8 +415,8 @@
   },
   "bcms/shot-docs": {
     "px": [
-      2102,
-      1614
+      2048,
+      1573
     ],
     "alpha": false,
     "src": "/media/bcms/shot-docs.webp",
@@ -289,8 +433,8 @@
   },
   "bcms/shot-marketing": {
     "px": [
-      2966,
-      1700
+      2048,
+      1174
     ],
     "alpha": false,
     "src": "/media/bcms/shot-marketing.webp",
@@ -400,7 +544,7 @@
       1442,
       1462
     ],
-    "alpha": true,
+    "alpha": false,
     "src": "/media/brand/glass-mark-model.webp",
     "half": "/media/brand/glass-mark-model.half.webp"
   },
@@ -413,6 +557,15 @@
     "src": "/media/brand/glass-mark.webp",
     "half": "/media/brand/glass-mark.half.webp"
   },
+  "getcv/application-preview": {
+    "px": [
+      2048,
+      1742
+    ],
+    "alpha": true,
+    "src": "/media/getcv/application-preview.webp",
+    "half": "/media/getcv/application-preview.half.webp"
+  },
   "getcv/basic-info": {
     "px": [
       559,
@@ -421,6 +574,51 @@
     "alpha": true,
     "src": "/media/getcv/basic-info.webp",
     "half": "/media/getcv/basic-info.half.webp"
+  },
+  "getcv/dashboard": {
+    "px": [
+      1736,
+      1210
+    ],
+    "alpha": true,
+    "src": "/media/getcv/dashboard.webp",
+    "half": "/media/getcv/dashboard.half.webp"
+  },
+  "getcv/greeting": {
+    "px": [
+      470,
+      86
+    ],
+    "alpha": true,
+    "src": "/media/getcv/greeting.webp",
+    "half": "/media/getcv/greeting.half.webp"
+  },
+  "getcv/illustration-card": {
+    "px": [
+      728,
+      997
+    ],
+    "alpha": true,
+    "src": "/media/getcv/illustration-card.webp",
+    "half": "/media/getcv/illustration-card.half.webp"
+  },
+  "getcv/illustration-couple": {
+    "px": [
+      1050,
+      1400
+    ],
+    "alpha": true,
+    "src": "/media/getcv/illustration-couple.webp",
+    "half": "/media/getcv/illustration-couple.half.webp"
+  },
+  "getcv/illustration-hand": {
+    "px": [
+      1484,
+      1980
+    ],
+    "alpha": true,
+    "src": "/media/getcv/illustration-hand.webp",
+    "half": "/media/getcv/illustration-hand.half.webp"
   },
   "getcv/illustration": {
     "px": [
@@ -431,6 +629,114 @@
     "src": "/media/getcv/illustration.webp",
     "half": "/media/getcv/illustration.half.webp"
   },
+  "getcv/invite-modal": {
+    "px": [
+      2048,
+      1456
+    ],
+    "alpha": true,
+    "src": "/media/getcv/invite-modal.webp",
+    "half": "/media/getcv/invite-modal.half.webp"
+  },
+  "getcv/job-candidate-prompt": {
+    "px": [
+      2048,
+      1456
+    ],
+    "alpha": true,
+    "src": "/media/getcv/job-candidate-prompt.webp",
+    "half": "/media/getcv/job-candidate-prompt.half.webp"
+  },
+  "getcv/job-created": {
+    "px": [
+      2048,
+      1456
+    ],
+    "alpha": true,
+    "src": "/media/getcv/job-created.webp",
+    "half": "/media/getcv/job-created.half.webp"
+  },
+  "getcv/job-description": {
+    "px": [
+      2048,
+      1456
+    ],
+    "alpha": true,
+    "src": "/media/getcv/job-description.webp",
+    "half": "/media/getcv/job-description.half.webp"
+  },
+  "getcv/job-list": {
+    "px": [
+      1242,
+      774
+    ],
+    "alpha": true,
+    "src": "/media/getcv/job-list.webp",
+    "half": "/media/getcv/job-list.half.webp"
+  },
+  "getcv/job-preview": {
+    "px": [
+      2048,
+      1124
+    ],
+    "alpha": true,
+    "src": "/media/getcv/job-preview.webp",
+    "half": "/media/getcv/job-preview.half.webp"
+  },
+  "getcv/job-questions": {
+    "px": [
+      2048,
+      1456
+    ],
+    "alpha": true,
+    "src": "/media/getcv/job-questions.webp",
+    "half": "/media/getcv/job-questions.half.webp"
+  },
+  "getcv/mobile-dashboard": {
+    "px": [
+      750,
+      1624
+    ],
+    "alpha": true,
+    "src": "/media/getcv/mobile-dashboard.webp",
+    "half": "/media/getcv/mobile-dashboard.half.webp"
+  },
+  "getcv/mobile-forgot-password": {
+    "px": [
+      750,
+      1624
+    ],
+    "alpha": true,
+    "src": "/media/getcv/mobile-forgot-password.webp",
+    "half": "/media/getcv/mobile-forgot-password.half.webp"
+  },
+  "getcv/mobile-login": {
+    "px": [
+      750,
+      1624
+    ],
+    "alpha": true,
+    "src": "/media/getcv/mobile-login.webp",
+    "half": "/media/getcv/mobile-login.half.webp"
+  },
+  "getcv/mobile-menu": {
+    "px": [
+      750,
+      1624
+    ],
+    "alpha": true,
+    "src": "/media/getcv/mobile-menu.webp",
+    "half": "/media/getcv/mobile-menu.half.webp"
+  },
+  "getcv/mobile-verification": {
+    "px": [
+      750,
+      1624
+    ],
+    "alpha": true,
+    "src": "/media/getcv/mobile-verification.webp",
+    "half": "/media/getcv/mobile-verification.half.webp"
+  },
   "getcv/phone": {
     "px": [
       513,
@@ -439,6 +745,42 @@
     "alpha": true,
     "src": "/media/getcv/phone.webp",
     "half": "/media/getcv/phone.half.webp"
+  },
+  "getcv/sign-off": {
+    "px": [
+      359,
+      18
+    ],
+    "alpha": true,
+    "src": "/media/getcv/sign-off.webp",
+    "half": "/media/getcv/sign-off.half.webp"
+  },
+  "getcv/stat-candidates": {
+    "px": [
+      280,
+      380
+    ],
+    "alpha": true,
+    "src": "/media/getcv/stat-candidates.webp",
+    "half": "/media/getcv/stat-candidates.half.webp"
+  },
+  "getcv/stat-filled": {
+    "px": [
+      280,
+      380
+    ],
+    "alpha": true,
+    "src": "/media/getcv/stat-filled.webp",
+    "half": "/media/getcv/stat-filled.half.webp"
+  },
+  "getcv/stat-jobs": {
+    "px": [
+      280,
+      380
+    ],
+    "alpha": true,
+    "src": "/media/getcv/stat-jobs.webp",
+    "half": "/media/getcv/stat-jobs.half.webp"
   },
   "getcv/stats": {
     "px": [
@@ -449,41 +791,104 @@
     "src": "/media/getcv/stats.webp",
     "half": "/media/getcv/stats.half.webp"
   },
-  "heroic-rankings/badge": {
+  "getcv/summary-copy": {
+    "px": [
+      1163,
+      847
+    ],
+    "alpha": true,
+    "src": "/media/getcv/summary-copy.webp",
+    "half": "/media/getcv/summary-copy.half.webp"
+  },
+  "getcv/team-grid": {
+    "px": [
+      1242,
+      1054
+    ],
+    "alpha": true,
+    "src": "/media/getcv/team-grid.webp",
+    "half": "/media/getcv/team-grid.half.webp"
+  },
+  "heroic-rankings/badge-google": {
+    "px": [
+      632,
+      268
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/badge-google.webp",
+    "half": "/media/heroic-rankings/badge-google.half.webp"
+  },
+  "heroic-rankings/badge-hubspot": {
+    "px": [
+      632,
+      268
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/badge-hubspot.webp",
+    "half": "/media/heroic-rankings/badge-hubspot.half.webp"
+  },
+  "heroic-rankings/badge-nps": {
     "px": [
       440,
       432
     ],
     "alpha": true,
-    "src": "/media/heroic-rankings/badge.webp",
-    "half": "/media/heroic-rankings/badge.half.webp"
+    "src": "/media/heroic-rankings/badge-nps.webp",
+    "half": "/media/heroic-rankings/badge-nps.half.webp"
   },
-  "heroic-rankings/frame-150": {
+  "heroic-rankings/brands": {
+    "px": [
+      2048,
+      1128
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/brands.webp",
+    "half": "/media/heroic-rankings/brands.half.webp"
+  },
+  "heroic-rankings/bust": {
+    "px": [
+      1682,
+      2048
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/bust.webp",
+    "half": "/media/heroic-rankings/bust.half.webp"
+  },
+  "heroic-rankings/card-support": {
+    "px": [
+      768,
+      422
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/card-support.webp",
+    "half": "/media/heroic-rankings/card-support.half.webp"
+  },
+  "heroic-rankings/certifications": {
+    "px": [
+      2048,
+      785
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/certifications.webp",
+    "half": "/media/heroic-rankings/certifications.half.webp"
+  },
+  "heroic-rankings/chart-rankings": {
     "px": [
       882,
       672
     ],
     "alpha": true,
-    "src": "/media/heroic-rankings/frame-150.webp",
-    "half": "/media/heroic-rankings/frame-150.half.webp"
+    "src": "/media/heroic-rankings/chart-rankings.webp",
+    "half": "/media/heroic-rankings/chart-rankings.half.webp"
   },
-  "heroic-rankings/group-hand": {
+  "heroic-rankings/form-partnership": {
     "px": [
-      386,
-      810
+      654,
+      788
     ],
     "alpha": true,
-    "src": "/media/heroic-rankings/group-hand.webp",
-    "half": "/media/heroic-rankings/group-hand.half.webp"
-  },
-  "heroic-rankings/group-statue": {
-    "px": [
-      805,
-      632
-    ],
-    "alpha": true,
-    "src": "/media/heroic-rankings/group-statue.webp",
-    "half": "/media/heroic-rankings/group-statue.half.webp"
+    "src": "/media/heroic-rankings/form-partnership.webp",
+    "half": "/media/heroic-rankings/form-partnership.half.webp"
   },
   "heroic-rankings/growth": {
     "px": [
@@ -503,6 +908,33 @@
     "src": "/media/heroic-rankings/hand.webp",
     "half": "/media/heroic-rankings/hand.half.webp"
   },
+  "heroic-rankings/hands-growth": {
+    "px": [
+      805,
+      632
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/hands-growth.webp",
+    "half": "/media/heroic-rankings/hands-growth.half.webp"
+  },
+  "heroic-rankings/hands-raised": {
+    "px": [
+      1931,
+      2048
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/hands-raised.webp",
+    "half": "/media/heroic-rankings/hands-raised.half.webp"
+  },
+  "heroic-rankings/hands-reach": {
+    "px": [
+      1224,
+      1048
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/hands-reach.webp",
+    "half": "/media/heroic-rankings/hands-reach.half.webp"
+  },
   "heroic-rankings/laptop": {
     "px": [
       964,
@@ -512,14 +944,50 @@
     "src": "/media/heroic-rankings/laptop.webp",
     "half": "/media/heroic-rankings/laptop.half.webp"
   },
-  "heroic-rankings/stats": {
+  "heroic-rankings/partner-cloudways": {
     "px": [
-      768,
-      422
+      384,
+      482
     ],
     "alpha": true,
-    "src": "/media/heroic-rankings/stats.webp",
-    "half": "/media/heroic-rankings/stats.half.webp"
+    "src": "/media/heroic-rankings/partner-cloudways.webp",
+    "half": "/media/heroic-rankings/partner-cloudways.half.webp"
+  },
+  "heroic-rankings/partner-entrepreneur": {
+    "px": [
+      384,
+      482
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/partner-entrepreneur.webp",
+    "half": "/media/heroic-rankings/partner-entrepreneur.half.webp"
+  },
+  "heroic-rankings/partner-envato": {
+    "px": [
+      384,
+      482
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/partner-envato.webp",
+    "half": "/media/heroic-rankings/partner-envato.half.webp"
+  },
+  "heroic-rankings/partner-serpstat": {
+    "px": [
+      384,
+      482
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/partner-serpstat.webp",
+    "half": "/media/heroic-rankings/partner-serpstat.half.webp"
+  },
+  "heroic-rankings/services-grid": {
+    "px": [
+      2048,
+      811
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/services-grid.webp",
+    "half": "/media/heroic-rankings/services-grid.half.webp"
   },
   "heroic-rankings/statue-card": {
     "px": [
@@ -530,6 +998,24 @@
     "src": "/media/heroic-rankings/statue-card.webp",
     "half": "/media/heroic-rankings/statue-card.half.webp"
   },
+  "heroic-rankings/statue-pair": {
+    "px": [
+      386,
+      810
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/statue-pair.webp",
+    "half": "/media/heroic-rankings/statue-pair.half.webp"
+  },
+  "heroic-rankings/statue-stats": {
+    "px": [
+      654,
+      560
+    ],
+    "alpha": true,
+    "src": "/media/heroic-rankings/statue-stats.webp",
+    "half": "/media/heroic-rankings/statue-stats.half.webp"
+  },
   "heroic-rankings/statue": {
     "px": [
       774,
@@ -539,14 +1025,122 @@
     "src": "/media/heroic-rankings/statue.webp",
     "half": "/media/heroic-rankings/statue.half.webp"
   },
+  "kooper/badge-chapters": {
+    "px": [
+      1044,
+      240
+    ],
+    "alpha": true,
+    "src": "/media/kooper/badge-chapters.webp",
+    "half": "/media/kooper/badge-chapters.half.webp"
+  },
+  "kooper/badge-linguist": {
+    "px": [
+      1044,
+      240
+    ],
+    "alpha": true,
+    "src": "/media/kooper/badge-linguist.webp",
+    "half": "/media/kooper/badge-linguist.half.webp"
+  },
+  "kooper/badge-reader": {
+    "px": [
+      1044,
+      240
+    ],
+    "alpha": true,
+    "src": "/media/kooper/badge-reader.webp",
+    "half": "/media/kooper/badge-reader.half.webp"
+  },
+  "kooper/badge-speed-reader": {
+    "px": [
+      1044,
+      240
+    ],
+    "alpha": true,
+    "src": "/media/kooper/badge-speed-reader.webp",
+    "half": "/media/kooper/badge-speed-reader.half.webp"
+  },
+  "kooper/book-big-bed": {
+    "px": [
+      385,
+      520
+    ],
+    "alpha": true,
+    "src": "/media/kooper/book-big-bed.webp",
+    "half": "/media/kooper/book-big-bed.half.webp"
+  },
   "kooper/book-cards": {
     "px": [
-      2794,
-      852
+      2048,
+      625
     ],
     "alpha": true,
     "src": "/media/kooper/book-cards.webp",
     "half": "/media/kooper/book-cards.half.webp"
+  },
+  "kooper/book-girl-who-said-no": {
+    "px": [
+      736,
+      944
+    ],
+    "alpha": true,
+    "src": "/media/kooper/book-girl-who-said-no.webp",
+    "half": "/media/kooper/book-girl-who-said-no.half.webp"
+  },
+  "kooper/book-grid": {
+    "px": [
+      1536,
+      1520
+    ],
+    "alpha": true,
+    "src": "/media/kooper/book-grid.webp",
+    "half": "/media/kooper/book-grid.half.webp"
+  },
+  "kooper/book-shelf": {
+    "px": [
+      2048,
+      844
+    ],
+    "alpha": true,
+    "src": "/media/kooper/book-shelf.webp",
+    "half": "/media/kooper/book-shelf.half.webp"
+  },
+  "kooper/book-to-the-sea": {
+    "px": [
+      385,
+      520
+    ],
+    "alpha": true,
+    "src": "/media/kooper/book-to-the-sea.webp",
+    "half": "/media/kooper/book-to-the-sea.half.webp"
+  },
+  "kooper/book-wild-child": {
+    "px": [
+      385,
+      520
+    ],
+    "alpha": true,
+    "src": "/media/kooper/book-wild-child.webp",
+    "half": "/media/kooper/book-wild-child.half.webp"
+  },
+  "kooper/browse-books": {
+    "px": [
+      330,
+      88
+    ],
+    "alpha": true,
+    "src": "/media/kooper/browse-books.webp",
+    "half": "/media/kooper/browse-books.half.webp"
+  },
+  "kooper/continue-reading": {
+    "px": [
+      676,
+      440
+    ],
+    "alpha": true,
+    "src": "/media/kooper/continue-reading.webp",
+    "half": "/media/kooper/continue-reading.half.webp"
   },
   "kooper/daily-challenges": {
     "px": [
@@ -556,6 +1150,15 @@
     "alpha": true,
     "src": "/media/kooper/daily-challenges.webp",
     "half": "/media/kooper/daily-challenges.half.webp"
+  },
+  "kooper/illustration-sack": {
+    "px": [
+      294,
+      296
+    ],
+    "alpha": true,
+    "src": "/media/kooper/illustration-sack.webp",
+    "half": "/media/kooper/illustration-sack.half.webp"
   },
   "kooper/joystick": {
     "px": [
@@ -568,16 +1171,97 @@
   },
   "kooper/level-up": {
     "px": [
-      552,
-      204
+      1044,
+      240
     ],
     "alpha": true,
     "src": "/media/kooper/level-up.webp",
     "half": "/media/kooper/level-up.half.webp"
   },
+  "kooper/menu-profile": {
+    "px": [
+      528,
+      1150
+    ],
+    "alpha": true,
+    "src": "/media/kooper/menu-profile.webp",
+    "half": "/media/kooper/menu-profile.half.webp"
+  },
+  "kooper/tab-bar": {
+    "px": [
+      764,
+      88
+    ],
+    "alpha": true,
+    "src": "/media/kooper/tab-bar.webp",
+    "half": "/media/kooper/tab-bar.half.webp"
+  },
+  "kooper/tablet-end-dark": {
+    "px": [
+      1431,
+      2048
+    ],
+    "alpha": true,
+    "src": "/media/kooper/tablet-end-dark.webp",
+    "half": "/media/kooper/tablet-end-dark.half.webp"
+  },
+  "kooper/tablet-quiz-question": {
+    "px": [
+      1431,
+      2048
+    ],
+    "alpha": true,
+    "src": "/media/kooper/tablet-quiz-question.webp",
+    "half": "/media/kooper/tablet-quiz-question.half.webp"
+  },
+  "kooper/tablet-quiz-start": {
+    "px": [
+      1431,
+      2048
+    ],
+    "alpha": true,
+    "src": "/media/kooper/tablet-quiz-start.webp",
+    "half": "/media/kooper/tablet-quiz-start.half.webp"
+  },
+  "kooper/tablet-reader-dark": {
+    "px": [
+      1431,
+      2048
+    ],
+    "alpha": true,
+    "src": "/media/kooper/tablet-reader-dark.webp",
+    "half": "/media/kooper/tablet-reader-dark.half.webp"
+  },
+  "kooper/tablet-reader": {
+    "px": [
+      1431,
+      2048
+    ],
+    "alpha": true,
+    "src": "/media/kooper/tablet-reader.webp",
+    "half": "/media/kooper/tablet-reader.half.webp"
+  },
+  "kooper/tablet-review": {
+    "px": [
+      1431,
+      2048
+    ],
+    "alpha": true,
+    "src": "/media/kooper/tablet-review.webp",
+    "half": "/media/kooper/tablet-review.half.webp"
+  },
+  "kooper/top-bar": {
+    "px": [
+      1812,
+      334
+    ],
+    "alpha": true,
+    "src": "/media/kooper/top-bar.webp",
+    "half": "/media/kooper/top-bar.half.webp"
+  },
   "milmedic/brand-palette": {
     "px": [
-      904,
+      956,
       466
     ],
     "alpha": true,
@@ -703,8 +1387,8 @@
   },
   "milmedic/menu-conditions": {
     "px": [
-      2268,
-      888
+      2048,
+      802
     ],
     "alpha": true,
     "src": "/media/milmedic/menu-conditions.webp",
@@ -721,8 +1405,8 @@
   },
   "milmedic/menu-services": {
     "px": [
-      2168,
-      1122
+      2048,
+      1060
     ],
     "alpha": true,
     "src": "/media/milmedic/menu-services.webp",
@@ -784,8 +1468,8 @@
   },
   "milmedic/why-choose": {
     "px": [
-      2640,
-      1228
+      2048,
+      953
     ],
     "alpha": true,
     "src": "/media/milmedic/why-choose.webp",
@@ -800,14 +1484,437 @@
     "src": "/media/note/paper.webp",
     "half": "/media/note/paper.half.webp"
   },
-  "other/placeholder": {
+  "other/axilis-big-leagues": {
     "px": [
-      1120,
-      770
+      2048,
+      1416
     ],
-    "alpha": false,
-    "src": "/media/other/placeholder.webp",
-    "half": "/media/other/placeholder.half.webp"
+    "alpha": true,
+    "src": "/media/other/axilis-big-leagues.webp",
+    "half": "/media/other/axilis-big-leagues.half.webp"
+  },
+  "other/axilis-blog": {
+    "px": [
+      1886,
+      1770
+    ],
+    "alpha": true,
+    "src": "/media/other/axilis-blog.webp",
+    "half": "/media/other/axilis-blog.half.webp"
+  },
+  "other/axilis-hero": {
+    "px": [
+      2048,
+      1497
+    ],
+    "alpha": true,
+    "src": "/media/other/axilis-hero.webp",
+    "half": "/media/other/axilis-hero.half.webp"
+  },
+  "other/axilis-locations": {
+    "px": [
+      1712,
+      1366
+    ],
+    "alpha": true,
+    "src": "/media/other/axilis-locations.webp",
+    "half": "/media/other/axilis-locations.half.webp"
+  },
+  "other/axilis-office": {
+    "px": [
+      2048,
+      1706
+    ],
+    "alpha": true,
+    "src": "/media/other/axilis-office.webp",
+    "half": "/media/other/axilis-office.half.webp"
+  },
+  "other/axilis-team-spirit": {
+    "px": [
+      1478,
+      1168
+    ],
+    "alpha": true,
+    "src": "/media/other/axilis-team-spirit.webp",
+    "half": "/media/other/axilis-team-spirit.half.webp"
+  },
+  "other/axilis-team": {
+    "px": [
+      2048,
+      1928
+    ],
+    "alpha": true,
+    "src": "/media/other/axilis-team.webp",
+    "half": "/media/other/axilis-team.half.webp"
+  },
+  "other/closet-brands": {
+    "px": [
+      1232,
+      1005
+    ],
+    "alpha": true,
+    "src": "/media/other/closet-brands.webp",
+    "half": "/media/other/closet-brands.half.webp"
+  },
+  "other/closet-catalog": {
+    "px": [
+      1732,
+      852
+    ],
+    "alpha": true,
+    "src": "/media/other/closet-catalog.webp",
+    "half": "/media/other/closet-catalog.half.webp"
+  },
+  "other/closet-home": {
+    "px": [
+      1972,
+      1398
+    ],
+    "alpha": true,
+    "src": "/media/other/closet-home.webp",
+    "half": "/media/other/closet-home.half.webp"
+  },
+  "other/closet-item-details": {
+    "px": [
+      1769,
+      2048
+    ],
+    "alpha": true,
+    "src": "/media/other/closet-item-details.webp",
+    "half": "/media/other/closet-item-details.half.webp"
+  },
+  "other/closet-pair-card": {
+    "px": [
+      640,
+      808
+    ],
+    "alpha": true,
+    "src": "/media/other/closet-pair-card.webp",
+    "half": "/media/other/closet-pair-card.half.webp"
+  },
+  "other/closet-swipe-pair": {
+    "px": [
+      1154,
+      942
+    ],
+    "alpha": true,
+    "src": "/media/other/closet-swipe-pair.webp",
+    "half": "/media/other/closet-swipe-pair.half.webp"
+  },
+  "other/closet-swipe": {
+    "px": [
+      1814,
+      1518
+    ],
+    "alpha": true,
+    "src": "/media/other/closet-swipe.webp",
+    "half": "/media/other/closet-swipe.half.webp"
+  },
+  "other/happening-dna": {
+    "px": [
+      1858,
+      1466
+    ],
+    "alpha": true,
+    "src": "/media/other/happening-dna.webp",
+    "half": "/media/other/happening-dna.half.webp"
+  },
+  "other/happening-hero": {
+    "px": [
+      1438,
+      1292
+    ],
+    "alpha": true,
+    "src": "/media/other/happening-hero.webp",
+    "half": "/media/other/happening-hero.half.webp"
+  },
+  "other/happening-job": {
+    "px": [
+      1816,
+      1256
+    ],
+    "alpha": true,
+    "src": "/media/other/happening-job.webp",
+    "half": "/media/other/happening-job.half.webp"
+  },
+  "other/happening-remote": {
+    "px": [
+      2038,
+      1444
+    ],
+    "alpha": true,
+    "src": "/media/other/happening-remote.webp",
+    "half": "/media/other/happening-remote.half.webp"
+  },
+  "other/happening-scale": {
+    "px": [
+      1354,
+      884
+    ],
+    "alpha": true,
+    "src": "/media/other/happening-scale.webp",
+    "half": "/media/other/happening-scale.half.webp"
+  },
+  "other/happening-search": {
+    "px": [
+      2016,
+      1370
+    ],
+    "alpha": true,
+    "src": "/media/other/happening-search.webp",
+    "half": "/media/other/happening-search.half.webp"
+  },
+  "other/happening-stereotypes": {
+    "px": [
+      1636,
+      1292
+    ],
+    "alpha": true,
+    "src": "/media/other/happening-stereotypes.webp",
+    "half": "/media/other/happening-stereotypes.half.webp"
+  },
+  "other/happening-stories": {
+    "px": [
+      2048,
+      1514
+    ],
+    "alpha": true,
+    "src": "/media/other/happening-stories.webp",
+    "half": "/media/other/happening-stories.half.webp"
+  },
+  "other/happening-team": {
+    "px": [
+      1522,
+      1016
+    ],
+    "alpha": true,
+    "src": "/media/other/happening-team.webp",
+    "half": "/media/other/happening-team.half.webp"
+  },
+  "other/natuera-card-oil": {
+    "px": [
+      620,
+      1000
+    ],
+    "alpha": true,
+    "src": "/media/other/natuera-card-oil.webp",
+    "half": "/media/other/natuera-card-oil.half.webp"
+  },
+  "other/natuera-card-rub": {
+    "px": [
+      620,
+      1000
+    ],
+    "alpha": true,
+    "src": "/media/other/natuera-card-rub.webp",
+    "half": "/media/other/natuera-card-rub.half.webp"
+  },
+  "other/natuera-cart-modal": {
+    "px": [
+      2048,
+      1550
+    ],
+    "alpha": true,
+    "src": "/media/other/natuera-cart-modal.webp",
+    "half": "/media/other/natuera-cart-modal.half.webp"
+  },
+  "other/natuera-cart": {
+    "px": [
+      2048,
+      1513
+    ],
+    "alpha": true,
+    "src": "/media/other/natuera-cart.webp",
+    "half": "/media/other/natuera-cart.half.webp"
+  },
+  "other/natuera-harmony": {
+    "px": [
+      1606,
+      1138
+    ],
+    "alpha": true,
+    "src": "/media/other/natuera-harmony.webp",
+    "half": "/media/other/natuera-harmony.half.webp"
+  },
+  "other/natuera-hero": {
+    "px": [
+      1688,
+      1050
+    ],
+    "alpha": true,
+    "src": "/media/other/natuera-hero.webp",
+    "half": "/media/other/natuera-hero.half.webp"
+  },
+  "other/natuera-newsletter": {
+    "px": [
+      1676,
+      938
+    ],
+    "alpha": true,
+    "src": "/media/other/natuera-newsletter.webp",
+    "half": "/media/other/natuera-newsletter.half.webp"
+  },
+  "other/natuera-plant-based": {
+    "px": [
+      1930,
+      1208
+    ],
+    "alpha": true,
+    "src": "/media/other/natuera-plant-based.webp",
+    "half": "/media/other/natuera-plant-based.half.webp"
+  },
+  "other/natuera-product": {
+    "px": [
+      1438,
+      1290
+    ],
+    "alpha": true,
+    "src": "/media/other/natuera-product.webp",
+    "half": "/media/other/natuera-product.half.webp"
+  },
+  "other/natuera-shop": {
+    "px": [
+      1692,
+      1028
+    ],
+    "alpha": true,
+    "src": "/media/other/natuera-shop.webp",
+    "half": "/media/other/natuera-shop.half.webp"
+  },
+  "other/portfolio-cards": {
+    "px": [
+      2048,
+      1270
+    ],
+    "alpha": true,
+    "src": "/media/other/portfolio-cards.webp",
+    "half": "/media/other/portfolio-cards.half.webp"
+  },
+  "other/portfolio-case": {
+    "px": [
+      2048,
+      1128
+    ],
+    "alpha": true,
+    "src": "/media/other/portfolio-case.webp",
+    "half": "/media/other/portfolio-case.half.webp"
+  },
+  "other/portfolio-grid": {
+    "px": [
+      962,
+      922
+    ],
+    "alpha": true,
+    "src": "/media/other/portfolio-grid.webp",
+    "half": "/media/other/portfolio-grid.half.webp"
+  },
+  "other/saturized-404": {
+    "px": [
+      2048,
+      1281
+    ],
+    "alpha": true,
+    "src": "/media/other/saturized-404.webp",
+    "half": "/media/other/saturized-404.half.webp"
+  },
+  "other/saturized-hero": {
+    "px": [
+      2048,
+      1280
+    ],
+    "alpha": true,
+    "src": "/media/other/saturized-hero.webp",
+    "half": "/media/other/saturized-hero.half.webp"
+  },
+  "other/workgeist-buttons": {
+    "px": [
+      1616,
+      640
+    ],
+    "alpha": true,
+    "src": "/media/other/workgeist-buttons.webp",
+    "half": "/media/other/workgeist-buttons.half.webp"
+  },
+  "other/workgeist-killing-time": {
+    "px": [
+      1314,
+      1160
+    ],
+    "alpha": true,
+    "src": "/media/other/workgeist-killing-time.webp",
+    "half": "/media/other/workgeist-killing-time.half.webp"
+  },
+  "other/workgeist-paradox": {
+    "px": [
+      2048,
+      1207
+    ],
+    "alpha": true,
+    "src": "/media/other/workgeist-paradox.webp",
+    "half": "/media/other/workgeist-paradox.half.webp"
+  },
+  "other/workgeist-pattern": {
+    "px": [
+      1093,
+      1038
+    ],
+    "alpha": true,
+    "src": "/media/other/workgeist-pattern.webp",
+    "half": "/media/other/workgeist-pattern.half.webp"
+  },
+  "other/workgeist-portraits": {
+    "px": [
+      2048,
+      1218
+    ],
+    "alpha": true,
+    "src": "/media/other/workgeist-portraits.webp",
+    "half": "/media/other/workgeist-portraits.half.webp"
+  },
+  "other/workgeist-report-card": {
+    "px": [
+      2048,
+      1151
+    ],
+    "alpha": true,
+    "src": "/media/other/workgeist-report-card.webp",
+    "half": "/media/other/workgeist-report-card.half.webp"
+  },
+  "other/workgeist-reports": {
+    "px": [
+      2048,
+      696
+    ],
+    "alpha": true,
+    "src": "/media/other/workgeist-reports.webp",
+    "half": "/media/other/workgeist-reports.half.webp"
+  },
+  "other/workgeist-shapes": {
+    "px": [
+      2048,
+      465
+    ],
+    "alpha": true,
+    "src": "/media/other/workgeist-shapes.webp",
+    "half": "/media/other/workgeist-shapes.half.webp"
+  },
+  "other/workgeist-subscribe": {
+    "px": [
+      2048,
+      676
+    ],
+    "alpha": true,
+    "src": "/media/other/workgeist-subscribe.webp",
+    "half": "/media/other/workgeist-subscribe.half.webp"
+  },
+  "other/workgeist-time": {
+    "px": [
+      1616,
+      896
+    ],
+    "alpha": true,
+    "src": "/media/other/workgeist-time.webp",
+    "half": "/media/other/workgeist-time.half.webp"
   },
   "pov/app-clip": {
     "px": [
@@ -946,8 +2053,8 @@
   },
   "pyure/glass-cylinder": {
     "px": [
-      6428,
-      3778
+      2048,
+      1204
     ],
     "alpha": true,
     "src": "/media/pyure/glass-cylinder.webp",
@@ -955,8 +2062,8 @@
   },
   "pyure/glass-loop": {
     "px": [
-      2916,
-      1512
+      2048,
+      1062
     ],
     "alpha": true,
     "src": "/media/pyure/glass-loop.webp",
@@ -982,8 +2089,8 @@
   },
   "pyure/glass-terrariums": {
     "px": [
-      2840,
-      1400
+      2048,
+      1010
     ],
     "alpha": true,
     "src": "/media/pyure/glass-terrariums.webp",
@@ -1000,8 +2107,8 @@
   },
   "pyure/hero-copy": {
     "px": [
-      2840,
-      1400
+      2048,
+      1010
     ],
     "alpha": true,
     "src": "/media/pyure/hero-copy.webp",
@@ -1045,8 +2152,8 @@
   },
   "pyure/moss-rock": {
     "px": [
-      2202,
-      2066
+      2048,
+      1922
     ],
     "alpha": true,
     "src": "/media/pyure/moss-rock.webp",
@@ -1115,6 +2222,15 @@
     "src": "/media/videotoflip/corners.webp",
     "half": "/media/videotoflip/corners.half.webp"
   },
+  "videotoflip/cover-colors": {
+    "px": [
+      992,
+      264
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/cover-colors.webp",
+    "half": "/media/videotoflip/cover-colors.half.webp"
+  },
   "videotoflip/cover-modal": {
     "px": [
       1152,
@@ -1135,12 +2251,57 @@
   },
   "videotoflip/details": {
     "px": [
-      2240,
-      1240
+      2048,
+      1134
     ],
     "alpha": true,
     "src": "/media/videotoflip/details.webp",
     "half": "/media/videotoflip/details.half.webp"
+  },
+  "videotoflip/feature-custom-options": {
+    "px": [
+      1150,
+      250
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/feature-custom-options.webp",
+    "half": "/media/videotoflip/feature-custom-options.half.webp"
+  },
+  "videotoflip/feature-digital-mockup": {
+    "px": [
+      1150,
+      200
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/feature-digital-mockup.webp",
+    "half": "/media/videotoflip/feature-digital-mockup.half.webp"
+  },
+  "videotoflip/feature-flipbook-maker": {
+    "px": [
+      1150,
+      200
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/feature-flipbook-maker.webp",
+    "half": "/media/videotoflip/feature-flipbook-maker.half.webp"
+  },
+  "videotoflip/feature-occasion": {
+    "px": [
+      650,
+      196
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/feature-occasion.webp",
+    "half": "/media/videotoflip/feature-occasion.half.webp"
+  },
+  "videotoflip/feature-print": {
+    "px": [
+      1150,
+      200
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/feature-print.webp",
+    "half": "/media/videotoflip/feature-print.half.webp"
   },
   "videotoflip/filmstrip": {
     "px": [
@@ -1151,41 +2312,41 @@
     "src": "/media/videotoflip/filmstrip.webp",
     "half": "/media/videotoflip/filmstrip.half.webp"
   },
-  "videotoflip/final": {
+  "videotoflip/flipbook-couple": {
     "px": [
-      746,
-      746
+      1320,
+      568
     ],
     "alpha": true,
-    "src": "/media/videotoflip/final.webp",
-    "half": "/media/videotoflip/final.half.webp"
+    "src": "/media/videotoflip/flipbook-couple.webp",
+    "half": "/media/videotoflip/flipbook-couple.half.webp"
   },
-  "videotoflip/four": {
+  "videotoflip/flipbook-fan": {
     "px": [
-      405,
-      352
+      1320,
+      568
     ],
     "alpha": true,
-    "src": "/media/videotoflip/four.webp",
-    "half": "/media/videotoflip/four.half.webp"
+    "src": "/media/videotoflip/flipbook-fan.webp",
+    "half": "/media/videotoflip/flipbook-fan.half.webp"
   },
-  "videotoflip/frame-150": {
+  "videotoflip/flipbook-hands": {
     "px": [
-      650,
-      196
+      2000,
+      1240
     ],
     "alpha": true,
-    "src": "/media/videotoflip/frame-150.webp",
-    "half": "/media/videotoflip/frame-150.half.webp"
+    "src": "/media/videotoflip/flipbook-hands.webp",
+    "half": "/media/videotoflip/flipbook-hands.half.webp"
   },
-  "videotoflip/group-3": {
+  "videotoflip/flipbook-open": {
     "px": [
-      1050,
-      652
+      1320,
+      568
     ],
     "alpha": true,
-    "src": "/media/videotoflip/group-3.webp",
-    "half": "/media/videotoflip/group-3.half.webp"
+    "src": "/media/videotoflip/flipbook-open.webp",
+    "half": "/media/videotoflip/flipbook-open.half.webp"
   },
   "videotoflip/hero": {
     "px": [
@@ -1195,6 +2356,15 @@
     "alpha": true,
     "src": "/media/videotoflip/hero.webp",
     "half": "/media/videotoflip/hero.half.webp"
+  },
+  "videotoflip/mark-v": {
+    "px": [
+      746,
+      746
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/mark-v.webp",
+    "half": "/media/videotoflip/mark-v.half.webp"
   },
   "videotoflip/occasion": {
     "px": [
@@ -1216,8 +2386,8 @@
   },
   "videotoflip/palette": {
     "px": [
-      2600,
-      200
+      2048,
+      158
     ],
     "alpha": true,
     "src": "/media/videotoflip/palette.webp",
@@ -1268,6 +2438,51 @@
     "src": "/media/videotoflip/ready-to-order.webp",
     "half": "/media/videotoflip/ready-to-order.half.webp"
   },
+  "videotoflip/step-customize": {
+    "px": [
+      980,
+      800
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/step-customize.webp",
+    "half": "/media/videotoflip/step-customize.half.webp"
+  },
+  "videotoflip/step-order": {
+    "px": [
+      980,
+      800
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/step-order.webp",
+    "half": "/media/videotoflip/step-order.half.webp"
+  },
+  "videotoflip/step-preview": {
+    "px": [
+      980,
+      800
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/step-preview.webp",
+    "half": "/media/videotoflip/step-preview.half.webp"
+  },
+  "videotoflip/step-upload": {
+    "px": [
+      980,
+      800
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/step-upload.webp",
+    "half": "/media/videotoflip/step-upload.half.webp"
+  },
+  "videotoflip/sticker-blue": {
+    "px": [
+      405,
+      352
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/sticker-blue.webp",
+    "half": "/media/videotoflip/sticker-blue.half.webp"
+  },
   "videotoflip/sticker-retro": {
     "px": [
       1915,
@@ -1295,6 +2510,33 @@
     "src": "/media/videotoflip/tiktok.webp",
     "half": "/media/videotoflip/tiktok.half.webp"
   },
+  "videotoflip/use-corporate": {
+    "px": [
+      640,
+      568
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/use-corporate.webp",
+    "half": "/media/videotoflip/use-corporate.half.webp"
+  },
+  "videotoflip/use-events": {
+    "px": [
+      640,
+      568
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/use-events.webp",
+    "half": "/media/videotoflip/use-events.half.webp"
+  },
+  "videotoflip/use-weddings": {
+    "px": [
+      640,
+      568
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/use-weddings.webp",
+    "half": "/media/videotoflip/use-weddings.half.webp"
+  },
   "videotoflip/v-rainbow": {
     "px": [
       530,
@@ -1304,13 +2546,31 @@
     "src": "/media/videotoflip/v-rainbow.webp",
     "half": "/media/videotoflip/v-rainbow.half.webp"
   },
+  "videotoflip/wordmark-inline": {
+    "px": [
+      1554,
+      328
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/wordmark-inline.webp",
+    "half": "/media/videotoflip/wordmark-inline.half.webp"
+  },
   "videotoflip/wordmark-rainbow": {
     "px": [
-      3414,
-      724
+      2048,
+      434
     ],
     "alpha": true,
     "src": "/media/videotoflip/wordmark-rainbow.webp",
     "half": "/media/videotoflip/wordmark-rainbow.half.webp"
+  },
+  "videotoflip/wordmark-stacked": {
+    "px": [
+      1659,
+      1153
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/wordmark-stacked.webp",
+    "half": "/media/videotoflip/wordmark-stacked.half.webp"
   }
 }

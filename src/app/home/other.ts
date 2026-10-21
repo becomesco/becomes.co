@@ -41,7 +41,8 @@ function columnsFor(grid: Grid): number {
 
 /**
  * `p0` is where the title pins, `titleHeight` its height about the viewport center, and
- * `aspects` each piece's height over width. Frames share a width; rows take their tallest.
+ * `aspects` each piece's height over width. Masonry: frames share a width and each one
+ * goes under the shortest column, leftmost on a tie, so pieces keep their own heights.
  */
 export function computeOther(
   grid: Grid,
@@ -52,15 +53,15 @@ export function computeOther(
 ): OtherLayout {
   const columns = columnsFor(grid);
   const w = (grid.width - grid.margin * 2 - grid.gutter * (columns - 1)) / columns;
-  const cells: OtherCell[] = [];
-  let y = 0;
-  for (let row = 0; row * columns < aspects.length; row++) {
-    const slice = aspects.slice(row * columns, (row + 1) * columns);
-    const heights = slice.map((a) => (w - OTHER_INSET * 2) * a + OTHER_INSET * 2);
-    slice.forEach((_, i) => cells.push({ x: grid.margin + i * (w + grid.gutter), y, w, h: heights[i] }));
-    y += Math.max(...heights) + grid.gutter;
-  }
-  const height = Math.max(0, y - grid.gutter);
+  const bottoms = new Array<number>(columns).fill(0);
+  const cells: OtherCell[] = aspects.map((a) => {
+    const column = bottoms.indexOf(Math.min(...bottoms));
+    const h = (w - OTHER_INSET * 2) * a + OTHER_INSET * 2;
+    const cell = { x: grid.margin + column * (w + grid.gutter), y: bottoms[column], w, h };
+    bottoms[column] += h + grid.gutter;
+    return cell;
+  });
+  const height = Math.max(0, Math.max(...bottoms) - grid.gutter);
 
   const top = vh / 2 + titleHeight / 2 + grid.gutter * TITLE_GAP;
   // The grid's top crosses the bottom of the screen as the title pins.

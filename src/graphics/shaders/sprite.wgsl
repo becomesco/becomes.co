@@ -23,7 +23,7 @@ struct Sprite {
   shape: vec4f,  // outer radius, inner radius, card amount, opacity
   fade: vec4f,   // edge fade top, right, bottom, left (fraction of image)
   extra: vec4f,  // bend px, has texture, border px, image opacity
-  motion: vec4f, // unused x4; hover scale is applied to the sprite rect on the CPU
+  motion: vec4f, // image zoom, hover (unused; its scale is applied on the CPU), zoom focus x, y (-1..1 across the image)
   layer: vec4f,  // shadow strength 0..1, shadowed texture (image above, shadow below), under glass, quad reach px
 };
 
@@ -166,7 +166,10 @@ fn shade(s: Sprite, local: vec2f, aa: f32) -> vec4f {
   let ip = local + s.rect.xy - s.inner.xy;
   let center = s.inner.zw * 0.5;
   let uv = ip / max(s.inner.zw, vec2f(1.0));
-  let texel = sampleImage(s, uv);
+  // Magnified about the focus, which stays under the cursor; with the focus inside the image
+  // the zoomed view never reaches past its edges.
+  let focus = s.motion.zw * 0.5 + 0.5;
+  let texel = sampleImage(s, focus + (uv - focus) / max(s.motion.x, 1.0));
   let di = roundedBox(ip - center, center, s.shape.y);
   let innerCoverage = clamp(0.5 - di / aa, 0.0, 1.0);
   var img = texel * innerCoverage * edgeFade(uv, s.fade) * s.extra.y * s.extra.w;

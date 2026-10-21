@@ -57,9 +57,11 @@ export interface Sprite {
   bend: number;
   /** Hover, 0 to 1. Home grows the Asset with this. */
   hover: number;
-  /** Cursor across the sprite, -1 to 1 per axis. */
+  /** Cursor across the image, -1 to 1 per axis: the point `zoom` holds still. */
   focusX: number;
   focusY: number;
+  /** Magnification of the image inside its inner rect, about the focus; 1 for none. */
+  zoom: number;
   /** Strength of a `shadowed` texture's shadow, 0 to 1: lower presses the Asset flat. */
   lift: number;
 }
@@ -120,6 +122,7 @@ export function createSprite(id: string, texture: TextureRef | null): Sprite {
     hover: 0,
     focusX: 0,
     focusY: 0,
+    zoom: 1,
     lift: 1,
   };
 }

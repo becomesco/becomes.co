@@ -1,5 +1,5 @@
 // Builds delivery media from media/source/<group>/<name>.(png|jpg).
-// Output: public/media/<group>/<name>.webp (source resolution, treated as 2x)
+// Output: public/media/<group>/<name>.webp (source resolution up to MAX_EDGE, treated as 2x)
 //         public/media/<group>/<name>.half.webp (1x)
 //         src/app/data/media.json (pixel sizes and URLs keyed "<group>/<name>")
 import { readdir, mkdir, writeFile } from 'node:fs/promises';
@@ -11,21 +11,57 @@ const sourceDir = join(root, 'media/source');
 const outDir = join(root, 'public/media');
 const manifestPath = join(root, 'src/app/data/media.json');
 
-// Figma exports are flattened onto the frame background. Recover alpha for the
-// background region: flood from the border through near-background colors, then
+/** Longest edge of the 2x file, px. Larger sources are downscaled; nothing on screen needs more. */
+const MAX_EDGE = 2048;
+
+// Early Figma exports were flattened onto the frame background. For those, recover alpha
+// for the background region: flood from the border through near-background colors, then
 // un-composite those pixels against the background.
 // Pixels the flood cannot reach stay opaque, so photo interiors keep their color.
+// Only the files listed here are matted; newer exports carry their own alpha, and opaque
+// screenshots and photos must stay whole.
 const BACKGROUND = [228, 226, 220];
 const FLOOD_DISTANCE = 26;
-// Per-file flood distance. Infinity un-composites every pixel (pure glass on beige);
+const MATTE = new Set([
+  'about/note',
+  'basket/illustration-backpack',
+  'basket/illustration-mountain',
+  'basket/mobile-product',
+  'basket/product-card',
+  'getcv/basic-info',
+  'getcv/illustration',
+  'getcv/phone',
+  'getcv/stats',
+  'heroic-rankings/badge-nps',
+  'heroic-rankings/card-support',
+  'heroic-rankings/chart-rankings',
+  'heroic-rankings/growth',
+  'heroic-rankings/hands-growth',
+  'heroic-rankings/laptop',
+  'heroic-rankings/statue-card',
+  'heroic-rankings/statue-pair',
+  'kooper/book-cards',
+  'kooper/daily-challenges',
+  'kooper/joystick',
+  'milmedic/card-keratoconus',
+  'milmedic/hero-desktop',
+  'pov/app-clip',
+  'pov/artwork',
+  'pov/get-started',
+  'pov/group-670',
+  'pov/group-730',
+  'pov/phone-grid',
+  'pov/qr-code',
+  'videotoflip/confetti',
+  'videotoflip/feature-occasion',
+  'videotoflip/sticker-blue',
+]);
+// Matted at their own flood distance. Infinity un-composites every pixel (pure glass on beige);
 // a smaller value keeps light photo edges from being treated as background.
 const MATTE_OVERRIDES = {
   'brand/glass-mark': Infinity,
   'heroic-rankings/statue': 10,
 };
-
-/** Skip beige rematte for whole groups (exports keep their own alpha). */
-const SKIP_MATTE_GROUPS = new Set(['bcms', 'pyure']);
 
 async function matte(input, floodDistance) {
   const { data, info } = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
@@ -103,18 +139,22 @@ for (const group of groups) {
   for (const file of files) {
     const name = basename(file, extname(file));
     const input = join(sourceDir, group.name, file);
-    const { width, height } = await sharp(input).metadata();
+    const meta = await sharp(input).metadata();
+    const scale = Math.min(1, MAX_EDGE / Math.max(meta.width, meta.height));
+    const width = Math.round(meta.width * scale);
+    const height = Math.round(meta.height * scale);
     const matteKey = `${group.name}/${name}`;
-    const skipMatte = SKIP_MATTE_GROUPS.has(group.name);
-    const matted =
-      /\.png$/i.test(file) && !skipMatte ? await matte(input, MATTE_OVERRIDES[matteKey] ?? FLOOD_DISTANCE) : null;
+    const flood = MATTE_OVERRIDES[matteKey] ?? (MATTE.has(matteKey) ? FLOOD_DISTANCE : null);
+    const matted = /\.png$/i.test(file) && flood !== null ? await matte(input, flood) : null;
     const source = matted ? await matted.png().toBuffer() : input;
-    const hasAlpha = Boolean(matted) || (await sharp(input).metadata()).hasAlpha;
+    const hasAlpha = Boolean(matted) || meta.hasAlpha;
     const webp = { quality: 84, alphaQuality: 92, effort: 5, smartSubsample: true };
 
     const fullName = `${name}.webp`;
     const halfName = `${name}.half.webp`;
-    await sharp(source).webp(webp).toFile(join(outDir, group.name, fullName));
+    const full = sharp(source);
+    if (scale < 1) full.resize(width, height, { kernel: 'lanczos3' });
+    await full.webp(webp).toFile(join(outDir, group.name, fullName));
     await sharp(source)
       .resize(Math.max(1, Math.round(width / 2)), Math.max(1, Math.round(height / 2)), { kernel: 'lanczos3' })
       .webp(webp)

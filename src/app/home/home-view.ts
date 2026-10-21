@@ -16,6 +16,23 @@ const HOVER_STIFFNESS = 70;
 const HOVER_DAMPING = 16;
 /** How far an Asset grows at full hover. */
 const HOVER_SCALE = 0.05;
+/** Magnification of an Other piece under the cursor. */
+const OTHER_ZOOM = 2.2;
+/** Lens springs: underdamped (ζ ≈ 0.6), so it opens with a small overshoot and settles; opening is the slower of the two. */
+const LENS_OPEN_STIFFNESS = 60;
+const LENS_OPEN_DAMPING = 9.5;
+const LENS_CLOSE_STIFFNESS = 140;
+const LENS_CLOSE_DAMPING = 14;
+/** Focus spring: the zoomed spot trails the cursor with some weight and settles just past it (ζ ≈ 0.75). */
+const FOCUS_STIFFNESS = 110;
+const FOCUS_DAMPING = 16;
+/** Seconds the cursor rests on a piece before its lens opens, so a sweep across the grid doesn't pop every one. */
+const LENS_DWELL = 0.09;
+/** Cursor speed, px/s, at which the lens has eased out by LENS_SPEED_EASE of its zoom; it sinks back in as the cursor slows. */
+const LENS_SPEED = 1400;
+const LENS_SPEED_EASE = 0.3;
+/** Rate, per second, at which the measured cursor speed is smoothed. */
+const LENS_SPEED_RATE = 10;
 /** How much smaller Assets get at full scroll speed (Notes excepted). */
 const SCROLL_SHRINK = 0.2;
 /** Scroll speeds, px/s, between which Assets go from rest to fully shrunk. */
@@ -268,6 +285,15 @@ export class HomeView implements View {
   private otherTitle: Title;
   private otherSprites = others.map(otherSprite);
   private otherVisible: Sprite[] = [];
+  private lenses = others.map(() => ({
+    open: new Spring(0, LENS_CLOSE_STIFFNESS, LENS_CLOSE_DAMPING),
+    fx: new Spring(0, FOCUS_STIFFNESS, FOCUS_DAMPING),
+    fy: new Spring(0, FOCUS_STIFFNESS, FOCUS_DAMPING),
+    dwell: 0,
+  }));
+  /** Smoothed cursor speed, px/s, and where the cursor was last frame. */
+  private lensSpeed = 0;
+  private lensLast: { x: number; y: number } | null = null;
   private lastPrefetch = Number.NaN;
   /** Scroll shrink of each placement, 0 to 1. */
   private shrink = new Map<number, number>();
@@ -464,6 +490,8 @@ export class HomeView implements View {
       this.hovered = hovered;
       active = true;
     }
+    const lens = this.presence > 0.9 && pointer.inside ? this.otherAt(pointer.x, pointer.y) : null;
+    if (this.updateZoom(lens, pointer.x, pointer.y, frame.dt, reducedMotion)) active = true;
 
     const speed = reducedMotion ? 0 : smoothstep(SHRINK_FROM, SHRINK_FULL, Math.abs(this.scroll.velocity));
     if (this.press.update(this.scroll.velocity, frame.dt, reducedMotion)) active = true;
@@ -672,6 +700,65 @@ export class HomeView implements View {
     if (Math.abs(next - speed) < 1e-4) next = speed;
     this.shrink.set(p.index, next);
     return next !== speed;
+  }
+
+  /** The visible Other piece whose image is under screen point `x`, `y`, as placed this frame. */
+  private otherAt(x: number, y: number): Sprite | null {
+    for (const sprite of this.otherVisible) {
+      if (x >= sprite.ix && x <= sprite.ix + sprite.iw && y >= sprite.iy && y <= sprite.iy + sprite.ih) return sprite;
+    }
+    return null;
+  }
+
+  /**
+   * Magnifies the Other piece under the cursor once it has rested there for LENS_DWELL, with
+   * the zoomed spot trailing the cursor on a spring, and eases the rest back out. Fast cursor
+   * movement eases the zoom out a little. Returns true while anything is still moving.
+   */
+  private updateZoom(lens: Sprite | null, x: number, y: number, dt: number, reduced: boolean): boolean {
+    let active = false;
+
+    const last = this.lensLast;
+    const speed = lens && last && dt > 0 ? Math.hypot(x - last.x, y - last.y) / dt : 0;
+    this.lensLast = lens ? { x, y } : null;
+    this.lensSpeed = reduced ? 0 : damp(this.lensSpeed, speed, LENS_SPEED_RATE, dt);
+    if (this.lensSpeed > 1) active = true;
+    const ease = 1 - LENS_SPEED_EASE * smoothstep(0, LENS_SPEED, this.lensSpeed);
+
+    this.otherSprites.forEach((sprite, i) => {
+      const state = this.lenses[i];
+      const over = sprite === lens;
+      state.dwell = over ? state.dwell + dt : 0;
+      const open = over && (reduced || state.dwell >= LENS_DWELL);
+      if (over && !open) active = true;
+
+      if (over) {
+        const fx = clamp(((x - sprite.ix) / Math.max(1, sprite.iw)) * 2 - 1, -1, 1);
+        const fy = clamp(((y - sprite.iy) / Math.max(1, sprite.ih)) * 2 - 1, -1, 1);
+        // From rest, the lens opens where the cursor is rather than gliding over from the last spot.
+        if (reduced || state.open.value < 0.02) {
+          state.fx.set(fx);
+          state.fy.set(fy);
+        } else {
+          state.fx.target = fx;
+          state.fy.target = fy;
+        }
+      }
+      if (state.fx.update(dt)) active = true;
+      if (state.fy.update(dt)) active = true;
+
+      state.open.target = open ? ease : 0;
+      state.open.stiffness = open ? LENS_OPEN_STIFFNESS : LENS_CLOSE_STIFFNESS;
+      state.open.damping = open ? LENS_OPEN_DAMPING : LENS_CLOSE_DAMPING;
+      if (reduced) state.open.set(state.open.target);
+      else if (state.open.update(dt)) active = true;
+
+      // The spring overshoots; the focus is clamped so the zoomed view still never leaves the image.
+      sprite.focusX = clamp(state.fx.value, -1, 1);
+      sprite.focusY = clamp(state.fy.value, -1, 1);
+      sprite.zoom = 1 + (OTHER_ZOOM - 1) * Math.max(0, state.open.value);
+    });
+    return active;
   }
 
   private hitTest(x: number, y: number, s: number): number {
