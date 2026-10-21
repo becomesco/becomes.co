@@ -35,15 +35,12 @@ export interface SectionInput {
   key: string;
   title: TitleBox;
   assets: readonly Asset[];
-  /** How many shuffled passes of this section's Assets. Defaults to `options.copies`. */
-  copies?: number;
 }
 
 export interface Placement {
   index: number;
   section: number;
   asset: Asset;
-  copy: number;
   x: number;
   w: number;
   h: number;
@@ -81,7 +78,6 @@ export interface LayoutOptions {
   width: number;
   height: number;
   reducedMotion: boolean;
-  copies: number;
   /** Height over width of each Other piece; the last section is then the Other title. */
   other?: readonly number[];
 }
@@ -130,26 +126,6 @@ function titleBodies(width: number, height: number, title: TitleBox, p0: number,
   ];
 }
 
-/**
- * Copies of a Work's Assets, each copy shuffled, never the same Asset again within three
- * places (fewer for Works with fewer Assets), so one doesn't show up twice on screen.
- */
-function sequence(assets: readonly Asset[], copies: number, random: Random): { asset: Asset; copy: number }[] {
-  const out: { asset: Asset; copy: number }[] = [];
-  const spacing = Math.min(3, assets.length - 1);
-  for (let copy = 0; copy < copies; copy++) {
-    const order = shuffle(assets, random);
-    for (let i = 0; i < spacing; i++) {
-      const recent = (a: Asset) => out.slice(out.length - (spacing - i)).some((o) => o.asset === a);
-      if (!recent(order[i])) continue;
-      const j = order.findIndex((a, k) => k > i && !recent(a));
-      if (j > 0) [order[i], order[j]] = [order[j], order[i]];
-    }
-    for (const asset of order) out.push({ asset, copy });
-  }
-  return out;
-}
-
 export function computeLayout(sections: readonly SectionInput[], options: LayoutOptions): HomeLayout {
   const { width, height: vh } = options;
   const grid = createGrid(width);
@@ -193,7 +169,7 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
     let zone: Zone = random() < 0.5 ? 'left' : 'right';
     const maxArea = Math.max(1, ...section.assets.map((a) => a.width * a.height));
 
-    for (const { asset, copy } of sequence(section.assets, section.copies ?? options.copies, random)) {
+    for (const asset of shuffle(section.assets, random)) {
       const forced: Zone | null = asset.cut.has('left') ? 'left' : asset.cut.has('right') ? 'right' : null;
       if (mode === 'field') zone = forced ?? nextZone(zone, random);
 
@@ -223,7 +199,6 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
         index: placements.length,
         section: k,
         asset,
-        copy,
         x,
         w: box.w,
         h: box.h,

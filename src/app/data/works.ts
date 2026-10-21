@@ -199,16 +199,48 @@ export const works: readonly Work[] = [
     headline: 'A leading ophthalmology clinic, modernised. Bookings went through the roof.',
     logo: { src: '/logos/milmedic.svg', width: 47, height: 76 },
     assets: [
-      { media: 'milmedic/group-1222' },
-      { media: 'milmedic/photo' },
-      { media: 'milmedic/frame-37' },
-      { media: 'milmedic/frame-15' },
+      { media: 'milmedic/hero-desktop' },
+      { media: 'milmedic/hero-mobile', width: 320, frame: true },
+      { media: 'milmedic/menu-mobile', width: 300 },
+      { media: 'milmedic/why-choose', width: 600 },
+      { media: 'milmedic/icon-eye', width: 120, frame: true },
       {
         note: [
-          'We worked on a system to help clients unify their team photos, at scale.',
-          'We did 2 vision tests, that now make 30% of the traffic.',
+          'We designed and built a multilingual website for Milmedic, an ophthalmology clinic.',
+          'It walks patients to the right exam, or to a vision test they can take online. Scheduled appointments went up.',
         ],
       },
+      { media: 'milmedic/photo-autorefractor' },
+      { media: 'milmedic/card-eye-exam', width: 280 },
+      { media: 'milmedic/card-laser', width: 280 },
+      { media: 'milmedic/test-color', width: 300 },
+      { media: 'milmedic/icon-trial-frame', width: 120, frame: true },
+      { media: 'milmedic/card-keratoconus' },
+      { media: 'milmedic/test-astigmatism', width: 200 },
+      {
+        note: [
+          'Every service and eye condition has its own page, in each language.',
+          'Search traffic spiked after launch, and the new site converts several times better than the old one!',
+        ],
+      },
+      { media: 'milmedic/menu-conditions', width: 640 },
+      { media: 'milmedic/photo-exam', width: 480, frame: true },
+      { media: 'milmedic/card-diagnosed', width: 280 },
+      { media: 'milmedic/icon-screen', width: 120, frame: true },
+      { media: 'milmedic/test-acuity-result', width: 300 },
+      { media: 'milmedic/icon-child', width: 120, frame: true },
+      { media: 'milmedic/brand-palette' },
+      {
+        note: [
+          'We helped them migrate off an old WordPress system.',
+          'Along the way we shaped up their digital branding.',
+        ],
+      },
+      { media: 'milmedic/menu-services', width: 620 },
+      { media: 'milmedic/card-second-opinion', width: 280 },
+      { media: 'milmedic/test-astigmatism-pass', width: 200 },
+      { media: 'milmedic/icon-report', width: 120, frame: true },
+      { media: 'milmedic/icon-tumor', width: 120, frame: true },
     ],
   },
   {
@@ -226,7 +258,7 @@ export const works: readonly Work[] = [
       {
         note: [
           'We worked on a system to help clients unify their team photos, at scale.',
-          'We did 2 vision tests, that now make 30% of the traffic.',
+          'We developed 2 vision tests, that now make good %% of the overall traffic.',
         ],
       },
       { media: 'heroic-rankings/group-hand' },

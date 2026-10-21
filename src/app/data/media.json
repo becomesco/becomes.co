@@ -575,41 +575,221 @@
     "src": "/media/kooper/level-up.webp",
     "half": "/media/kooper/level-up.half.webp"
   },
-  "milmedic/frame-15": {
-    "px": [
-      1096,
-      590
-    ],
-    "alpha": true,
-    "src": "/media/milmedic/frame-15.webp",
-    "half": "/media/milmedic/frame-15.half.webp"
-  },
-  "milmedic/frame-37": {
-    "px": [
-      630,
-      354
-    ],
-    "alpha": true,
-    "src": "/media/milmedic/frame-37.webp",
-    "half": "/media/milmedic/frame-37.half.webp"
-  },
-  "milmedic/group-1222": {
+  "milmedic/brand-palette": {
     "px": [
       904,
       466
     ],
     "alpha": true,
-    "src": "/media/milmedic/group-1222.webp",
-    "half": "/media/milmedic/group-1222.half.webp"
+    "src": "/media/milmedic/brand-palette.webp",
+    "half": "/media/milmedic/brand-palette.half.webp"
   },
-  "milmedic/photo": {
+  "milmedic/card-diagnosed": {
+    "px": [
+      706,
+      960
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/card-diagnosed.webp",
+    "half": "/media/milmedic/card-diagnosed.half.webp"
+  },
+  "milmedic/card-eye-exam": {
+    "px": [
+      706,
+      960
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/card-eye-exam.webp",
+    "half": "/media/milmedic/card-eye-exam.half.webp"
+  },
+  "milmedic/card-keratoconus": {
+    "px": [
+      630,
+      354
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/card-keratoconus.webp",
+    "half": "/media/milmedic/card-keratoconus.half.webp"
+  },
+  "milmedic/card-laser": {
+    "px": [
+      706,
+      960
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/card-laser.webp",
+    "half": "/media/milmedic/card-laser.half.webp"
+  },
+  "milmedic/card-second-opinion": {
+    "px": [
+      706,
+      960
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/card-second-opinion.webp",
+    "half": "/media/milmedic/card-second-opinion.half.webp"
+  },
+  "milmedic/hero-desktop": {
+    "px": [
+      1096,
+      590
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/hero-desktop.webp",
+    "half": "/media/milmedic/hero-desktop.half.webp"
+  },
+  "milmedic/hero-mobile": {
+    "px": [
+      746,
+      1158
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/hero-mobile.webp",
+    "half": "/media/milmedic/hero-mobile.half.webp"
+  },
+  "milmedic/icon-child": {
+    "px": [
+      274,
+      274
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/icon-child.webp",
+    "half": "/media/milmedic/icon-child.half.webp"
+  },
+  "milmedic/icon-eye": {
+    "px": [
+      278,
+      260
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/icon-eye.webp",
+    "half": "/media/milmedic/icon-eye.half.webp"
+  },
+  "milmedic/icon-report": {
+    "px": [
+      233,
+      274
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/icon-report.webp",
+    "half": "/media/milmedic/icon-report.half.webp"
+  },
+  "milmedic/icon-screen": {
+    "px": [
+      288,
+      267
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/icon-screen.webp",
+    "half": "/media/milmedic/icon-screen.half.webp"
+  },
+  "milmedic/icon-trial-frame": {
+    "px": [
+      288,
+      274
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/icon-trial-frame.webp",
+    "half": "/media/milmedic/icon-trial-frame.half.webp"
+  },
+  "milmedic/icon-tumor": {
+    "px": [
+      274,
+      274
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/icon-tumor.webp",
+    "half": "/media/milmedic/icon-tumor.half.webp"
+  },
+  "milmedic/menu-conditions": {
+    "px": [
+      2268,
+      888
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/menu-conditions.webp",
+    "half": "/media/milmedic/menu-conditions.half.webp"
+  },
+  "milmedic/menu-mobile": {
+    "px": [
+      746,
+      1424
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/menu-mobile.webp",
+    "half": "/media/milmedic/menu-mobile.half.webp"
+  },
+  "milmedic/menu-services": {
+    "px": [
+      2168,
+      1122
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/menu-services.webp",
+    "half": "/media/milmedic/menu-services.half.webp"
+  },
+  "milmedic/photo-autorefractor": {
     "px": [
       802,
       896
     ],
     "alpha": true,
-    "src": "/media/milmedic/photo.webp",
-    "half": "/media/milmedic/photo.half.webp"
+    "src": "/media/milmedic/photo-autorefractor.webp",
+    "half": "/media/milmedic/photo-autorefractor.half.webp"
+  },
+  "milmedic/photo-exam": {
+    "px": [
+      1706,
+      1020
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/photo-exam.webp",
+    "half": "/media/milmedic/photo-exam.half.webp"
+  },
+  "milmedic/test-acuity-result": {
+    "px": [
+      690,
+      718
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/test-acuity-result.webp",
+    "half": "/media/milmedic/test-acuity-result.half.webp"
+  },
+  "milmedic/test-astigmatism-pass": {
+    "px": [
+      484,
+      664
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/test-astigmatism-pass.webp",
+    "half": "/media/milmedic/test-astigmatism-pass.half.webp"
+  },
+  "milmedic/test-astigmatism": {
+    "px": [
+      484,
+      664
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/test-astigmatism.webp",
+    "half": "/media/milmedic/test-astigmatism.half.webp"
+  },
+  "milmedic/test-color": {
+    "px": [
+      688,
+      797
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/test-color.webp",
+    "half": "/media/milmedic/test-color.half.webp"
+  },
+  "milmedic/why-choose": {
+    "px": [
+      2640,
+      1228
+    ],
+    "alpha": true,
+    "src": "/media/milmedic/why-choose.webp",
+    "half": "/media/milmedic/why-choose.half.webp"
   },
   "note/paper": {
     "px": [

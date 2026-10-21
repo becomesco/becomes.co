@@ -10,7 +10,6 @@ import type { AppContext, DrawList, View } from '../view';
 import { computeLayout, type HomeLayout, type Placement, type SectionInput } from './layout';
 import { OTHER_IMAGE_RADIUS, OTHER_INSET, OTHER_RADIUS } from './other';
 
-const COPIES = 4;
 const CUT_FADE = 0.2;
 /** Hover spring: just under critical damping, so it glides in over ~0.6 s and settles without a bounce. */
 const HOVER_STIFFNESS = 70;
@@ -405,7 +404,6 @@ export class HomeView implements View {
         // Symmetric about the anchor, since that is the point the layout centers.
         title: { width: text.width, height: 2 * Math.max(title.anchor, rect.height - title.anchor) },
         assets: title.work ? (this.assets.get(title.work) ?? []) : [],
-        copies: title.work?.slug === 'bcms' || title.work?.slug === 'pyure' ? 1 : undefined,
       };
     });
     this.measureSpots();
@@ -415,7 +413,7 @@ export class HomeView implements View {
 
     const t0 = performance.now();
     const other = this.otherSprites.map((s) => s.texture!.px[1] / s.texture!.px[0]);
-    this.layoutState = computeLayout(this.sections, { width, height, reducedMotion, copies: COPIES, other });
+    this.layoutState = computeLayout(this.sections, { width, height, reducedMotion, other });
     this.otherTitle.follow = this.layoutState.other?.follow ?? Infinity;
     if (import.meta.env.DEV) {
       const l = this.layoutState;
