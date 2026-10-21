@@ -26,11 +26,10 @@
   --glass: rgb(255 255 255 / 0.3);
   --font-display: 'Grillmaster ExtWide', 'Helvetica Neue', Arial, sans-serif;
   --font-text: 'Grillmaster Wide', 'Helvetica Neue', Arial, sans-serif;
-  /* Figma sets display copy with thin spaces (0.2em). The ExtWide builds have no thin-space
-     glyph and set spaces at 0.5em (Regular) and 0.522em (Medium), so word-spacing narrows them. */
+
   --thin-space: -0.3em;
   --thin-space-medium: -0.322em;
-  /* Mirrors the modular grid in src/app/home/grid.ts. */
+
   --margin: 16px;
   --gutter: 12px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -99,8 +98,6 @@ a {
   border-radius: 4px;
 }
 
-/* Stage: the one canvas, plus the HTML/CSS fallback host. */
-
 .stage {
   position: fixed;
   inset: 0;
@@ -148,9 +145,6 @@ a {
   max-width: none;
 }
 
-/* Views: browser-layer content above the canvas. Empty areas pass pointer input
-   through to the stage so Assets stay clickable. */
-
 .views {
   position: fixed;
   inset: 0;
@@ -176,8 +170,6 @@ a {
 .view form {
   pointer-events: auto;
 }
-
-/* Home titles */
 
 .home-title {
   position: absolute;
@@ -230,6 +222,18 @@ a {
   margin-bottom: clamp(16px, 2.4vw, 40px);
 }
 
+.home-title[data-slug='bcms'] .home-title__logo {
+  height: clamp(calc(var(--logo-h) * 0.91px), calc(var(--logo-h) * 0.09022vw), calc(var(--logo-h) * 1.56px));
+}
+
+.home-title[data-slug='kooper'] .home-title__logo {
+  height: clamp(calc(var(--logo-h) * 0.84px), calc(var(--logo-h) * 0.08328vw), calc(var(--logo-h) * 1.44px));
+}
+
+.home-title[data-slug='videotoflip'] .home-title__logo {
+  height: clamp(calc(var(--logo-h) * 0.84px), calc(var(--logo-h) * 0.08328vw), calc(var(--logo-h) * 1.44px));
+}
+
 .visit-link {
   display: inline-block;
   font-family: var(--font-display);
@@ -238,15 +242,7 @@ a {
   word-spacing: var(--thin-space-medium);
   text-decoration: none;
   white-space: nowrap;
-  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
-  transition: background-size 0.45s var(--ease-out);
 }
-
-.visit-link:hover {
-  background-size: 100% 1px;
-}
-
-/* Work View */
 
 .work__content {
   position: absolute;
@@ -273,7 +269,7 @@ a {
   letter-spacing: -0.01em;
   word-spacing: var(--thin-space);
   text-transform: lowercase;
-  /* Figma's 1182px measure at 70px. */
+
   max-width: 16.9em;
   text-wrap: pretty;
   outline: none;
@@ -286,8 +282,6 @@ a {
 .work-header__visit[hidden] {
   display: none;
 }
-
-/* About View */
 
 .about__content {
   position: absolute;
@@ -331,7 +325,13 @@ a {
   line-height: 1.25;
 }
 
-/* Contact View — Figma 196:845 directory, 196:915 brief. */
+.about__text + .about__text {
+  margin-top: clamp(14px, 1.4vw, 22px);
+}
+
+.about__cta {
+  margin: clamp(28px, 2.8vw, 48px) 0 0;
+}
 
 .contact__content {
   position: relative;
@@ -373,6 +373,11 @@ a {
   backdrop-filter: blur(4px);
 }
 
+.contact-card[data-brief-card] {
+  overflow: hidden;
+  transform-origin: top center;
+}
+
 .contact-card__inner {
   background: var(--paper);
   border-radius: 8px;
@@ -384,10 +389,27 @@ a {
   padding: 21px 21px 24px;
 }
 
+.contact-card__split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px 24px;
+  align-items: start;
+}
+
 .contact-card__copy {
   margin: 0;
   font-size: 16px;
   line-height: 1.25;
+}
+
+.contact-card__street {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.25;
+  text-align: right;
 }
 
 .contact-row {
@@ -401,6 +423,16 @@ a {
 
 .contact-row--rule {
   border-top: 1px solid var(--bg);
+}
+
+.contact-row--brief {
+  position: relative;
+}
+
+.contact-link--row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
 }
 
 .contact-row__label {
@@ -430,19 +462,121 @@ a {
   gap: 10px;
 }
 
+.contact-draw {
+  position: relative;
+  display: inline-block;
+}
+
+.contact-draw::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.45s var(--ease-out);
+}
+
+@media (hover: hover) {
+  .contact-draw:hover::after,
+  .contact-link--row:hover .contact-draw::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+
+.contact-draw:focus-visible::after,
+.contact-link--row:focus-visible .contact-draw::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.contact-copy {
+  display: grid;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.contact-copy > span {
+  grid-area: 1 / 1;
+  justify-self: center;
+  transition:
+    opacity 0.3s var(--ease-out),
+    filter 0.4s var(--ease-out),
+    transform 0.45s var(--ease-out);
+}
+
+.contact-copy__email {
+  justify-self: end;
+}
+
+.contact-copy__action,
+.contact-copy__done {
+  opacity: 0;
+  transform: translate3d(0, 0.3em, 0);
+}
+
+@media (hover: hover) {
+  .contact-copy:hover .contact-copy__email {
+    opacity: 0.3;
+    filter: blur(3px);
+  }
+
+  .contact-copy:hover .contact-copy__action {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.contact-copy:focus-visible .contact-copy__email {
+  opacity: 0.3;
+  filter: blur(3px);
+}
+
+.contact-copy:focus-visible .contact-copy__action {
+  opacity: 1;
+  transform: none;
+}
+
+.contact-copy[data-copied] .contact-copy__email {
+  opacity: 0.3;
+  filter: blur(3px);
+}
+
+.contact-copy[data-copied] .contact-copy__action {
+  opacity: 0;
+  transform: translate3d(0, -0.3em, 0);
+}
+
+.contact-copy[data-copied] .contact-copy__done {
+  opacity: 1;
+  transform: none;
+}
+
+.contact__copied {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 .contact-card--open [data-open-brief] {
   display: none;
 }
 
 .contact__form {
-  display: none;
+  display: flex;
   flex-direction: column;
   gap: 20px;
   padding: 0 21px 8px;
 }
 
-.contact-card--open .contact__form {
-  display: flex;
+.contact__form[hidden] {
+  display: none;
 }
 
 .field {
@@ -487,6 +621,22 @@ a {
   min-height: 90px;
   padding-top: 10px;
   resize: none;
+}
+
+.field__input--select {
+  appearance: none;
+  padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.field__input--select:has(option[value='']:checked) {
+  color: rgb(0 0 0 / 0.4);
+}
+
+.field__input--select option {
+  color: var(--ink);
 }
 
 .contact-help__pills {
@@ -565,9 +715,16 @@ a {
   .contact-link {
     font-size: 14px;
   }
-}
 
-/* Chrome */
+  .contact-card__split {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-card__street {
+    font-size: 14px;
+    text-align: left;
+  }
+}
 
 .chrome {
   position: fixed;
@@ -656,27 +813,40 @@ a {
 }
 
 .chrome__nav {
-  gap: 0;
+  gap: 1px;
   padding: 6px;
 }
 
 .chrome__nav a {
+  position: relative;
+  z-index: 0;
   padding: 8px 10px;
   border-radius: 10px;
   text-decoration: none;
-  transition:
-    background-color 0.35s var(--ease-out),
-    color 0.35s var(--ease-out);
+  transition: color 0.35s var(--ease-out);
 }
 
-.chrome__nav a:hover {
-  background: rgb(0 0 0 / 0.06);
+.chrome__nav a::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: transparent;
+  transition: background-color 0.35s var(--ease-out);
+}
+
+.chrome__nav a:hover::before {
+  background-color: rgb(0 0 0 / 0.06);
 }
 
 .chrome__nav a[aria-current='page'] {
-  background: var(--ink);
   color: var(--paper);
-  letter-spacing: -0.04em;
+}
+
+.chrome__nav a[aria-current='page']::before,
+.chrome__nav a[aria-current='page']:hover::before {
+  background-color: var(--ink);
 }
 
 @media (min-width: 900px) {
@@ -710,8 +880,6 @@ a {
   }
 }
 
-/* Loader */
-
 .loader {
   position: fixed;
   inset: 0;
@@ -731,7 +899,6 @@ a {
   background: var(--bg);
 }
 
-/* Its own layer above the Loader, so the still can screen over whatever lies beneath. */
 .loader__mark {
   position: fixed;
   z-index: 11;
@@ -739,7 +906,6 @@ a {
   pointer-events: none;
 }
 
-/* The still's frame, and the live mark's size at rest: it stands about as tall as the Wordmark is wide. */
 .loader__mark-box {
   position: absolute;
   left: 50%;
@@ -749,7 +915,6 @@ a {
   transform: translate(-50%, -50%);
 }
 
-/* Once the intro is over the Glass mark stays on its own: over Home's text, under Chrome. */
 .loader__mark--rest {
   z-index: 2;
 }
@@ -770,7 +935,6 @@ a {
   opacity: 0;
 }
 
-/* The still is the live mark's reflections on black; screened, its body stays clear. */
 .loader__mark--poster {
   mix-blend-mode: screen;
 }
@@ -801,7 +965,7 @@ a {
   width: clamp(200px, 33.2vw, 600px);
   height: auto;
   overflow: visible;
-  /* Hard cut at the baseline; room above for the letters' overshoot. */
+
   clip-path: inset(-60% -10% 0 -10%);
 }
 

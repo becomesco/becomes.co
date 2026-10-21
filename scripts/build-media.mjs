@@ -25,6 +25,9 @@ const MATTE_OVERRIDES = {
   'heroic-rankings/statue': 10,
 };
 
+/** Skip beige rematte for whole groups (exports keep their own alpha). */
+const SKIP_MATTE_GROUPS = new Set(['bcms']);
+
 async function matte(input, floodDistance) {
   const { data, info } = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const { width, height } = info;
@@ -102,9 +105,10 @@ for (const group of groups) {
     const name = basename(file, extname(file));
     const input = join(sourceDir, group.name, file);
     const { width, height } = await sharp(input).metadata();
-    const matted = /\.png$/i.test(file)
-      ? await matte(input, MATTE_OVERRIDES[`${group.name}/${name}`] ?? FLOOD_DISTANCE)
-      : null;
+    const matteKey = `${group.name}/${name}`;
+    const skipMatte = SKIP_MATTE_GROUPS.has(group.name);
+    const matted =
+      /\.png$/i.test(file) && !skipMatte ? await matte(input, MATTE_OVERRIDES[matteKey] ?? FLOOD_DISTANCE) : null;
     const source = matted ? await matted.png().toBuffer() : input;
     const hasAlpha = Boolean(matted) || (await sharp(input).metadata()).hasAlpha;
     const webp = { quality: 84, alphaQuality: 92, effort: 5, smartSubsample: true };

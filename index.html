@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Becomes: a design and technology studio for a more interesting internet.</title>
+    <title>Becomes · a design and technology studio for a more interesting internet.</title>
     <meta
       name="description"
       content="Becomes is a small creative web development studio delivering the fastest websites and web apps. Strategy, brand, web and product, carried by one team."
@@ -39,7 +39,7 @@
           <header class="work-header">
             <img class="work-header__logo" alt="" />
             <h1 class="work-header__headline" tabindex="-1" data-focus></h1>
-            <a class="visit-link work-header__visit" target="_blank" rel="noopener">visit site →</a>
+            <a class="visit-link contact-draw work-header__visit" target="_blank" rel="noopener">visit site →</a>
           </header>
         </div>
       </section>
@@ -47,11 +47,22 @@
       <section class="view view--about" data-view="about" hidden inert>
         <div class="about__content">
           <div class="about__copy">
-            <h1 class="about__title" tabindex="-1" data-focus>we are becomes.</h1>
+            <h1 class="about__title" tabindex="-1" data-focus>About Becomes</h1>
             <p class="about__text">
-              We are Becomes, a small creative web development studio, delivering the fastest websites &amp; web
-              apps. Strategy, brand, web and product, carried by one team from direction to build, so everything we
-              do supports and informs the otherrr.
+              Becomes is an independent design and technology studio. We make brands, products and experiences that get
+              people involved, make them feel something and leave room for a few surprises.
+            </p>
+            <p class="about__text">
+              We like giving people something to play with and a say in how it turns out. We want the result to feel a
+              little more theirs because they helped shape it, whether it lives on a screen or ends up in their hands.
+            </p>
+            <p class="about__text">
+              Alongside client work, we develop our own products and projects across community services, personal
+              keepsakes and digital publishing. They’re a way to give something back to the communities we’re part of,
+              using what we know about design, development, marketing and building businesses.
+            </p>
+            <p class="about__cta">
+              <a class="visit-link contact-draw" href="/contact">let’s work together →</a>
             </p>
           </div>
         </div>
@@ -63,14 +74,16 @@
           <div class="contact__cards">
             <div class="contact-card" data-brief-card>
               <div class="contact-card__inner">
-                <div class="contact-row">
+                <div class="contact-row contact-row--brief">
                   <p class="contact-row__label">Start a project</p>
-                  <button class="contact-link" type="button" data-open-brief aria-expanded="false">submit brief →</button>
+                  <button class="contact-link contact-link--row" type="button" data-open-brief aria-expanded="false">
+                    <span class="contact-draw">submit brief →</span>
+                  </button>
                 </div>
                 <form class="contact__form" method="post">
                   <label class="field">
                     <span class="field__label">What’s your name?</span>
-                    <input class="field__input" name="name" autocomplete="name" required />
+                    <input class="field__input" placeholder="Full names" name="name" autocomplete="name" required />
                   </label>
                   <label class="field">
                     <span class="field__label">What’s your company’s name?</span>
@@ -95,7 +108,7 @@
                         <span>strategy</span>
                       </label>
                       <label class="contact-help__option">
-                        <input type="checkbox" name="help" value="website" />
+                        <input type="checkbox" name="help" value="website" checked />
                         <span>website</span>
                       </label>
                       <label class="contact-help__option">
@@ -109,6 +122,17 @@
                     </div>
                   </fieldset>
                   <label class="field">
+                    <span class="field__label">Is there a defined budget for this project?</span>
+                    <select class="field__input field__input--select" name="budget">
+                      <option value="" selected>Select a range</option>
+                      <option value="under-20k">Under $20,000</option>
+                      <option value="20k-50k">$20,000 to $50,000</option>
+                      <option value="50k-100k">$50,000 to $100,000</option>
+                      <option value="100k-200k">$100,000 to $200,000</option>
+                      <option value="200k-plus">$200,000+</option>
+                    </select>
+                  </label>
+                  <label class="field">
                     <span class="field__label">Tell us about your project</span>
                     <textarea
                       class="field__input field__input--area"
@@ -118,40 +142,55 @@
                       required
                     ></textarea>
                   </label>
-                  <button class="contact-link contact__submit" type="submit">submit brief →</button>
+                  <button class="contact-link contact-draw contact__submit" type="submit">submit brief →</button>
                   <p class="contact__status" role="status" aria-live="polite"></p>
                 </form>
                 <div class="contact-row contact-row--rule">
                   <p class="contact-row__label">Business enquiries</p>
-                  <a class="contact-link" href="mailto:business@becomes.co">business@becomes.co</a>
+                  <button class="contact-link contact-copy" type="button" data-copy="inquiry@becomes.co" aria-label="Copy inquiry@becomes.co">
+                    <span class="contact-copy__email">inquiry@becomes.co</span>
+                    <span class="contact-copy__action" aria-hidden="true">copy</span>
+                    <span class="contact-copy__done" aria-hidden="true">copied</span>
+                  </button>
                 </div>
               </div>
             </div>
             <div class="contact-card">
               <div class="contact-card__inner contact-card__inner--copy">
                 <p class="contact-row__label">Address</p>
-                <p class="contact-card__copy">
-                  We’re a remote native company spread across the globe, orchestrated from our Serbian office.
-                </p>
+                <div class="contact-card__split">
+                  <p class="contact-card__copy">
+                    We’re a remote native company spread across the globe, orchestrated from our Novi Sad, Serbia office.
+                  </p>
+                  <address class="contact-card__street">
+                    Ilije Ognjanovica 10<br />
+                    21000 Novi Sad, Serbia
+                  </address>
+                </div>
               </div>
             </div>
             <div class="contact-card">
               <div class="contact-card__inner">
                 <div class="contact-row">
                   <p class="contact-row__label">Join us</p>
-                  <a class="contact-link" href="mailto:careers@becomes.co">careers →</a>
+                  <button class="contact-link contact-copy" type="button" data-copy="join@becomes.co" aria-label="Copy join@becomes.co">
+                    <span class="contact-copy__email">join@becomes.co</span>
+                    <span class="contact-copy__action" aria-hidden="true">copy</span>
+                    <span class="contact-copy__done" aria-hidden="true">copied</span>
+                  </button>
                 </div>
                 <div class="contact-row contact-row--rule">
                   <p class="contact-row__label">Socials</p>
                   <div class="contact-socials">
-                    <a class="contact-link" href="https://x.com/becomesco" target="_blank" rel="noopener">x</a>
-                    <a class="contact-link" href="https://github.com/becomesco" target="_blank" rel="noopener">github</a>
-                    <a class="contact-link" href="https://www.linkedin.com/company/becomesco" target="_blank" rel="noopener">linkedin</a>
+                    <a class="contact-link contact-draw" href="https://x.com/becomesco" target="_blank" rel="noopener">x</a>
+                    <a class="contact-link contact-draw" href="https://github.com/becomesco" target="_blank" rel="noopener">github</a>
+                    <a class="contact-link contact-draw" href="https://www.linkedin.com/company/becomesco" target="_blank" rel="noopener">linkedin</a>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <p class="contact__copied" role="status" aria-live="polite"></p>
         </div>
       </section>
     </main>

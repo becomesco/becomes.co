@@ -71,77 +71,329 @@
     "src": "/media/basket/screen.webp",
     "half": "/media/basket/screen.half.webp"
   },
+  "bcms/brand-glow": {
+    "px": [
+      3095,
+      2423
+    ],
+    "alpha": true,
+    "src": "/media/bcms/brand-glow.webp",
+    "half": "/media/bcms/brand-glow.half.webp"
+  },
+  "bcms/code-editor": {
+    "px": [
+      1138,
+      1680
+    ],
+    "alpha": true,
+    "src": "/media/bcms/code-editor.webp",
+    "half": "/media/bcms/code-editor.half.webp"
+  },
   "bcms/code-snippet": {
     "px": [
-      638,
-      785
+      1848,
+      842
     ],
     "alpha": true,
     "src": "/media/bcms/code-snippet.webp",
     "half": "/media/bcms/code-snippet.half.webp"
   },
-  "bcms/command-bar": {
+  "bcms/confirm-modal": {
     "px": [
-      1093,
-      323
+      1372,
+      1106
     ],
     "alpha": true,
-    "src": "/media/bcms/command-bar.webp",
-    "half": "/media/bcms/command-bar.half.webp"
+    "src": "/media/bcms/confirm-modal.webp",
+    "half": "/media/bcms/confirm-modal.half.webp"
   },
-  "bcms/edit-template": {
+  "bcms/dashboard": {
     "px": [
-      576,
-      966
+      2880,
+      1920
+    ],
+    "alpha": false,
+    "src": "/media/bcms/dashboard.webp",
+    "half": "/media/bcms/dashboard.half.webp"
+  },
+  "bcms/docs-properties": {
+    "px": [
+      1372,
+      838
     ],
     "alpha": true,
-    "src": "/media/bcms/edit-template.webp",
-    "half": "/media/bcms/edit-template.half.webp"
+    "src": "/media/bcms/docs-properties.webp",
+    "half": "/media/bcms/docs-properties.half.webp"
   },
-  "bcms/frame-12446": {
+  "bcms/editor-field-alt": {
     "px": [
-      856,
+      1226,
+      179
+    ],
+    "alpha": true,
+    "src": "/media/bcms/editor-field-alt.webp",
+    "half": "/media/bcms/editor-field-alt.half.webp"
+  },
+  "bcms/editor-field": {
+    "px": [
+      1231,
+      183
+    ],
+    "alpha": true,
+    "src": "/media/bcms/editor-field.webp",
+    "half": "/media/bcms/editor-field.half.webp"
+  },
+  "bcms/entry-nested": {
+    "px": [
+      1234,
+      368
+    ],
+    "alpha": true,
+    "src": "/media/bcms/entry-nested.webp",
+    "half": "/media/bcms/entry-nested.half.webp"
+  },
+  "bcms/groups-list": {
+    "px": [
+      900,
+      1200
+    ],
+    "alpha": true,
+    "src": "/media/bcms/groups-list.webp",
+    "half": "/media/bcms/groups-list.half.webp"
+  },
+  "bcms/history": {
+    "px": [
+      712,
+      592
+    ],
+    "alpha": true,
+    "src": "/media/bcms/history.webp",
+    "half": "/media/bcms/history.half.webp"
+  },
+  "bcms/inputs-card": {
+    "px": [
+      900,
+      1200
+    ],
+    "alpha": true,
+    "src": "/media/bcms/inputs-card.webp",
+    "half": "/media/bcms/inputs-card.half.webp"
+  },
+  "bcms/invite-row": {
+    "px": [
+      1372,
+      112
+    ],
+    "alpha": true,
+    "src": "/media/bcms/invite-row.webp",
+    "half": "/media/bcms/invite-row.half.webp"
+  },
+  "bcms/kanban": {
+    "px": [
+      2880,
+      1920
+    ],
+    "alpha": false,
+    "src": "/media/bcms/kanban.webp",
+    "half": "/media/bcms/kanban.half.webp"
+  },
+  "bcms/lock": {
+    "px": [
+      1405,
+      1425
+    ],
+    "alpha": true,
+    "src": "/media/bcms/lock.webp",
+    "half": "/media/bcms/lock.half.webp"
+  },
+  "bcms/login": {
+    "px": [
+      750,
+      1624
+    ],
+    "alpha": false,
+    "src": "/media/bcms/login.webp",
+    "half": "/media/bcms/login.half.webp"
+  },
+  "bcms/media-grid": {
+    "px": [
+      1372,
+      620
+    ],
+    "alpha": true,
+    "src": "/media/bcms/media-grid.webp",
+    "half": "/media/bcms/media-grid.half.webp"
+  },
+  "bcms/media-manager": {
+    "px": [
+      900,
+      1200
+    ],
+    "alpha": true,
+    "src": "/media/bcms/media-manager.webp",
+    "half": "/media/bcms/media-manager.half.webp"
+  },
+  "bcms/next-integration": {
+    "px": [
+      900,
+      1200
+    ],
+    "alpha": true,
+    "src": "/media/bcms/next-integration.webp",
+    "half": "/media/bcms/next-integration.half.webp"
+  },
+  "bcms/properties-panel": {
+    "px": [
+      824,
+      1294
+    ],
+    "alpha": true,
+    "src": "/media/bcms/properties-panel.webp",
+    "half": "/media/bcms/properties-panel.half.webp"
+  },
+  "bcms/shot-chrome": {
+    "px": [
+      1120,
       496
     ],
-    "alpha": true,
-    "src": "/media/bcms/frame-12446.webp",
-    "half": "/media/bcms/frame-12446.half.webp"
+    "alpha": false,
+    "src": "/media/bcms/shot-chrome.webp",
+    "half": "/media/bcms/shot-chrome.half.webp"
   },
-  "bcms/frame-12447": {
+  "bcms/shot-comments": {
     "px": [
-      1625,
-      1013
+      710,
+      652
+    ],
+    "alpha": false,
+    "src": "/media/bcms/shot-comments.webp",
+    "half": "/media/bcms/shot-comments.half.webp"
+  },
+  "bcms/shot-docs": {
+    "px": [
+      2102,
+      1614
+    ],
+    "alpha": false,
+    "src": "/media/bcms/shot-docs.webp",
+    "half": "/media/bcms/shot-docs.half.webp"
+  },
+  "bcms/shot-editor": {
+    "px": [
+      1344,
+      1138
+    ],
+    "alpha": false,
+    "src": "/media/bcms/shot-editor.webp",
+    "half": "/media/bcms/shot-editor.half.webp"
+  },
+  "bcms/shot-marketing": {
+    "px": [
+      2966,
+      1700
+    ],
+    "alpha": false,
+    "src": "/media/bcms/shot-marketing.webp",
+    "half": "/media/bcms/shot-marketing.half.webp"
+  },
+  "bcms/shot-toolbar": {
+    "px": [
+      918,
+      360
+    ],
+    "alpha": false,
+    "src": "/media/bcms/shot-toolbar.webp",
+    "half": "/media/bcms/shot-toolbar.half.webp"
+  },
+  "bcms/starter-jobs": {
+    "px": [
+      692,
+      788
     ],
     "alpha": true,
-    "src": "/media/bcms/frame-12447.webp",
-    "half": "/media/bcms/frame-12447.half.webp"
+    "src": "/media/bcms/starter-jobs.webp",
+    "half": "/media/bcms/starter-jobs.half.webp"
   },
-  "bcms/group-1220": {
+  "bcms/starter-podcast": {
     "px": [
-      742,
-      476
+      692,
+      788
     ],
     "alpha": true,
-    "src": "/media/bcms/group-1220.webp",
-    "half": "/media/bcms/group-1220.half.webp"
+    "src": "/media/bcms/starter-podcast.webp",
+    "half": "/media/bcms/starter-podcast.half.webp"
   },
-  "bcms/properties": {
+  "bcms/starter-portfolio": {
     "px": [
-      681,
-      795
+      692,
+      788
     ],
     "alpha": true,
-    "src": "/media/bcms/properties.webp",
-    "half": "/media/bcms/properties.half.webp"
+    "src": "/media/bcms/starter-portfolio.webp",
+    "half": "/media/bcms/starter-portfolio.half.webp"
   },
-  "bcms/turn-into-menu": {
+  "bcms/starter-recipes": {
     "px": [
-      684,
-      858
+      692,
+      788
     ],
     "alpha": true,
-    "src": "/media/bcms/turn-into-menu.webp",
-    "half": "/media/bcms/turn-into-menu.half.webp"
+    "src": "/media/bcms/starter-recipes.webp",
+    "half": "/media/bcms/starter-recipes.half.webp"
+  },
+  "bcms/starter-restaurant": {
+    "px": [
+      692,
+      788
+    ],
+    "alpha": true,
+    "src": "/media/bcms/starter-restaurant.webp",
+    "half": "/media/bcms/starter-restaurant.half.webp"
+  },
+  "bcms/starter-shop": {
+    "px": [
+      692,
+      788
+    ],
+    "alpha": true,
+    "src": "/media/bcms/starter-shop.webp",
+    "half": "/media/bcms/starter-shop.half.webp"
+  },
+  "bcms/starter-stack": {
+    "px": [
+      520,
+      580
+    ],
+    "alpha": true,
+    "src": "/media/bcms/starter-stack.webp",
+    "half": "/media/bcms/starter-stack.half.webp"
+  },
+  "bcms/upload-dropzone": {
+    "px": [
+      1372,
+      204
+    ],
+    "alpha": true,
+    "src": "/media/bcms/upload-dropzone.webp",
+    "half": "/media/bcms/upload-dropzone.half.webp"
+  },
+  "bcms/upload-queue": {
+    "px": [
+      972,
+      332
+    ],
+    "alpha": true,
+    "src": "/media/bcms/upload-queue.webp",
+    "half": "/media/bcms/upload-queue.half.webp"
+  },
+  "bcms/widget-entry": {
+    "px": [
+      900,
+      1200
+    ],
+    "alpha": true,
+    "src": "/media/bcms/widget-entry.webp",
+    "half": "/media/bcms/widget-entry.half.webp"
   },
   "brand/glass-mark-model": {
     "px": [
@@ -530,6 +782,15 @@
     "src": "/media/pyure/leaf-card.webp",
     "half": "/media/pyure/leaf-card.half.webp"
   },
+  "videotoflip/about": {
+    "px": [
+      1680,
+      1610
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/about.webp",
+    "half": "/media/videotoflip/about.half.webp"
+  },
   "videotoflip/confetti": {
     "px": [
       281,
@@ -538,6 +799,51 @@
     "alpha": true,
     "src": "/media/videotoflip/confetti.webp",
     "half": "/media/videotoflip/confetti.half.webp"
+  },
+  "videotoflip/corners": {
+    "px": [
+      1090,
+      450
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/corners.webp",
+    "half": "/media/videotoflip/corners.half.webp"
+  },
+  "videotoflip/cover-modal": {
+    "px": [
+      1152,
+      1494
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/cover-modal.webp",
+    "half": "/media/videotoflip/cover-modal.half.webp"
+  },
+  "videotoflip/cover-options": {
+    "px": [
+      1090,
+      754
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/cover-options.webp",
+    "half": "/media/videotoflip/cover-options.half.webp"
+  },
+  "videotoflip/details": {
+    "px": [
+      2240,
+      1240
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/details.webp",
+    "half": "/media/videotoflip/details.half.webp"
+  },
+  "videotoflip/filmstrip": {
+    "px": [
+      1500,
+      241
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/filmstrip.webp",
+    "half": "/media/videotoflip/filmstrip.half.webp"
   },
   "videotoflip/final": {
     "px": [
@@ -574,5 +880,131 @@
     "alpha": true,
     "src": "/media/videotoflip/group-3.webp",
     "half": "/media/videotoflip/group-3.half.webp"
+  },
+  "videotoflip/hero": {
+    "px": [
+      1537,
+      724
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/hero.webp",
+    "half": "/media/videotoflip/hero.half.webp"
+  },
+  "videotoflip/occasion": {
+    "px": [
+      980,
+      1364
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/occasion.webp",
+    "half": "/media/videotoflip/occasion.half.webp"
+  },
+  "videotoflip/order-info": {
+    "px": [
+      1130,
+      1178
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/order-info.webp",
+    "half": "/media/videotoflip/order-info.half.webp"
+  },
+  "videotoflip/palette": {
+    "px": [
+      2600,
+      200
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/palette.webp",
+    "half": "/media/videotoflip/palette.half.webp"
+  },
+  "videotoflip/player": {
+    "px": [
+      990,
+      800
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/player.webp",
+    "half": "/media/videotoflip/player.half.webp"
+  },
+  "videotoflip/price": {
+    "px": [
+      1000,
+      220
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/price.webp",
+    "half": "/media/videotoflip/price.half.webp"
+  },
+  "videotoflip/qr-card": {
+    "px": [
+      702,
+      725
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/qr-card.webp",
+    "half": "/media/videotoflip/qr-card.half.webp"
+  },
+  "videotoflip/quantity": {
+    "px": [
+      1090,
+      496
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/quantity.webp",
+    "half": "/media/videotoflip/quantity.half.webp"
+  },
+  "videotoflip/ready-to-order": {
+    "px": [
+      2000,
+      522
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/ready-to-order.webp",
+    "half": "/media/videotoflip/ready-to-order.half.webp"
+  },
+  "videotoflip/sticker-retro": {
+    "px": [
+      1915,
+      1673
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/sticker-retro.webp",
+    "half": "/media/videotoflip/sticker-retro.half.webp"
+  },
+  "videotoflip/sticker-yellow": {
+    "px": [
+      1835,
+      1593
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/sticker-yellow.webp",
+    "half": "/media/videotoflip/sticker-yellow.half.webp"
+  },
+  "videotoflip/tiktok": {
+    "px": [
+      1260,
+      838
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/tiktok.webp",
+    "half": "/media/videotoflip/tiktok.half.webp"
+  },
+  "videotoflip/v-rainbow": {
+    "px": [
+      530,
+      392
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/v-rainbow.webp",
+    "half": "/media/videotoflip/v-rainbow.half.webp"
+  },
+  "videotoflip/wordmark-rainbow": {
+    "px": [
+      3414,
+      724
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/wordmark-rainbow.webp",
+    "half": "/media/videotoflip/wordmark-rainbow.half.webp"
   }
 }

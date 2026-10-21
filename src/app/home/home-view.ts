@@ -237,7 +237,7 @@ function otherTitleElement(): HTMLElement {
   el.className = 'home-title';
   const heading = document.createElement('h2');
   heading.className = 'home-title__headline';
-  heading.textContent = 'other projects';
+  heading.textContent = 'other projects...';
   el.append(heading);
   return el;
 }
@@ -405,6 +405,7 @@ export class HomeView implements View {
         // Symmetric about the anchor, since that is the point the layout centers.
         title: { width: text.width, height: 2 * Math.max(title.anchor, rect.height - title.anchor) },
         assets: title.work ? (this.assets.get(title.work) ?? []) : [],
+        copies: title.work?.slug === 'bcms' ? 1 : undefined,
       };
     });
     this.measureSpots();
@@ -592,12 +593,28 @@ export class HomeView implements View {
     const scale = (1 - 0.07 * edge) * (1 - SCROLL_SHRINK * shrink) * (1 + HOVER_SCALE * hover);
     const w = p.w * scale;
     const h = p.h * scale;
-    sprite.x = p.x + (p.w - w) / 2;
-    sprite.y = cy - h / 2;
-    sprite.w = sprite.iw = w;
-    sprite.h = sprite.ih = h;
-    sprite.ix = sprite.x;
-    sprite.iy = sprite.y;
+    const x = p.x + (p.w - w) / 2;
+    const y = cy - h / 2;
+    sprite.x = x;
+    sprite.y = y;
+    sprite.w = w;
+    sprite.h = h;
+    if (p.asset.frame) {
+      sprite.card = 1;
+      sprite.radius = OTHER_RADIUS;
+      sprite.innerRadius = OTHER_IMAGE_RADIUS;
+      sprite.ix = x + OTHER_INSET;
+      sprite.iy = y + OTHER_INSET;
+      sprite.iw = w - OTHER_INSET * 2;
+      sprite.ih = h - OTHER_INSET * 2;
+    } else {
+      sprite.card = 0;
+      sprite.innerRadius = 0;
+      sprite.iw = w;
+      sprite.ih = h;
+      sprite.ix = x;
+      sprite.iy = y;
+    }
     sprite.hover = hover;
     sprite.lift = this.press.lift;
     sprite.opacity = 1;

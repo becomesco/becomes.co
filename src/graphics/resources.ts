@@ -171,6 +171,7 @@ export class TextureStore {
       });
       this.device.queue.copyExternalImageToTexture(
         { source },
+        // Straight-alpha decode; premul on upload so leftover RGB in a=0 pixels does not tint.
         { texture, premultipliedAlpha: true },
         [source.width, source.height],
       );

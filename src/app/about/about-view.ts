@@ -107,6 +107,7 @@ export class AboutView implements View {
       }
       bottom = y + 40;
     }
+    bottom = Math.max(bottom, this.copy.offsetTop + this.copy.offsetHeight + 40);
     this.scroll.setEase(reducedMotion ? 60 : 9);
     this.scroll.setMax(bottom - vh);
   }

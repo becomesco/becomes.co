@@ -35,6 +35,8 @@ export interface SectionInput {
   key: string;
   title: TitleBox;
   assets: readonly Asset[];
+  /** How many shuffled passes of this section's Assets. Defaults to `options.copies`. */
+  copies?: number;
 }
 
 export interface Placement {
@@ -97,6 +99,11 @@ interface Body {
 const ENTRY_MARGIN = 48;
 /** Empty ground after the last section, in viewport heights, for the Glass mark to fly back in over. */
 const CLOSING = 1;
+/**
+ * Scroll the manifesto holds alone, in viewport heights, before the first Work's Assets come in.
+ * Longer than the Glass mark's way out, so it turns away first and the manifesto then sits by itself.
+ */
+const LANDING = 1;
 
 const screenOffset = (b: Body, s: number): number => (b.a - s) * b.v;
 
@@ -176,7 +183,7 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
 
     const field = mode === 'field' && section.assets.length > 0;
     if (!field) {
-      layout.p1 = section.assets.length ? p0 + pinShort : p0;
+      layout.p1 = section.assets.length ? p0 + pinShort : k === 0 ? p0 + vh * LANDING : p0;
       if (mode === 'stack') bodies.push(...titleBodies(width, vh, section.title, layout.p0, layout.p1));
     }
 
@@ -186,7 +193,7 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
     let zone: Zone = random() < 0.5 ? 'left' : 'right';
     const maxArea = Math.max(1, ...section.assets.map((a) => a.width * a.height));
 
-    for (const { asset, copy } of sequence(section.assets, options.copies, random)) {
+    for (const { asset, copy } of sequence(section.assets, section.copies ?? options.copies, random)) {
       const forced: Zone | null = asset.cut.has('left') ? 'left' : asset.cut.has('right') ? 'right' : null;
       if (mode === 'field') zone = forced ?? nextZone(zone, random);
 

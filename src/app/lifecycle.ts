@@ -27,9 +27,9 @@ interface Fade {
 }
 
 const TITLES: Record<Exclude<ViewName, 'work'>, string> = {
-  home: 'Becomes: a design and technology studio for a more interesting internet.',
-  about: 'About — Becomes',
-  contact: 'Contact — Becomes',
+  home: 'Becomes · a design and technology studio for a more interesting internet.',
+  about: 'About · Becomes',
+  contact: 'Contact · Becomes',
 };
 
 export class App {
@@ -152,7 +152,7 @@ export class App {
 
   private onRoute = (route: Route, intent: NavigationIntent, kind: 'initial' | 'push' | 'pop'): void => {
     const next = this.views[route.view];
-    document.title = route.view === 'work' ? `${route.work.name} — Becomes` : TITLES[route.view];
+    document.title = route.view === 'work' ? `${route.work.name} · Becomes` : TITLES[route.view];
     this.chrome.setView(route.view);
 
     if (kind === 'initial') {

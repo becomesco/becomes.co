@@ -4,6 +4,7 @@ import { createSprite, NO_FADE, type EdgeFade, type Sprite } from '../../graphic
 import { clamp, easeOutCubic, saturate } from '../../utils/math';
 import { assetsOf, type Asset, type Work } from '../data/works';
 import { createGrid } from '../home/grid';
+import { OTHER_IMAGE_RADIUS, OTHER_INSET, OTHER_RADIUS } from '../home/other';
 import { NotePress } from '../note';
 import type { AppContext, DrawList, View } from '../view';
 
@@ -20,7 +21,6 @@ interface Card {
   ih: number;
 }
 
-const CARD_RADIUS = 12;
 const CUT_FADE = 0.14;
 /** Largest display size relative to the design size; beyond this the 2x export goes soft. */
 const MAX_UPSCALE = 1.3;
@@ -62,8 +62,9 @@ export class WorkView implements View {
     const ordered = [assets[heroIndex], ...assets.filter((_, i) => i !== heroIndex)];
     this.cards = ordered.map((asset, i) => {
       const sprite = createSprite(`work:${i}`, asset.texture);
-      sprite.card = 1;
-      sprite.radius = CARD_RADIUS;
+      sprite.card = asset.frame ? 1 : 0;
+      sprite.radius = asset.frame ? OTHER_RADIUS : 0;
+      sprite.innerRadius = asset.frame ? OTHER_IMAGE_RADIUS : 0;
       sprite.fade = cardFade(asset);
       return { asset, sprite, x: 0, y: 0, w: 0, h: 0, ix: 0, iy: 0, iw: 0, ih: 0 };
     });
@@ -193,8 +194,9 @@ export class WorkView implements View {
 
   private fit(card: Card, x: number, y: number, w: number, h: number, desktop: boolean): void {
     const pad = desktop ? Math.max(32, w * 0.07) : 20;
-    const availW = w - pad * 2;
-    const availH = h - pad * 2;
+    const framePad = card.asset.frame ? OTHER_INSET : 0;
+    const availW = w - pad * 2 - framePad * 2;
+    const availH = h - pad * 2 - framePad * 2;
     const scale = Math.min(availW / card.asset.width, availH / card.asset.height, MAX_UPSCALE);
     card.x = x;
     card.y = y;
@@ -202,8 +204,8 @@ export class WorkView implements View {
     card.h = h;
     card.iw = card.asset.width * scale;
     card.ih = card.asset.height * scale;
-    card.ix = x + (w - card.iw) / 2;
-    card.iy = y + (h - card.ih) / 2;
+    card.ix = x + pad + framePad + (availW - card.iw) / 2;
+    card.iy = y + pad + framePad + (availH - card.ih) / 2;
   }
 
   private position(card: Card, s: number, lift: number): void {
