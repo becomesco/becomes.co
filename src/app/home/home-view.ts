@@ -405,7 +405,7 @@ export class HomeView implements View {
         // Symmetric about the anchor, since that is the point the layout centers.
         title: { width: text.width, height: 2 * Math.max(title.anchor, rect.height - title.anchor) },
         assets: title.work ? (this.assets.get(title.work) ?? []) : [],
-        copies: title.work?.slug === 'bcms' ? 1 : undefined,
+        copies: title.work?.slug === 'bcms' || title.work?.slug === 'pyure' ? 1 : undefined,
       };
     });
     this.measureSpots();

@@ -26,7 +26,7 @@ const MATTE_OVERRIDES = {
 };
 
 /** Skip beige rematte for whole groups (exports keep their own alpha). */
-const SKIP_MATTE_GROUPS = new Set(['bcms']);
+const SKIP_MATTE_GROUPS = new Set(['bcms', 'pyure']);
 
 async function matte(input, floodDistance) {
   const { data, info } = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true });

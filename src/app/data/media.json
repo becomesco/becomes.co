@@ -710,77 +710,203 @@
     "src": "/media/pov/tap-block.webp",
     "half": "/media/pov/tap-block.half.webp"
   },
-  "pyure/demo": {
+  "pyure/book-demo": {
     "px": [
       1178,
       196
     ],
-    "alpha": true,
-    "src": "/media/pyure/demo.webp",
-    "half": "/media/pyure/demo.half.webp"
+    "alpha": false,
+    "src": "/media/pyure/book-demo.webp",
+    "half": "/media/pyure/book-demo.half.webp"
   },
-  "pyure/frame-12446": {
+  "pyure/contact-form": {
     "px": [
-      1046,
-      642
+      1052,
+      986
     ],
     "alpha": true,
-    "src": "/media/pyure/frame-12446.webp",
-    "half": "/media/pyure/frame-12446.half.webp"
+    "src": "/media/pyure/contact-form.webp",
+    "half": "/media/pyure/contact-form.half.webp"
   },
-  "pyure/frame-12463": {
+  "pyure/copy-esg": {
     "px": [
-      666,
-      714
+      932,
+      816
     ],
     "alpha": true,
-    "src": "/media/pyure/frame-12463.webp",
-    "half": "/media/pyure/frame-12463.half.webp"
+    "src": "/media/pyure/copy-esg.webp",
+    "half": "/media/pyure/copy-esg.half.webp"
   },
-  "pyure/glass-box": {
+  "pyure/copy-measure": {
+    "px": [
+      932,
+      1182
+    ],
+    "alpha": true,
+    "src": "/media/pyure/copy-measure.webp",
+    "half": "/media/pyure/copy-measure.half.webp"
+  },
+  "pyure/copy-owners": {
+    "px": [
+      932,
+      816
+    ],
+    "alpha": true,
+    "src": "/media/pyure/copy-owners.webp",
+    "half": "/media/pyure/copy-owners.half.webp"
+  },
+  "pyure/forest-ring": {
+    "px": [
+      932,
+      1414
+    ],
+    "alpha": true,
+    "src": "/media/pyure/forest-ring.webp",
+    "half": "/media/pyure/forest-ring.half.webp"
+  },
+  "pyure/glass-cylinder": {
+    "px": [
+      6428,
+      3778
+    ],
+    "alpha": true,
+    "src": "/media/pyure/glass-cylinder.webp",
+    "half": "/media/pyure/glass-cylinder.half.webp"
+  },
+  "pyure/glass-loop": {
+    "px": [
+      2916,
+      1512
+    ],
+    "alpha": true,
+    "src": "/media/pyure/glass-loop.webp",
+    "half": "/media/pyure/glass-loop.half.webp"
+  },
+  "pyure/glass-maze": {
+    "px": [
+      932,
+      1048
+    ],
+    "alpha": true,
+    "src": "/media/pyure/glass-maze.webp",
+    "half": "/media/pyure/glass-maze.half.webp"
+  },
+  "pyure/glass-ribbon": {
     "px": [
       924,
       694
     ],
     "alpha": true,
-    "src": "/media/pyure/glass-box.webp",
-    "half": "/media/pyure/glass-box.half.webp"
+    "src": "/media/pyure/glass-ribbon.webp",
+    "half": "/media/pyure/glass-ribbon.half.webp"
   },
-  "pyure/group": {
+  "pyure/glass-terrariums": {
     "px": [
-      269,
-      269
+      2840,
+      1400
     ],
     "alpha": true,
-    "src": "/media/pyure/group.webp",
-    "half": "/media/pyure/group.half.webp"
+    "src": "/media/pyure/glass-terrariums.webp",
+    "half": "/media/pyure/glass-terrariums.half.webp"
   },
-  "pyure/header": {
+  "pyure/headline": {
+    "px": [
+      736,
+      90
+    ],
+    "alpha": true,
+    "src": "/media/pyure/headline.webp",
+    "half": "/media/pyure/headline.half.webp"
+  },
+  "pyure/hero-copy": {
+    "px": [
+      2840,
+      1400
+    ],
+    "alpha": true,
+    "src": "/media/pyure/hero-copy.webp",
+    "half": "/media/pyure/hero-copy.half.webp"
+  },
+  "pyure/laptop": {
+    "px": [
+      1017,
+      627
+    ],
+    "alpha": false,
+    "src": "/media/pyure/laptop.webp",
+    "half": "/media/pyure/laptop.half.webp"
+  },
+  "pyure/leaf-icon": {
+    "px": [
+      245,
+      257
+    ],
+    "alpha": false,
+    "src": "/media/pyure/leaf-icon.webp",
+    "half": "/media/pyure/leaf-icon.half.webp"
+  },
+  "pyure/mark-glow": {
+    "px": [
+      1210,
+      1059
+    ],
+    "alpha": true,
+    "src": "/media/pyure/mark-glow.webp",
+    "half": "/media/pyure/mark-glow.half.webp"
+  },
+  "pyure/moss-path": {
+    "px": [
+      932,
+      1414
+    ],
+    "alpha": true,
+    "src": "/media/pyure/moss-path.webp",
+    "half": "/media/pyure/moss-path.half.webp"
+  },
+  "pyure/moss-rock": {
+    "px": [
+      2202,
+      2066
+    ],
+    "alpha": true,
+    "src": "/media/pyure/moss-rock.webp",
+    "half": "/media/pyure/moss-rock.half.webp"
+  },
+  "pyure/nav-bar": {
     "px": [
       1204,
       418
     ],
     "alpha": true,
-    "src": "/media/pyure/header.webp",
-    "half": "/media/pyure/header.half.webp"
+    "src": "/media/pyure/nav-bar.webp",
+    "half": "/media/pyure/nav-bar.half.webp"
   },
-  "pyure/icon": {
+  "pyure/nav-glow": {
     "px": [
-      199,
-      199
+      1494,
+      1000
     ],
     "alpha": true,
-    "src": "/media/pyure/icon.webp",
-    "half": "/media/pyure/icon.half.webp"
+    "src": "/media/pyure/nav-glow.webp",
+    "half": "/media/pyure/nav-glow.half.webp"
   },
-  "pyure/leaf-card": {
+  "pyure/nav-menu": {
     "px": [
-      506,
-      534
+      780,
+      1688
     ],
     "alpha": true,
-    "src": "/media/pyure/leaf-card.webp",
-    "half": "/media/pyure/leaf-card.half.webp"
+    "src": "/media/pyure/nav-menu.webp",
+    "half": "/media/pyure/nav-menu.half.webp"
+  },
+  "pyure/ribbon-card": {
+    "px": [
+      650,
+      694
+    ],
+    "alpha": false,
+    "src": "/media/pyure/ribbon-card.webp",
+    "half": "/media/pyure/ribbon-card.half.webp"
   },
   "videotoflip/about": {
     "px": [
