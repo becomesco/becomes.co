@@ -18,7 +18,7 @@ const HOVER_DAMPING = 16;
 /** How far an Asset grows at full hover. */
 const HOVER_SCALE = 0.05;
 /** How much smaller Assets get at full scroll speed (Notes excepted). */
-const SCROLL_SHRINK = 0.025;
+const SCROLL_SHRINK = 0.2;
 /** Scroll speeds, px/s, between which Assets go from rest to fully shrunk. */
 const SHRINK_FROM = 60;
 const SHRINK_FULL = 2400;
