@@ -11,6 +11,9 @@ const EXPAND_STIFFNESS = 70;
 const EXPAND_DAMPING = 16;
 /** Slight X shrink at the start so the card grows, not only stretches down. */
 const EXPAND_SX = 0.985;
+/** Softer than open: the sent card should settle, not snap shut. */
+const COLLAPSE_STIFFNESS = 36;
+const COLLAPSE_DAMPING = 14;
 const COPIED_MS = 1600;
 
 /** Contact: directory cards and a native brief form. The GPU only paints the background. */
@@ -36,6 +39,7 @@ export class ContactView implements View {
   private extra = 0;
   private expandStyle = '';
   private pendingFocus = false;
+  private sent = false;
   private openedAt = 0;
   private now = 0;
   private style = '';
@@ -66,7 +70,9 @@ export class ContactView implements View {
     const { height: vh, reducedMotion } = this.ctx.viewport.state;
     this.content.style.transform = 'none';
     this.style = '';
-    if (!this.form.hidden) {
+    if (this.sent) {
+      if (this.expand.target === 0 && this.expand.value <= 0) this.releaseBriefHeight();
+    } else if (!this.form.hidden) {
       this.openH = this.brief.offsetHeight;
       this.extra = Math.max(0, this.openH - this.closedH);
       this.expandStyle = '';
@@ -108,7 +114,6 @@ export class ContactView implements View {
   sleep(): void {
     this.setBriefOpen(false);
     this.form.reset();
-    this.setStatus('', false);
     for (const button of this.copyButtons) this.clearCopied(button);
     this.copied.textContent = '';
     this.content.style.opacity = '0';
@@ -137,7 +142,9 @@ export class ContactView implements View {
   }
 
   private showBrief = (): void => {
-    if (this.expand.target === 1) return;
+    if (this.sent || this.expand.target === 1) return;
+    this.expand.stiffness = EXPAND_STIFFNESS;
+    this.expand.damping = EXPAND_DAMPING;
     this.closedH = this.brief.offsetHeight;
     this.setBriefOpen(true);
     this.openH = this.brief.offsetHeight;
@@ -159,11 +166,19 @@ export class ContactView implements View {
     this.openBrief.setAttribute('aria-expanded', String(open));
     this.form.toggleAttribute('hidden', !open);
     if (!open) {
+      this.sent = false;
+      this.brief.classList.remove('contact-card--sent');
+      this.brief.style.height = '';
+      this.expand.stiffness = EXPAND_STIFFNESS;
+      this.expand.damping = EXPAND_DAMPING;
       this.expand.set(0);
       this.pendingFocus = false;
       this.closedH = 0;
       this.openH = 0;
       this.extra = 0;
+      const submit = this.form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (submit) submit.disabled = false;
+      this.setStatus('', false);
       this.paintExpand(0);
     }
   }
@@ -172,15 +187,18 @@ export class ContactView implements View {
    * Layout jumps to the open height on the click frame. The spring only writes
    * clip-path + transform so the card grows from the closed size on the compositor.
    */
-  private paintExpand(t: number): void {
-    const done = t >= 1 || this.extra <= 0 || this.openH <= 0;
-    const style = done ? 'rest' : t.toFixed(4);
+  private paintExpand(raw: number): void {
+    const t = saturate(raw);
+    const closing = this.expand.target === 0;
+    const done = this.extra <= 0 || this.openH <= 0 || (closing ? t <= 0 : t >= 1);
+    const style = done ? `rest|${closing ? 'in' : 'out'}` : t.toFixed(4);
     if (style !== this.expandStyle) {
       this.expandStyle = style;
       if (done) {
         this.brief.style.transform = '';
         this.brief.style.clipPath = '';
         for (const card of this.rest) card.style.transform = '';
+        if (this.sent && closing) this.releaseBriefHeight();
       } else {
         const grown = (this.closedH + this.extra * t) / this.openH;
         const s = lerp(EXPAND_SX, 1, t);
@@ -237,11 +255,46 @@ export class ContactView implements View {
       });
       if (!response.ok) throw new Error(String(response.status));
       this.form.reset();
-      this.setStatus('Thanks. We will get back to you shortly.', false);
+      this.collapseToSent();
     } catch {
       this.setStatus('Something went wrong. Please try again.', true);
-    } finally {
       button.disabled = false;
+    }
+  }
+
+  private collapseToSent(): void {
+    this.setStatus('Thanks. We will get back to you shortly.', false);
+    const inner = this.brief.querySelector<HTMLElement>('.contact-card__inner')!;
+    this.openH = this.brief.offsetHeight;
+    const pad = this.openH - inner.offsetHeight;
+    this.brief.style.height = `${this.openH}px`;
+    this.sent = true;
+    this.brief.classList.add('contact-card--sent');
+    this.closedH = inner.offsetHeight + pad;
+    this.extra = Math.max(0, this.openH - this.closedH);
+    this.expandStyle = '';
+    this.pendingFocus = false;
+    const reduced = this.ctx.viewport.state.reducedMotion;
+    if (reduced || this.extra <= 0) {
+      this.expand.set(0);
+      this.releaseBriefHeight();
+    } else {
+      this.expand.stiffness = COLLAPSE_STIFFNESS;
+      this.expand.damping = COLLAPSE_DAMPING;
+      this.expand.set(1);
+      this.expand.target = 0;
+    }
+    this.layout();
+    this.paintExpand(this.expand.value);
+    this.ctx.wake();
+  }
+
+  private releaseBriefHeight(): void {
+    if (this.brief.style.height) {
+      this.brief.style.height = '';
+      this.openH = this.closedH;
+      this.extra = 0;
+      this.layout();
     }
   };
 

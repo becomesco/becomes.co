@@ -724,6 +724,16 @@ a {
   opacity: 0.5;
 }
 
+.contact-card--sent .contact__form > :not(.contact__status) {
+  display: none;
+}
+
+.contact-card--sent .contact__status {
+  padding-bottom: 12px;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
 .contact__status {
   margin: 0;
   font-size: 14px;
