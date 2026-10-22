@@ -13,7 +13,7 @@ Media that belongs to a Work. Clicking an Asset on Home opens that Work. Figma i
 _Avoid_: image, texture, attachment
 
 **Note**:
-An Asset drawn in code, not exported: the paper card with its shadow and the Work's copy typed on it (`note` in `works.ts`).
+An Asset drawn in code, not exported: the paper card with its shadow and the Work's copy typed on it (`note` in `works.ts`). About uses the same card for its own copy, outside any Work.
 _Avoid_: sticky, note image
 
 **Other**:

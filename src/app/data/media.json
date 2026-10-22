@@ -1,39 +1,39 @@
 {
-  "about/note": {
-    "px": [
-      528,
-      511
-    ],
-    "alpha": true,
-    "src": "/media/about/note.webp",
-    "half": "/media/about/note.half.webp"
-  },
   "about/photo-desk": {
     "px": [
-      1016,
-      677
+      1080,
+      1080
     ],
     "alpha": false,
     "src": "/media/about/photo-desk.webp",
     "half": "/media/about/photo-desk.half.webp"
   },
-  "about/photo-hill": {
+  "about/photo-studio": {
     "px": [
-      857,
-      571
+      1080,
+      1080
     ],
     "alpha": false,
-    "src": "/media/about/photo-hill.webp",
-    "half": "/media/about/photo-hill.half.webp"
+    "src": "/media/about/photo-studio.webp",
+    "half": "/media/about/photo-studio.half.webp"
   },
-  "about/photo-office": {
+  "about/photo-team": {
     "px": [
-      887,
-      665
+      1080,
+      836
     ],
     "alpha": false,
-    "src": "/media/about/photo-office.webp",
-    "half": "/media/about/photo-office.half.webp"
+    "src": "/media/about/photo-team.webp",
+    "half": "/media/about/photo-team.half.webp"
+  },
+  "about/photo-terrace": {
+    "px": [
+      1080,
+      1350
+    ],
+    "alpha": false,
+    "src": "/media/about/photo-terrace.webp",
+    "half": "/media/about/photo-terrace.half.webp"
   },
   "basket/cart-desktop": {
     "px": [

@@ -70,6 +70,11 @@ export class Engine {
     return GlassMark.create(this.backend.device, canvas, mesh);
   }
 
+  /** What the stage canvas drew this frame, for the Glass mark to refract. Use it in the same task as `render`. */
+  get frameTexture(): GPUTexture | null {
+    return this.backend instanceof WebGpuRenderer ? this.backend.frameTexture : null;
+  }
+
   render(scene: SceneFrame, frame: FrameTime): void {
     const consecutive = this.lastRenderedAt > 0 && frame.now - this.lastRenderedAt < 120;
     if (consecutive && this.backend.kind === 'webgpu') {

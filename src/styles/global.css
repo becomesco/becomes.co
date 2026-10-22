@@ -244,6 +244,22 @@ a {
   white-space: nowrap;
 }
 
+/* Closes Home over the returned Glass mark, so it sits above the mark rather than in the views under it. */
+.home-cta {
+  position: fixed;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.home-cta a {
+  pointer-events: auto;
+}
+
 .work__content {
   position: absolute;
   inset: 0 0 auto;
@@ -591,6 +607,7 @@ a {
 .field__label {
   font-size: 14px;
   line-height: 1.25;
+  user-select: none;
 }
 
 .field__input {
@@ -651,6 +668,7 @@ a {
 
 .contact-help__option {
   display: grid;
+  user-select: none;
 }
 
 .contact-help__option input {
@@ -849,6 +867,48 @@ a {
   background-color: var(--ink);
 }
 
+.chrome--instant .chrome__back,
+.chrome--instant .chrome__logo {
+  transition: none;
+}
+
+@media (max-width: 599px) {
+  .chrome__left {
+    position: relative;
+  }
+
+  .chrome__back {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    translate: 0 -50%;
+  }
+
+  .chrome__back--in {
+    margin-right: 0;
+  }
+
+  .chrome__logo {
+    transition: translate 0.6s var(--ease-out);
+  }
+
+  .chrome--work .chrome__logo {
+    translate: calc(50vw - var(--margin) - 50%) 0;
+  }
+
+  /* Top-right packing keeps the links still while the pill resizes under them. */
+  .chrome__nav {
+    justify-content: flex-end;
+    align-items: flex-start;
+  }
+
+  .chrome--work .chrome__nav {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+  }
+}
+
 @media (min-width: 900px) {
   .pill {
     padding: 20px;
@@ -917,6 +977,11 @@ a {
 
 .loader__mark--rest {
   z-index: 2;
+}
+
+/* Standing on About: over the stage's photos, under the browser layer's copy. */
+.loader__mark--under {
+  z-index: 0;
 }
 
 .loader__mark-canvas,

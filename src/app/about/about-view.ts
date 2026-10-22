@@ -2,9 +2,11 @@ import { Spring } from '../../core/motion';
 import type { FrameTime } from '../../core/scheduler';
 import { VirtualScroll } from '../../core/scroll';
 import { createSprite, type Sprite, type TextureRef } from '../../graphics/scene/types';
+import type { MarkSpot } from '../../ui/overlays/loader';
 import { clamp, easeOutCubic, saturate } from '../../utils/math';
 import { textureFor } from '../data/works';
 import { createGrid } from '../home/grid';
+import { NotePress, noteTexture } from '../note';
 import type { AppContext, DrawList, View } from '../view';
 
 interface Piece {
@@ -23,9 +25,13 @@ interface Piece {
 const FRAME_PAD = 6;
 const FRAME_RADIUS = 17;
 
-function piece(key: Parameters<typeof textureFor>[0], x: number, y: number, w: number, frame: boolean, depth: number, delay: number): Piece {
-  const texture = textureFor(key);
-  const sprite = createSprite(`about:${key}`, texture);
+const NOTE = [
+  'Every so often we pack our laptops and work together from somewhere new.',
+  'A change of scenery keeps the ideas fresh and the team close.',
+];
+
+function piece(texture: TextureRef, x: number, y: number, w: number, frame: boolean, depth: number, delay: number): Piece {
+  const sprite = createSprite(`about:${texture.key}`, texture);
   if (frame) {
     sprite.card = 1;
     sprite.radius = FRAME_RADIUS;
@@ -34,23 +40,30 @@ function piece(key: Parameters<typeof textureFor>[0], x: number, y: number, w: n
   return { texture, x, y, w, frame, depth, sprite, base: { x: 0, y: 0, w: 0, h: 0 }, delay };
 }
 
-/** About: readable copy in the browser layer, framed photos on the canvas with pointer parallax. */
-export class AboutView implements View {
+/**
+ * About: readable copy in the browser layer, framed photos on the canvas with pointer parallax, and
+ * the live Glass mark standing between them. The mark's still holds its spot and shows without WebGPU.
+ */
+export class AboutView implements View, MarkSpot {
   readonly name = 'about';
   readonly scroll = new VirtualScroll();
   readonly root: HTMLElement;
   presence = 0;
   hidden: string | null = null;
+  markLive = false;
+  readonly markFrame = { x: 0, y: 0, height: 0, opacity: 0 };
 
   private content: HTMLElement;
   private copy: HTMLElement;
   private pieces: Piece[] = [
-    piece('brand/glass-mark', 20, 400, 721, false, 1.3, 0.1),
-    piece('about/photo-desk', -100, 253, 441, true, 0.7, 0.2),
-    piece('about/photo-hill', 893, 59, 441, true, 1, 0.3),
-    piece('about/photo-office', 1024, 650, 441, true, 0.85, 0.4),
-    piece('about/note', 667, -34, 264, false, 0.45, 0.5),
+    piece(textureFor('brand/glass-mark'), 20, 400, 721, false, 1.3, 0.1),
+    piece(textureFor('about/photo-desk'), 150, -30, 300, true, 0.55, 0.3),
+    piece(textureFor('about/photo-studio'), -110, 290, 420, true, 0.7, 0.25),
+    piece(textureFor('about/photo-team'), 880, 40, 470, true, 1, 0.2),
+    piece(textureFor('about/photo-terrace'), 1075, 545, 330, true, 0.85, 0.4),
+    piece(noteTexture('about/note', NOTE), 667, -34, 264, false, 0.45, 0.5),
   ];
+  private press = new NotePress();
   private px = new Spring(0, 60, 14);
   private py = new Spring(0, 60, 14);
   private openedAt = 0;
@@ -94,14 +107,14 @@ export class AboutView implements View {
       this.copy.classList.add('about__copy--flow');
       const grid = createGrid(vw);
       let y = this.copy.offsetTop + this.copy.offsetHeight + 48;
-      const order = [1, 4, 2, 3, 0];
+      const order = [3, 5, 2, 4, 1, 0];
       const W = vw - grid.margin * 2;
       for (const index of order) {
         const p = this.pieces[index];
         const [pw, ph] = p.texture.px;
-        const w = index === 4 ? W * 0.62 : index === 0 ? W * 0.9 : W;
+        const w = index === 5 ? W * 0.62 : index === 0 ? W * 0.9 : W;
         const h = p.frame ? (w - FRAME_PAD * 2) * (ph / pw) + FRAME_PAD * 2 : (w * ph) / pw;
-        const x = index === 4 ? vw - grid.margin - w : (vw - w) / 2;
+        const x = index === 5 ? vw - grid.margin - w : (vw - w) / 2;
         p.base = { x, y, w, h };
         y += h + grid.gutter * 2;
       }
@@ -122,6 +135,7 @@ export class AboutView implements View {
     this.py.target = reducedMotion || !pointer.inside ? 0 : pointer.ny;
     if (this.px.update(frame.dt)) active = true;
     if (this.py.update(frame.dt)) active = true;
+    if (this.press.update(this.scroll.velocity, frame.dt, reducedMotion)) active = true;
     const t = this.now - this.openedAt;
 
     const copyIn = reducedMotion ? 1 : easeOutCubic(saturate((t - 0.15) / 0.8));
@@ -155,18 +169,30 @@ export class AboutView implements View {
       sprite.ih = h - pad * 2;
       sprite.opacity = reveal * this.presence * (p.frame ? 1 : appear);
       sprite.image = appear;
+      sprite.lift = this.press.lift;
       if (sprite.y > vh * 2) sprite.opacity = 0;
     }
+
+    const mark = this.pieces[0];
+    const reveal = reducedMotion ? 1 : easeOutCubic(saturate((t - mark.delay) / 0.9));
+    this.markFrame.x = mark.sprite.x + mark.sprite.w / 2;
+    this.markFrame.y = mark.sprite.y + mark.sprite.h / 2;
+    this.markFrame.height = mark.sprite.h;
+    this.markFrame.opacity = mark.sprite.y > vh * 2 ? 0 : reveal * this.presence;
     return active;
   }
 
   draw(out: DrawList): void {
     if (this.presence <= 0.001) return;
-    for (const p of this.pieces) out.sprites.push(p.sprite);
+    for (const p of this.pieces) {
+      if (p === this.pieces[0] && this.markLive) continue;
+      out.sprites.push(p.sprite);
+    }
   }
 
   sleep(): void {
     this.copy.style.opacity = '0';
     this.contentStyle = '';
+    this.markFrame.opacity = 0;
   }
 }

@@ -23,7 +23,6 @@ const MAX_EDGE = 2048;
 const BACKGROUND = [228, 226, 220];
 const FLOOD_DISTANCE = 26;
 const MATTE = new Set([
-  'about/note',
   'basket/illustration-backpack',
   'basket/illustration-mountain',
   'basket/mobile-product',

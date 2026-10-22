@@ -90,6 +90,14 @@ export interface MarkHost {
   drawUnderlay(ctx: OffscreenCanvasRenderingContext2D): void;
 }
 
+/** About, where the Glass mark stands still at a spot of its own, over the photos and under the copy. */
+export interface MarkSpot {
+  /** Set by the Loader: true while the live Glass mark stands in for the View's still of it. */
+  markLive: boolean;
+  /** The still's frame in screen px (centre and height, the mark filling it as it fills the Loader's) and its opacity. */
+  readonly markFrame: { x: number; y: number; height: number; opacity: number };
+}
+
 /** A computed colour as sRGB 0..1, normalised through a 2D context. */
 function cssColor(ctx: OffscreenCanvasRenderingContext2D, value: string): [number, number, number] {
   ctx.fillStyle = '#000';
@@ -164,7 +172,14 @@ export class Loader {
     aim: 0,
     approach: 0,
     flow: 0,
+    x: 0,
+    y: 0,
+    scene: 0,
   };
+  /** The pose About stands the mark in. */
+  private standing: MarkPose = { ...this.pose };
+  /** Opacity of the pose last drawn, Home's or About's. */
+  private shown = 0;
   /** Low and well damped, so the inner light glides between speeds. */
   private flowSpeed = new Spring(FLOW_APPEAR, 2.5, 3.4);
   /** The pose as drawn: `pose` with Home's scroll applied. */
@@ -200,8 +215,12 @@ export class Loader {
   private path: Carry | null = null;
   private landing: (() => LandingWord | null) | null = null;
   private host: MarkHost | null = null;
-  /** The intro is over but the Glass mark stays on Home. */
+  private spot: MarkSpot | null = null;
+  /** About holds the mark this frame: it drops under the browser layer and refracts no text. */
+  private standingOn = false;
+  /** The intro is over but the Glass mark stays, for About and, once the intro has played, Home. */
   private resting = false;
+  private onHome = false;
   private phase: Phase;
   private target = 0;
   private start = -1;
@@ -264,6 +283,20 @@ export class Loader {
     this.host = host;
   }
 
+  /**
+   * How far the Glass mark over Home is along its way out, 0 at rest (its turns unwound) to 1 gone.
+   * With no mark over Home, where it would be for the scroll.
+   */
+  get markAway(): number {
+    if (this.resting && this.onHome && this.handoffTime !== -Infinity) return saturate(this.away.value);
+    return this.awayGoal();
+  }
+
+  /** Where the Glass mark stands still once the Loader is gone, whether or not the intro played. */
+  standOn(spot: MarkSpot): void {
+    this.spot = spot;
+  }
+
   whenDone(fn: () => void): void {
     this.onDone = fn;
   }
@@ -272,17 +305,18 @@ export class Loader {
   async attach(engine: Engine): Promise<void> {
     const mesh = await this.mesh;
     let glass: GlassMark | null = null;
-    if (mesh && this.markSource === 'pending' && !this.finished) {
+    if (mesh && this.markSource === 'pending' && (!this.finished || this.resting)) {
       glass = await engine.glassMark(this.canvas, mesh).catch((error: unknown) => {
         console.warn('[loader] live Glass mark unavailable', error);
         return null;
       });
     }
     if (!glass) return this.showPoster();
-    if (this.markSource !== 'pending' || this.finished) return glass.destroy();
+    if (this.markSource !== 'pending' || (this.finished && !this.resting)) return glass.destroy();
 
     this.markSource = 'glass';
     this.glass = glass;
+    if (this.spot) this.spot.markLive = true;
     const mask = new OffscreenCanvas(1, 1).getContext('2d');
     if (mask) {
       this.wordMask = mask;
@@ -303,22 +337,64 @@ export class Loader {
     this.markReady = true;
   }
 
-  /** Render phase. */
-  draw(): void {
+  /** Render phase, after the stage: `scene` is the stage canvas's texture for this frame, when it has one. */
+  draw(scene: GPUTexture | null = null): void {
     if (this.finished && !this.resting) return;
     if (this.resting && this.glass?.lost) {
       this.dropGlass();
       this.markSource = 'pending';
       this.showPoster();
     }
-    const pose = this.leave();
-    if (this.markSource === 'poster') this.placePoster(pose);
+    const home = this.leave();
+    if (this.markSource === 'poster') this.placePoster(home);
     if (!this.glass) return;
+    const pose = this.stand(home);
+    this.shown = pose.opacity;
     const blank = pose.opacity <= 0.002;
     if (blank && this.blank) return;
     this.blank = blank;
     if (!blank) this.drawWord(this.glass);
-    this.glass.render(pose);
+    this.glass.render(pose, scene);
+  }
+
+  /**
+   * About takes the mark from Home while it shows more of it, and stands it face-on and still in
+   * its own spot, refracting the stage under the copy. Across a View change the two cross through
+   * zero opacity, so the mark never jumps between spots or layers while visible.
+   */
+  private stand(home: MarkPose): MarkPose {
+    const spot = this.spot;
+    const frame = spot?.markFrame;
+    const homeOpacity = this.onHome ? home.opacity : 0;
+    const standing = this.finished && !!frame && frame.opacity > homeOpacity;
+    if (standing !== this.standingOn) {
+      this.standingOn = standing;
+      this.mark.classList.toggle('loader__mark--under', standing);
+    }
+    if (!this.finished || !frame) return home;
+    if (!standing) {
+      home.opacity = homeOpacity - frame.opacity;
+      return home;
+    }
+    const { width, height } = this.markBox;
+    return Object.assign(this.standing, {
+      yaw: 0,
+      pitch: 0,
+      scale: this.frameHeight ? frame.height / this.frameHeight : 1,
+      opacity: frame.opacity - homeOpacity,
+      glint: GLINT_TO,
+      ground: 1,
+      edge: 2,
+      panel: 0,
+      light: 0,
+      word: 0,
+      aim: 0,
+      approach: 0,
+      flow: this.pose.flow,
+      x: width ? frame.x / width - 0.5 : 0,
+      y: height ? frame.y / height - 0.5 : 0,
+      scene: 1,
+    } satisfies MarkPose);
   }
 
   /**
@@ -344,17 +420,22 @@ export class Loader {
 
   /** Eases the way out towards Home's scroll, and back in towards its end. True while it is still moving. */
   private follow(dt: number): boolean {
-    const host = this.host;
-    if (!host || this.handoffTime === -Infinity) return false;
-    const { current, max } = host.scroll;
-    const span = window.innerHeight * AWAY;
-    const goal = Math.min(saturate(current / span), saturate((max - current) / span));
+    if (!this.host || this.handoffTime === -Infinity) return false;
+    const goal = this.awayGoal();
     if (this.reduced) {
       this.away.set(goal);
       return false;
     }
     this.away.target = goal;
     return this.away.update(dt);
+  }
+
+  /** The way out Home's scroll asks for: out over its first stretch, back in over its last. */
+  private awayGoal(): number {
+    if (!this.host) return 0;
+    const { current, max } = this.host.scroll;
+    const span = window.innerHeight * AWAY;
+    return Math.min(saturate(current / span), saturate((max - current) / span));
   }
 
   /** The still follows the live mark's flight with a CSS perspective of its own. */
@@ -400,7 +481,8 @@ export class Loader {
     if (!ctx || !glass.width) return;
     const c = this.path ? saturate(this.carry.value) : 0;
     const word = this.wordAlpha > 0.001 ? `${c} ${this.wordAlpha} ${this.rise.map((s) => s.value).join(' ')}` : '';
-    const key = `${glass.width}x${glass.height} ${word} | ${this.host?.underlayKey() ?? ''}`;
+    const under = this.standingOn ? null : this.host;
+    const key = `${glass.width}x${glass.height} ${word} | ${under?.underlayKey() ?? ''}`;
     if (key === this.wordKey) return;
     this.wordKey = key;
 
@@ -445,9 +527,9 @@ export class Loader {
       });
       ctx.restore();
     }
-    if (this.host) {
+    if (under) {
       ctx.save();
-      this.host.drawUnderlay(ctx);
+      under.drawUnderlay(ctx);
       ctx.restore();
     }
     glass.uploadWord(canvas);
@@ -645,18 +727,24 @@ export class Loader {
     this.pose.flow += this.flowSpeed.value * dt;
   }
 
-  /** Resting over Home: eases the way out, and keeps the sway and the inner light going while the live mark is on screen. */
+  /** Resting: eases Home's way out, and keeps the sway and the inner light going while the live mark is on screen. */
   private drift(frame: FrameTime): boolean {
     const moving = this.follow(frame.dt);
     if (this.reduced || this.markSource !== 'glass') return moving;
-    const since = frame.elapsed - this.start - this.markAt;
-    this.updateFlow(since, frame.dt);
-    this.updateMark(since, this.pose.ground);
-    return moving || this.drawn.opacity > 0.002;
+    if (this.onHome) {
+      const since = frame.elapsed - this.start - this.markAt;
+      this.updateFlow(since, frame.dt);
+      this.updateMark(since, this.pose.ground);
+    } else {
+      this.pose.flow += FLOW_REST * frame.dt;
+    }
+    return moving || this.shown > 0.002;
   }
 
   private showPoster(): void {
     if (this.markSource !== 'pending' || (this.finished && !this.resting)) return;
+    // Without the intro the mark only stands on About, which shows its own still instead.
+    if (this.finished && !this.onHome) return this.retire();
     this.markSource = 'poster';
     this.canvas.hidden = true;
     this.mark.classList.add('loader__mark--poster');
@@ -676,6 +764,13 @@ export class Loader {
     this.sizer = null;
     this.glass?.destroy();
     this.glass = null;
+    if (this.spot) this.spot.markLive = false;
+  }
+
+  private retire(): void {
+    this.resting = false;
+    this.dropGlass();
+    this.mark.remove();
   }
 
   private enter(phase: Phase, t: number): void {
@@ -689,10 +784,11 @@ export class Loader {
       this.handoffTime = Infinity;
       this.landed = 1;
       if (played && this.host && this.markSource !== 'pending') {
-        this.rest();
+        this.rest(true);
+      } else if (this.spot && this.markSource !== 'poster') {
+        this.rest(false);
       } else {
-        this.dropGlass();
-        this.mark.remove();
+        this.retire();
       }
       this.root.remove();
       if (played) storage(() => sessionStorage.setItem(SEEN_KEY, '1'));
@@ -701,9 +797,10 @@ export class Loader {
     return false;
   }
 
-  /** The Glass mark outlives the Loader, holding still over Home until the scroll takes it. */
-  private rest(): void {
+  /** The Glass mark outlives the Loader, holding still over Home until the scroll takes it, and standing on About. */
+  private rest(onHome: boolean): void {
     this.resting = true;
+    this.onHome = onHome;
     this.wordAlpha = 0;
     this.pose.panel = 0;
     this.pose.light = 0;

@@ -66,7 +66,10 @@ export class App {
       this.landing();
       return active;
     });
-    this.scheduler.onRender(() => this.loader.draw());
+    // Once the app renders, it draws the Loader after the stage, for the Glass mark to refract.
+    this.scheduler.onRender(() => {
+      if (!this.ready) this.loader.draw();
+    });
     this.scheduler.wake();
 
     const fonts = document.fonts.ready.then(() => this.loader.setProgress(0.45));
@@ -99,6 +102,7 @@ export class App {
     this.current = this.home;
     this.loader.landOn(() => (this.current === this.home ? this.home.landingWord() : null));
     this.loader.restOn(this.home);
+    this.loader.standOn(this.about);
 
     const { width, height, dpr } = this.viewport.state;
     this.engine.resize(width, height, dpr);
@@ -139,11 +143,15 @@ export class App {
 
   private chromeIn = false;
 
-  /** The Loader Wordmark glides into the manifesto as its lines rise in; Chrome settles in once the Loader is gone. */
+  /**
+   * The Loader Wordmark glides into the manifesto as its lines rise in; Chrome settles in once the Loader is gone.
+   * Home also follows the Glass mark's way out, for the contact link it shows once the mark is back.
+   */
   private landing(): void {
     if (!this.ready || this.current !== this.home) return;
     if (this.loader.handoffTime >= 0) this.home.startIntro();
     this.home.setLanded(this.loader.landed);
+    this.home.setMarkAway(this.loader.markAway);
     if (!this.loader.active && !this.chromeIn) {
       this.chromeIn = true;
       this.chrome.reveal();
@@ -289,5 +297,6 @@ export class App {
     this.current.draw(list);
     if (this.morph) list.sprites.push(this.morph.sprite);
     this.engine.render({ sprites: list.sprites, background: BACKGROUND, glows: list.glows, glass: list.glass }, frame);
+    this.loader.draw(this.engine.frameTexture);
   };
 }

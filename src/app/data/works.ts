@@ -257,8 +257,8 @@ export const works: readonly Work[] = [
       { media: 'heroic-rankings/statue', cut: ['right'] },
       {
         note: [
-          'We worked on a system to help clients unify their team photos, at scale.',
-          'We developed 2 vision tests, that now make good %% of the overall traffic.',
+          'We unified the Heroic Rankings brand, so every page, card and campaign reads as one.',
+          'Then we built a fast website, ready to scale in many different directions.',
         ],
       },
       { media: 'heroic-rankings/statue-pair' },
@@ -269,12 +269,24 @@ export const works: readonly Work[] = [
       { media: 'heroic-rankings/brands', width: 600, frame: true },
       { media: 'heroic-rankings/bust', width: 400 },
       { media: 'heroic-rankings/badge-google', width: 300 },
+      {
+        note: [
+          'For an SEO agency, the site doubles as a lab.',
+          'We helped them run a lot of SEO experiments, trying different URL structures and moving pages around freely.',
+        ],
+      },
       { media: 'heroic-rankings/services-grid', width: 600, frame: true },
       { media: 'heroic-rankings/partner-cloudways', width: 180 },
       { media: 'heroic-rankings/hands-reach', width: 420 },
       { media: 'heroic-rankings/form-partnership', width: 320 },
       { media: 'heroic-rankings/partner-entrepreneur', width: 180 },
       { media: 'heroic-rankings/statue-stats' },
+      {
+        note: [
+          'None of the experiments cost speed or scalability.',
+          'The site stays fast, and keeps growing whichever structure wins.',
+        ],
+      },
       { media: 'heroic-rankings/badge-hubspot', width: 300 },
       { media: 'heroic-rankings/certifications', width: 600, frame: true },
       { media: 'heroic-rankings/partner-envato', width: 180 },
@@ -294,8 +306,8 @@ export const works: readonly Work[] = [
       { media: 'videotoflip/mark-v' },
       {
         note: [
-          'We worked on a system to help clients unify their team photos, at scale.',
-          'We did 2 vision tests, that now make 30% of the traffic.',
+          'Video to Flip turns a short video into a printed flipbook you can hold.',
+          'We branded it playful and warm. Every order is a memory someone wants to keep offline.',
         ],
       },
       { media: 'videotoflip/flipbook-hands', width: 520 },
@@ -306,6 +318,12 @@ export const works: readonly Work[] = [
       { media: 'videotoflip/wordmark-rainbow', width: 560 },
       { media: 'videotoflip/occasion', width: 360 },
       { media: 'videotoflip/cover-modal', width: 400 },
+      {
+        note: [
+          'It looks like a simple, small online tool. Behind the scenes it is a B2C beast.',
+          'Email workflows, an order management system and powerful video processing, all built to scale.',
+        ],
+      },
       { media: 'videotoflip/about', width: 520, cut: ['right'] },
       { media: 'videotoflip/palette', width: 520 },
       { media: 'videotoflip/filmstrip', width: 480 },
@@ -323,6 +341,12 @@ export const works: readonly Work[] = [
       { media: 'videotoflip/step-upload', width: 360 },
       { media: 'videotoflip/feature-flipbook-maker', width: 420 },
       { media: 'videotoflip/flipbook-fan', width: 480 },
+      {
+        note: [
+          'We optimised every frame for print, so the flipbook in your hands feels as alive as the video.',
+          'And from upload to checkout, the site stays fast.',
+        ],
+      },
       { media: 'videotoflip/use-corporate', width: 300 },
       { media: 'videotoflip/wordmark-stacked', width: 400 },
       { media: 'videotoflip/step-customize', width: 360 },
@@ -350,8 +374,8 @@ export const works: readonly Work[] = [
       { media: 'basket/product-card' },
       {
         note: [
-          'We worked on a system to help clients unify their team photos, at scale.',
-          'We did 2 vision tests, that now make 30% of the traffic.',
+          'We gave Basket a modern, powerful website for their healthy snacks.',
+          'Playful and familiar, a little nostalgic, and healthy.',
         ],
       },
       { media: 'basket/mobile-product', cut: ['bottom'] },
@@ -362,12 +386,24 @@ export const works: readonly Work[] = [
       { media: 'basket/product-hazelnut', width: 360 },
       { media: 'basket/illustration-village', width: 360 },
       { media: 'basket/cart-mobile', width: 300 },
+      {
+        note: [
+          'Underneath is a custom solution.',
+          'Basket manages every order in one place, and stays in touch with its customers.',
+        ],
+      },
       { media: 'basket/illustration-ingredients', width: 480 },
       { media: 'basket/product-crackers', width: 360 },
       { media: 'basket/shop-grid', width: 440, frame: true },
       { media: 'basket/illustration-boat', width: 400 },
       { media: 'basket/illustration-winter', width: 360 },
       { media: 'basket/product-apple-flour', width: 360 },
+      {
+        note: [
+          'We integrated a local payment system, so checkout works the way customers already pay.',
+          'Snacks in the basket, a few taps, done.',
+        ],
+      },
       { media: 'basket/illustration-picnic' },
       { media: 'basket/product-page', width: 600, frame: true },
       { media: 'basket/illustration-slope', width: 600 },
@@ -379,21 +415,27 @@ export const works: readonly Work[] = [
     headline: 'Kids reading more, with carefully crafted AI experiences around books they love.',
     logo: { src: '/logos/kooper.svg', width: 99, height: 25 },
     assets: [
-      {
-        note: [
-          'We worked on a system to help clients unify their team photos, at scale.',
-          'We did 2 vision tests, that now make 30% of the traffic.',
-        ],
-      },
       { media: 'kooper/book-cards', cut: ['right'] },
       { media: 'kooper/daily-challenges' },
       { media: 'kooper/joystick' },
+      {
+        note: [
+          'We started with a question: what if books were an immersive, gamified experience?',
+          'Kooper is our answer, on web and tablet.',
+        ],
+      },
       { media: 'kooper/level-up', width: 400 },
       { media: 'kooper/tablet-reader', width: 360, frame: true },
       { media: 'kooper/book-girl-who-said-no', width: 280 },
       { media: 'kooper/badge-chapters', width: 400 },
       { media: 'kooper/illustration-sack', width: 200 },
       { media: 'kooper/book-shelf', width: 600 },
+      {
+        note: [
+          'Kids read and explore the books they love, with AI built around each story.',
+          'It stays inside the book, in an environment that is safe for kids and parents.',
+        ],
+      },
       { media: 'kooper/tablet-quiz-start', width: 360, frame: true },
       { media: 'kooper/continue-reading', width: 320 },
       { media: 'kooper/badge-reader', width: 400 },
@@ -402,6 +444,12 @@ export const works: readonly Work[] = [
       { media: 'kooper/tablet-reader-dark', width: 360, frame: true },
       { media: 'kooper/menu-profile' },
       { media: 'kooper/badge-speed-reader', width: 400 },
+      {
+        note: [
+          'Daily challenges, levels and badges turn chapters into progress.',
+          'So kids come back for the next page, as it\'s a next game ;)',
+        ],
+      },
       { media: 'kooper/book-big-bed', width: 220 },
       { media: 'kooper/browse-books', width: 240 },
       { media: 'kooper/tablet-quiz-question', width: 360, frame: true },
@@ -423,8 +471,8 @@ export const works: readonly Work[] = [
       { media: 'getcv/basic-info' },
       {
         note: [
-          'We worked on a system to help clients unify their team photos, at scale.',
-          'We did 2 vision tests, that now make 30% of the traffic.',
+          'GetCV is a warm, familiar hiring app for agencies and studios.',
+          'They hire in a way that fits what they believe in, not through some cold corporate form.',
         ],
       },
       { media: 'getcv/stats' },
@@ -441,6 +489,12 @@ export const works: readonly Work[] = [
       { media: 'getcv/stat-candidates' },
       { media: 'getcv/illustration-hand', width: 320 },
       { media: 'getcv/job-questions', width: 520, frame: true },
+      {
+        note: [
+          'The goal is to really meet the candidate, not just read a CV.',
+          'Studios ask their own questions, and candidates get to answer as themselves.',
+        ],
+      },
       { media: 'getcv/summary-copy', width: 420 },
       { media: 'getcv/mobile-dashboard', width: 280 },
       { media: 'getcv/job-list', width: 440 },
@@ -449,6 +503,12 @@ export const works: readonly Work[] = [
       { media: 'getcv/illustration-card', width: 320 },
       { media: 'getcv/job-candidate-prompt', width: 520, frame: true },
       { media: 'getcv/mobile-forgot-password', width: 280 },
+      {
+        note: [
+          'Safe, playful and honest, on both sides of the table.',
+          'Candidates know where they stand, and teams know who they are talking to.',
+        ],
+      },
       { media: 'getcv/sign-off', width: 360 },
       { media: 'getcv/job-preview', width: 560, frame: true },
       { media: 'getcv/mobile-menu', width: 280 },

@@ -11,7 +11,7 @@ struct Mark {
   half: vec4f,      // mesh half extents, unused
   params: vec4f,    // opacity, glint position, ground light (0 black, 1 warm gray), Wordmark opacity
   backdrop: vec4f,  // canvas px width, height; panel edge (fraction of height, panel above); panel amount
-  lens: vec4f,      // canvas uv per world unit at the mark's depth (x, y); light Wordmark amount; unused
+  lens: vec4f,      // canvas uv per world unit at the mark's depth (x, y); light Wordmark amount; stage share of the ground
   ink: vec4f,
   ground: vec4f,
   lightWord: vec4f,
@@ -23,6 +23,8 @@ struct Mark {
 @group(0) @binding(1) var wordMask: texture_2d<f32>;
 @group(0) @binding(2) var maskSampler: sampler;
 @group(0) @binding(3) var glowTexture: texture_2d<f32>;
+/** The stage canvas as drawn this frame (photos and ground), where the mark stands over it. */
+@group(0) @binding(4) var sceneTexture: texture_2d<f32>;
 
 /** Index of refraction of the plastic. */
 const IOR: f32 = 1.5;
@@ -83,10 +85,12 @@ fn studio(r: vec3f, p: vec3f, glint: f32, ground: f32) -> vec3f {
   return c;
 }
 
-/** The Loader as the browser layer draws it, at canvas uv. */
+/** The Loader as the browser layer draws it, or the stage under About, at canvas uv. */
 fn behind(uv: vec2f) -> vec3f {
   let panel = select(0.0, mark.backdrop.w, uv.y < mark.backdrop.z);
-  let base = mix(mark.ground.rgb, mark.ink.rgb, panel);
+  let stage = textureSampleLevel(sceneTexture, maskSampler, uv, 0.0).rgb;
+  let ground = mix(mark.ground.rgb, stage, mark.lens.w);
+  let base = mix(ground, mark.ink.rgb, panel);
   let ink = mix(mark.ink.rgb, mark.lightWord.rgb, min(panel, mark.lens.z));
   // Seen through the body the text is slightly out of focus.
   let blur = BLUR / mark.backdrop.xy;

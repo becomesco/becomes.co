@@ -41,6 +41,8 @@ export class WebGpuRenderer implements RenderBackend {
   private height = 1;
   private pixelRatio = 1;
   private destroyed = false;
+  /** The canvas texture the last `render` drew. Valid only until the browser presents it, at the end of that task. */
+  frameTexture: GPUTexture | null = null;
 
   static async create(canvas: HTMLCanvasElement, options: RendererOptions): Promise<WebGpuRenderer> {
     if (!navigator.gpu) throw new Error('WebGPU unavailable');
@@ -58,7 +60,13 @@ export class WebGpuRenderer implements RenderBackend {
     options: RendererOptions,
   ) {
     const format = navigator.gpu.getPreferredCanvasFormat();
-    context.configure({ device, format, alphaMode: 'opaque' });
+    // Sampled by the Glass mark, which refracts the stage from a canvas of its own.
+    context.configure({
+      device,
+      format,
+      alphaMode: 'opaque',
+      usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+    });
 
     device.lost.then((info) => {
       if (this.destroyed) return;
@@ -146,10 +154,11 @@ export class WebGpuRenderer implements RenderBackend {
     const count = this.packSprites(scene.sprites);
 
     const encoder = device.createCommandEncoder();
+    this.frameTexture = this.context.getCurrentTexture();
     const pass = encoder.beginRenderPass({
       colorAttachments: [
         {
-          view: this.context.getCurrentTexture().createView(),
+          view: this.frameTexture.createView(),
           loadOp: 'clear',
           storeOp: 'store',
           clearValue: { r: scene.background[0], g: scene.background[1], b: scene.background[2], a: 1 },

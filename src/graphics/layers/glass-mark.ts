@@ -50,6 +50,11 @@ export interface MarkPose {
   approach: number;
   /** Seconds on the clock of the light inside the body. */
   flow: number;
+  /** Where it stands off the canvas centre, as shares of the canvas width and height; y runs down. */
+  x: number;
+  y: number;
+  /** Share of the ground it refracts taken from the stage canvas instead of the flat ground colour. */
+  scene: number;
 }
 
 /** sRGB colours of the Loader's browser layer, 0..1. */
@@ -102,6 +107,8 @@ export class GlassMark {
   private depth: GPUTexture | null = null;
   private mask: GPUTexture | null = null;
   private glow: GPUTexture;
+  /** Bound in place of the stage canvas when the mark refracts only the flat ground. */
+  private noScene: GPUTexture;
   /** Canvas size in device px; the Wordmark mask must match it. */
   width = 0;
   height = 0;
@@ -119,6 +126,7 @@ export class GlassMark {
         { binding: 1, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
         { binding: 2, visibility: GPUShaderStage.FRAGMENT, sampler: { type: 'filtering' } },
         { binding: 3, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
+        { binding: 4, visibility: GPUShaderStage.FRAGMENT, texture: { sampleType: 'float' } },
       ],
     });
     // The glow pass reads only the uniforms, so it can render the texture the body samples.
@@ -204,6 +212,11 @@ export class GlassMark {
       format: GLOW_FORMAT,
       usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
     });
+    this.noScene = device.createTexture({
+      size: { width: 1, height: 1 },
+      format: 'rgba8unorm',
+      usage: GPUTextureUsage.TEXTURE_BINDING,
+    });
     this.glowGroup = device.createBindGroup({
       layout: glowLayout,
       entries: [{ binding: 0, resource: { buffer: this.uniformBuffer } }],
@@ -240,13 +253,18 @@ export class GlassMark {
       format: 'r8unorm',
       usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
     });
-    this.group = this.device.createBindGroup({
+    this.group = this.bind(this.noScene);
+  }
+
+  private bind(scene: GPUTexture): GPUBindGroup {
+    return this.device.createBindGroup({
       layout: this.layout,
       entries: [
         { binding: 0, resource: { buffer: this.uniformBuffer } },
-        { binding: 1, resource: this.mask.createView() },
+        { binding: 1, resource: this.mask!.createView() },
         { binding: 2, resource: this.sampler },
         { binding: 3, resource: this.glow.createView() },
+        { binding: 4, resource: scene.createView() },
       ],
     });
   }
@@ -262,10 +280,12 @@ export class GlassMark {
     this.device.queue.copyExternalImageToTexture({ source }, { texture: this.mask }, { width: this.width, height: this.height });
   }
 
-  render(pose: MarkPose): void {
+  /** `scene` is the stage canvas's texture for this frame, refracted as far as `pose.scene` asks. */
+  render(pose: MarkPose, scene: GPUTexture | null = null): void {
     if (this.destroyed || this.lost || !this.color || !this.depth || !this.group) return;
-    this.writeUniforms(pose);
+    this.writeUniforms(pose, scene ? pose.scene : 0);
     const visible = pose.opacity > 0.002;
+    const group = visible && scene && pose.scene > 0 ? this.bind(scene) : this.group;
     const encoder = this.device.createCommandEncoder();
     if (visible) {
       const glow = encoder.beginRenderPass({
@@ -294,7 +314,7 @@ export class GlassMark {
       },
     });
     if (visible) {
-      pass.setBindGroup(0, this.group);
+      pass.setBindGroup(0, group);
       pass.setVertexBuffer(0, this.vertexBuffer);
       pass.setIndexBuffer(this.indexBuffer, 'uint16');
       pass.setPipeline(this.depthPass);
@@ -316,6 +336,7 @@ export class GlassMark {
     this.depth?.destroy();
     this.mask?.destroy();
     this.glow.destroy();
+    this.noScene.destroy();
     this.context.unconfigure();
   }
 
@@ -326,7 +347,7 @@ export class GlassMark {
     return buffer;
   }
 
-  private writeUniforms(pose: MarkPose): void {
+  private writeUniforms(pose: MarkPose, scene: number): void {
     const u = this.uniforms;
     const aspect = this.width / this.height;
     const fill = this.fill;
@@ -341,6 +362,13 @@ export class GlassMark {
     u[11] = -1;
     u[14] = (near * far) / (near - far) + u[10] * -DISTANCE;
     u[15] = DISTANCE;
+    // Shift the projected image by the pose's offset, as if the canvas had been moved under it.
+    const shiftX = 2 * pose.x;
+    const shiftY = -2 * pose.y;
+    u[8] = -shiftX;
+    u[9] = -shiftY;
+    u[12] = shiftX * DISTANCE;
+    u[13] = shiftY * DISTANCE;
 
     // model: yaw about y, then pitch about x, and uniform scale, all about the optical centre; then
     // that centre slides onto the view axis and flies towards the camera.
@@ -369,11 +397,11 @@ export class GlassMark {
     u[43] = pose.word;
     u.set([this.width, this.height, pose.edge, pose.panel], 44);
     // Canvas uv per world unit on the mark's plane; uv y runs down.
-    u.set([(fill * closer) / (2 * aspect), (-fill * closer) / 2, pose.light, 0], 48);
+    u.set([(fill * closer) / (2 * aspect), (-fill * closer) / 2, pose.light, scene], 48);
     // The inner light's clock, and its frame: centred on the mark's bounds as projected, in canvas px.
     const frame = (fill * this.height * closer) / FRAME_FILL;
-    const centreX = (this.width / 2) * (1 + (f / aspect) * (tx / depth));
-    const centreY = (this.height / 2) * (1 - f * (ty / depth));
+    const centreX = (this.width / 2) * (1 + (f / aspect) * (tx / depth)) + pose.x * this.width;
+    const centreY = (this.height / 2) * (1 - f * (ty / depth)) + pose.y * this.height;
     u.set([pose.flow, centreX, centreY, frame], 64);
     this.device.queue.writeBuffer(this.uniformBuffer, 0, u);
   }

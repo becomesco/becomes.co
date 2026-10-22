@@ -75,6 +75,12 @@ const GLASS_FEATHER_MIN = 64;
 const GLASS_INSET = 0.15;
 /** Text lines a title's glass follows; further lines join the last. Two titles' lines and logos fit MAX_GLASS. */
 const GLASS_LINES = 5;
+/** Share of the Glass mark's way back still to go when the contact link comes in: its last turn is nearly unwound. */
+const CTA_AT = 0.1;
+/** Rate, per second, the contact link fades in and out at. */
+const CTA_RATE = 7;
+/** How far below rest the contact link starts, px. */
+const CTA_RISE = 12;
 
 interface Title {
   el: HTMLElement;
@@ -324,9 +330,16 @@ export class HomeView implements View {
   private morph = 1;
   private goo: SVGFEColorMatrixElement;
   private gooValue = '';
+  private cta: HTMLElement;
+  private ctaStyle = '';
+  /** Contact link fade, 0 to 1, before Home's presence. */
+  private ctaIn = 0;
+  /** The Glass mark's way out, from the Loader: 0 at rest, 1 gone. */
+  private markAway = 0;
 
   constructor(private ctx: AppContext) {
     this.root = document.querySelector<HTMLElement>('[data-view="home"]')!;
+    this.cta = document.querySelector<HTMLElement>('.home-cta')!;
     this.goo = gooFilter();
     const landing = this.root.querySelector<HTMLElement>('.home-title--landing')!;
     this.words = splitWords(landing.querySelector<HTMLElement>('.home-title__manifesto')!);
@@ -358,6 +371,10 @@ export class HomeView implements View {
 
   setLanded(value: number): void {
     this.landed = value;
+  }
+
+  setMarkAway(value: number): void {
+    this.markAway = value;
   }
 
   /** Ink box and baseline of the manifesto's first word at rest, in screen px. */
@@ -469,6 +486,7 @@ export class HomeView implements View {
     this.visible = this.query(layout, s, s);
     if (this.updateTitles(layout, s, frame.dt, reducedMotion)) active = true;
     if (this.updateLines(frame.dt, reducedMotion)) active = true;
+    if (this.updateCta(s > layout.max / 2, frame.dt, reducedMotion)) active = true;
 
     if (!(Math.abs(s - this.lastPrefetch) < vh * 0.25)) {
       this.lastPrefetch = s;
@@ -605,6 +623,30 @@ export class HomeView implements View {
     }
     this.settle();
     this.setGoo(0);
+    this.updateCta(false, 0, true);
+  }
+
+  /**
+   * The contact link over the Glass mark: in once the mark, flying back at the end of Home (`ending`),
+   * has nearly unwound its turns, out as soon as it leaves again. Returns true while still fading.
+   */
+  private updateCta(ending: boolean, dt: number, reduced: boolean): boolean {
+    const target = ending && this.markAway <= CTA_AT ? 1 : 0;
+    let next = reduced ? target : damp(this.ctaIn, target, CTA_RATE, dt);
+    if (Math.abs(next - target) < 0.002) next = target;
+    this.ctaIn = next;
+
+    const t = next * this.presence;
+    const shown = t > 0.005;
+    const style = shown ? t.toFixed(3) : '';
+    if (style !== this.ctaStyle) {
+      this.ctaStyle = style;
+      this.cta.style.opacity = style;
+      this.cta.style.visibility = shown ? 'visible' : '';
+      const rise = reduced ? 0 : (1 - next) * CTA_RISE;
+      this.cta.style.transform = shown ? `translate(-50%, calc(-50% + ${rise.toFixed(2)}px))` : '';
+    }
+    return next !== target;
   }
 
   private place(p: Placement, s: number, vh: number, hover: number, shrink: number, reduced: boolean): Sprite {
