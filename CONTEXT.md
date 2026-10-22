@@ -17,7 +17,7 @@ An Asset drawn in code, not exported: the paper card with its shadow and the Wor
 _Avoid_: sticky, note image
 
 **Other**:
-The grid that closes Home, under the "other projects" title: media in glass frames drawn in code (`others` in `works.ts`). Not Assets: no Work, no View, not clickable.
+The grid that closes Home, under the "other projects" title: media in glass frames drawn in code (`others` in `works.ts`), with bare client logos (`clients`, also listed on About) scattered between them. Not Assets: no Work, no View, not clickable.
 _Avoid_: archive, gallery
 
 **View**:

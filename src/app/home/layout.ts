@@ -80,6 +80,8 @@ export interface LayoutOptions {
   reducedMotion: boolean;
   /** Height over width of each Other piece; the last section is then the Other title. */
   other?: readonly number[];
+  /** Client logos dropped into the Other grid, see `computeOther`. */
+  otherLogos?: readonly number[];
 }
 
 interface Body {
@@ -231,7 +233,10 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
 
   placements.sort((a, b) => a.sMin - b.sMin);
   const last = out[out.length - 1];
-  const other = last && options.other?.length ? computeOther(grid, vh, last.p0, last.title.height, options.other) : null;
+  const other =
+    last && options.other?.length
+      ? computeOther(grid, vh, last.p0, last.title.height, options.other, options.otherLogos)
+      : null;
   return {
     mode,
     grid,

@@ -14,11 +14,6 @@
     <link rel="preload" href="/fonts/grillmaster-extwide-medium.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/grillmaster-wide-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/media/brand/glass-mark.mesh" as="fetch" type="application/octet-stream" crossorigin />
-    <script>
-      try {
-        if (sessionStorage.getItem('becomes:intro')) document.documentElement.classList.add('intro-seen');
-      } catch {}
-    </script>
     <script type="module" src="/src/app/main.ts"></script>
   </head>
   <body>
@@ -64,6 +59,23 @@
             <p class="about__cta">
               <a class="visit-link contact-draw" href="/contact">let’s work together →</a>
             </p>
+            <div class="about__clients">
+              <p class="about__clients-label" id="about-clients">Some of the clients we’ve worked with</p>
+              <ul class="about__clients-list" aria-labelledby="about-clients">
+                <li><img src="/clients/coca-cola.svg" alt="Coca-Cola" style="--logo-h: 23" draggable="false" /></li>
+                <li><img src="/clients/hbo.svg" alt="HBO" style="--logo-h: 22" draggable="false" /></li>
+                <li><img src="/clients/kobil.svg" alt="Kobil" style="--logo-h: 25" draggable="false" /></li>
+                <li><img src="/clients/nasa.svg" alt="NASA" style="--logo-h: 19" draggable="false" /></li>
+                <li>
+                  <img src="/clients/national-geographic.svg" alt="National Geographic" style="--logo-h: 23" draggable="false" />
+                </li>
+                <li><img src="/clients/pornhub.svg" alt="Pornhub" style="--logo-h: 20" draggable="false" /></li>
+                <li><img src="/clients/redbull.svg" alt="Red Bull" style="--logo-h: 30" draggable="false" /></li>
+                <li><img src="/clients/warner-bros.svg" alt="Warner Bros." style="--logo-h: 36" draggable="false" /></li>
+                <li><img src="/clients/netflix.svg" alt="Netflix" style="--logo-h: 20" draggable="false" /></li>
+                <li><img src="/clients/the-collective.svg" alt="The Collective" style="--logo-h: 23" draggable="false" /></li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
@@ -222,7 +234,10 @@
         <div class="loader__panel"></div>
         <div class="loader__word loader__word--dark">
           <svg viewBox="0 0 478.083 78.6151">
-            <g>
+            <clipPath id="loader-cut-dark">
+              <rect x="-48" y="-48" width="574.083" height="126.6151" />
+            </clipPath>
+            <g clip-path="url(#loader-cut-dark)">
               <path d="M9.82689 49.4657C9.82689 59.5134 16.2309 69.7819 30.5848 69.7819C45.2699 69.7819 51.5635 59.6238 51.5635 49.4657C51.5635 39.3076 45.2699 29.039 30.5848 29.039C16.3413 29.039 9.82689 39.1971 9.82689 49.4657ZM0 77.2901V1.14441e-05H10.0477V28.5974H10.5998C15.0164 23.6287 22.0829 20.2059 32.4618 20.2059C50.6802 20.2059 61.7217 33.3452 61.7217 49.4657C61.7217 65.9174 50.349 78.6151 32.5723 78.6151C21.8621 78.6151 14.4643 75.3027 10.1581 69.8924H9.71647L7.72901 77.2901H0Z" />
               <path d="M116.325 58.63H126.373C124.937 70.2235 115.663 78.615 96.0088 78.615C78.0113 78.615 65.424 68.0153 65.424 49.4656C65.424 31.0264 77.7905 20.2058 96.1193 20.2058C113.675 20.2058 126.814 29.591 126.814 47.9198V52.6677H75.5822C75.5822 61.3904 81.9862 69.7819 95.8984 69.7819C110.584 69.7819 115.111 63.3778 116.325 58.63ZM75.5822 44.9386H116.767C116.215 37.6513 111.136 29.039 96.1193 29.039C81.7654 29.039 76.3551 37.9825 75.5822 44.9386Z" />
               <path d="M182.448 55.7593H192.496C191.612 68.2361 182.558 78.615 161.911 78.615C142.367 78.615 130.663 66.4695 130.663 49.4656C130.663 33.1243 141.926 20.2058 161.69 20.2058C182.337 20.2058 191.06 30.5848 191.833 42.0679H181.785C180.902 36.5471 176.596 29.039 162.021 29.039C147.005 29.039 140.711 39.3075 140.711 49.4656C140.711 59.2925 146.674 69.7819 162.132 69.7819C176.927 69.7819 181.785 61.7216 182.448 55.7593Z" />

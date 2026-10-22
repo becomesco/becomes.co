@@ -4,7 +4,8 @@ import { VirtualScroll } from '../../core/scroll';
 import { createSprite, NO_FADE, type EdgeFade, type GlassBox, type Sprite } from '../../graphics/scene/types';
 import type { LandingWord } from '../../ui/overlays/loader';
 import { clamp, damp, easeInOutCubic, lerp, saturate, smoothstep } from '../../utils/math';
-import { assetsOf, others, textureFor, works, type Asset, type Work } from '../data/works';
+import { clientTexture } from '../client';
+import { assetsOf, clients, others, textureFor, works, type Asset, type Client, type Work } from '../data/works';
 import { NotePress } from '../note';
 import type { AppContext, DrawList, View } from '../view';
 import { computeLayout, type HomeLayout, type Placement, type SectionInput } from './layout';
@@ -18,6 +19,10 @@ const HOVER_DAMPING = 16;
 const HOVER_SCALE = 0.05;
 /** Magnification of an Other piece under the cursor. */
 const OTHER_ZOOM = 2.2;
+/** Client logos in the Other grid against their size on About. */
+const CLIENT_SCALE = 1.5;
+/** Widest a client logo gets, as a share of its slot. */
+const CLIENT_MAX_WIDTH = 0.8;
 /** Lens springs: underdamped (ζ ≈ 0.6), so it opens with a small overshoot and settles; opening is the slower of the two. */
 const LENS_OPEN_STIFFNESS = 60;
 const LENS_OPEN_DAMPING = 9.5;
@@ -273,6 +278,16 @@ function otherSprite(key: (typeof others)[number], i: number): Sprite {
   return sprite;
 }
 
+/** The client logos in grid order: those with a `slot` in it, the rest shuffled anew each visit. */
+function clientOrder(): Client[] {
+  const free = clients.filter((c) => c.slot === undefined);
+  for (let i = free.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [free[i], free[j]] = [free[j], free[i]];
+  }
+  return clients.map((_, i) => clients.find((c) => c.slot === i) ?? free.shift()!);
+}
+
 export class HomeView implements View {
   readonly name = 'home';
   readonly scroll = new VirtualScroll();
@@ -290,6 +305,10 @@ export class HomeView implements View {
   private visible: Placement[] = [];
   private otherTitle: Title;
   private otherSprites = others.map(otherSprite);
+  private clients = clientOrder();
+  private clientSprites = this.clients.map((client, i) => createSprite(`home:client:${i}`, clientTexture(client)));
+  /** Where each client logo drops into the Other grid; kept for the visit so a resize doesn't reshuffle them. */
+  private clientSpots = this.clients.map(() => Math.random());
   private otherVisible: Sprite[] = [];
   private lenses = others.map(() => ({
     open: new Spring(0, LENS_CLOSE_STIFFNESS, LENS_CLOSE_DAMPING),
@@ -456,7 +475,13 @@ export class HomeView implements View {
 
     const t0 = performance.now();
     const other = this.otherSprites.map((s) => s.texture!.px[1] / s.texture!.px[0]);
-    this.layoutState = computeLayout(this.sections, { width, height, reducedMotion, other });
+    this.layoutState = computeLayout(this.sections, {
+      width,
+      height,
+      reducedMotion,
+      other,
+      otherLogos: this.clientSpots,
+    });
     this.otherTitle.follow = this.layoutState.other?.follow ?? Infinity;
     if (import.meta.env.DEV) {
       const l = this.layoutState;
@@ -690,7 +715,10 @@ export class HomeView implements View {
     return sprite;
   }
 
-  /** Places the Other frames for scroll `s` and calls `each` for those overlapping screen rows `from` to `to`. */
+  /**
+   * Places the Other frames and client logos for scroll `s` and calls `each` for those
+   * overlapping screen rows `from` to `to`.
+   */
   private otherCells(layout: HomeLayout, s: number, from: number, to: number, each: (sprite: Sprite) => void): void {
     const other = layout.other;
     if (!other) return;
@@ -707,6 +735,22 @@ export class HomeView implements View {
       sprite.iy = y + OTHER_INSET;
       sprite.iw = cell.w - OTHER_INSET * 2;
       sprite.ih = cell.h - OTHER_INSET * 2;
+      each(sprite);
+    });
+    // Bare logos centered in their slots, sized with the viewport like About's list.
+    const scale = CLIENT_SCALE * clamp(layout.width / 1440, 0.75, 1.1);
+    other.logos.forEach((cell, i) => {
+      const y = top + cell.y;
+      if (y > to || y + cell.h < from) return;
+      const client = this.clients[i];
+      const aspect = client.width / client.height;
+      const w = Math.min(client.size * scale * aspect, cell.w * CLIENT_MAX_WIDTH);
+      const h = w / aspect;
+      const sprite = this.clientSprites[i];
+      sprite.x = sprite.ix = cell.x + (cell.w - w) / 2;
+      sprite.y = sprite.iy = y + (cell.h - h) / 2;
+      sprite.w = sprite.iw = w;
+      sprite.h = sprite.ih = h;
       each(sprite);
     });
   }
@@ -744,9 +788,10 @@ export class HomeView implements View {
     return next !== speed;
   }
 
-  /** The visible Other piece whose image is under screen point `x`, `y`, as placed this frame. */
+  /** The visible Other piece whose image is under screen point `x`, `y`, as placed this frame. Client logos don't zoom. */
   private otherAt(x: number, y: number): Sprite | null {
     for (const sprite of this.otherVisible) {
+      if (!sprite.card) continue;
       if (x >= sprite.ix && x <= sprite.ix + sprite.iw && y >= sprite.iy && y <= sprite.iy + sprite.ih) return sprite;
     }
     return null;

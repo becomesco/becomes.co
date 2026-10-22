@@ -573,6 +573,35 @@ export const others: readonly (keyof typeof media)[] = [
   'other/workgeist-shapes',
 ];
 
+/** A client logo: listed on About and scattered through the Other grid. */
+export interface Client {
+  name: string;
+  src: string;
+  /** SVG viewBox size. */
+  width: number;
+  height: number;
+  /**
+   * Height on About at the 1440 design size, CSS px, set from each logo's aspect and ink
+   * coverage so they all carry about the same weight. About's list in index.html repeats these.
+   */
+  size: number;
+  /** Fixed place among the logos in Home's Other grid, 0 first. The rest fill the gaps in a new order each visit. */
+  slot?: number;
+}
+
+export const clients: readonly Client[] = [
+  { name: 'Coca-Cola', src: '/clients/coca-cola.svg', width: 2443, height: 800, size: 23, slot: 1 },
+  { name: 'HBO', src: '/clients/hbo.svg', width: 1874, height: 800, size: 22 },
+  { name: 'Kobil', src: '/clients/kobil.svg', width: 2560, height: 800, size: 25 },
+  { name: 'NASA', src: '/clients/nasa.svg', width: 2871, height: 800, size: 19 },
+  { name: 'National Geographic', src: '/clients/national-geographic.svg', width: 2723, height: 800, size: 23 },
+  { name: 'Pornhub', src: '/clients/pornhub.svg', width: 2499, height: 700, size: 20, slot: 5 },
+  { name: 'Red Bull', src: '/clients/redbull.svg', width: 1315, height: 800, size: 30 },
+  { name: 'Warner Bros.', src: '/clients/warner-bros.svg', width: 658, height: 800, size: 36 },
+  { name: 'Netflix', src: '/clients/netflix.svg', width: 2961, height: 800, size: 20, slot: 0 },
+  { name: 'The Collective', src: '/clients/the-collective.svg', width: 2734, height: 800, size: 23 },
+];
+
 export function textureFor(key: keyof typeof media): FileTexture {
   const entry = media[key];
   return { key, src: entry.src, half: entry.half, px: entry.px as [number, number] };

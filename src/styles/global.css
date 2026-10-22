@@ -349,6 +349,37 @@ a {
   margin: clamp(28px, 2.8vw, 48px) 0 0;
 }
 
+.about__clients {
+  margin-top: clamp(48px, 5vw, 88px);
+}
+
+.about__clients-label {
+  margin: 0;
+  font-size: clamp(13px, 0.9vw, 15px);
+  line-height: 1.25;
+  opacity: 0.55;
+}
+
+.about__clients-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(18px, 1.7vw, 28px) clamp(24px, 2.4vw, 40px);
+  margin: clamp(18px, 1.7vw, 28px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about__clients-list img {
+  display: block;
+  width: auto;
+  height: clamp(calc(var(--logo-h) * 0.75px), calc(var(--logo-h) * 0.0694vw), calc(var(--logo-h) * 1.1px));
+  filter: brightness(0);
+  opacity: 0.55;
+  user-select: none;
+}
+
 .contact__content {
   position: relative;
   width: min(679px, calc(100vw - var(--margin) * 2));
@@ -1043,7 +1074,6 @@ a {
   visibility: hidden;
 }
 
-.intro-seen .loader__word,
 .loader--live .loader__word {
   visibility: visible;
 }
@@ -1052,8 +1082,6 @@ a {
   width: clamp(200px, 33.2vw, 600px);
   height: auto;
   overflow: visible;
-
-  clip-path: inset(-60% -10% 0 -10%);
 }
 
 .loader__word path {

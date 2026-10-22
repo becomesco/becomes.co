@@ -70,6 +70,8 @@ const CARRY_PAST = 1.02;
 const WORD_W = 478.083;
 const WORD_H = 78.6151;
 const WORD_BASELINE = 77.2901;
+/** How far a letter waits below its place, in SVG units: clear of the baseline cut, so no anti-aliased edge shows. */
+const RISE_DROP = WORD_H + 6;
 
 /** Where the Wordmark lands: the manifesto's first word, in screen px. */
 export interface LandingWord {
@@ -134,7 +136,7 @@ interface Carry {
  * Wordmark letters rise from behind a baseline cut, and a black panel retracts to warm gray as
  * loading completes. Then the Wordmark glides into the manifesto's first word, handing over to the
  * live text, and the Glass mark stays over Home until the scroll turns it away, returning at the end
- * of Home. Later loads in the session skip the Wordmark entrance. Not a View and not a URL.
+ * of Home. Later loads in the session shorten the Glass mark's entrance. Not a View and not a URL.
  */
 export class Loader {
   /** Seconds since the handoff into Home began: -Infinity before it, Infinity once the Loader is gone. */
@@ -244,18 +246,19 @@ export class Loader {
     this.word = dark.querySelector('svg')!;
     this.light = dark.cloneNode(true) as HTMLElement;
     this.light.classList.replace('loader__word--dark', 'loader__word--light');
+    this.light.querySelector('clipPath')!.id = 'loader-cut-light';
+    this.light.querySelector('g')!.setAttribute('clip-path', 'url(#loader-cut-light)');
     dark.after(this.light);
 
     const copies = [dark, this.light].map((word) => Array.from(word.querySelectorAll('path')));
     this.letters = copies[0].map((_, i) => copies.map((paths) => paths[i]));
 
-    const seen = storage(() => sessionStorage.getItem(SEEN_KEY)) != null;
-    const skipWord = seen || reduced;
-    this.rise = this.letters.map(() => new Spring(skipWord ? 0 : 1, 170, 19));
+    const short = reduced || storage(() => sessionStorage.getItem(SEEN_KEY)) != null;
+    this.rise = this.letters.map(() => new Spring(reduced ? 0 : 1, 170, 19));
     this.applyRise();
-    this.phase = skipWord ? 'panel' : 'mark';
-    this.hold = skipWord ? SHORT_HOLD : MARK_HOLD;
-    this.appear = skipWord ? APPEAR_SHORT : APPEAR;
+    this.phase = reduced ? 'panel' : 'mark';
+    this.hold = short ? SHORT_HOLD : MARK_HOLD;
+    this.appear = short ? APPEAR_SHORT : APPEAR;
     this.progress = reduced ? new Spring(0, 400, 40) : new Spring(0, 70, 16.5);
     this.root.classList.add('loader--live');
   }
@@ -521,7 +524,7 @@ export class Loader {
       this.glyphs.forEach((glyph, i) => {
         const spread = this.path ? this.path.spread[i] * c : 0;
         ctx.save();
-        ctx.translate(spread, this.rise[i].value * WORD_H);
+        ctx.translate(spread, this.rise[i].value * RISE_DROP);
         ctx.fill(glyph);
         ctx.restore();
       });
@@ -687,7 +690,7 @@ export class Loader {
 
   private applyRise(): void {
     this.rise.forEach((s, i) => {
-      const transform = s.value ? `translate(0 ${(s.value * WORD_H).toFixed(2)})` : '';
+      const transform = s.value ? `translate(0 ${(s.value * RISE_DROP).toFixed(2)})` : '';
       for (const path of this.letters[i]) {
         if (transform) path.setAttribute('transform', transform);
         else path.removeAttribute('transform');
