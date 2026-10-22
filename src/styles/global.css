@@ -595,6 +595,18 @@ a {
   display: none;
 }
 
+.contact__form {
+  position: relative;
+}
+
+.field--honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
 .field {
   display: grid;
   gap: 8px;

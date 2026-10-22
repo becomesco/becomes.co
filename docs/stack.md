@@ -14,7 +14,7 @@ Engineering rules for becomes.co. Glossary: `CONTEXT.md`. Decisions: `docs/adr/`
 | Scroll | Virtual scroll (ADR 0003) |
 | Routing | History API, one live GPU device (ADR 0004) |
 | Fallback | HTML/CSS when WebGPU is missing |
-| Hosting | Static / CDN |
+| Hosting | Static / CDN, plus `/api/contact` |
 
 Do not add Three.js, React Three Fiber, React, Vue, Astro, or GSAP unless a later ADR says so. Rust and WASM stay optional tooling, not the runtime.
 

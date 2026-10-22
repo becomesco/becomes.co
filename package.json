@@ -19,6 +19,12 @@
     "wawoff2": "^2.0.1"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "sharp"]
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
+  },
+  "dependencies": {
+    "resend": "^6.34.1"
   }
 }

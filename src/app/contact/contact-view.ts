@@ -4,7 +4,7 @@ import { VirtualScroll } from '../../core/scroll';
 import { easeOutCubic, lerp, saturate } from '../../utils/math';
 import type { AppContext, DrawList, View } from '../view';
 
-const ENDPOINT = import.meta.env.VITE_CONTACT_ENDPOINT as string | undefined;
+const ENDPOINT = (import.meta.env.VITE_CONTACT_ENDPOINT as string | undefined) ?? '/api/contact';
 const EMAIL = import.meta.env.VITE_CONTACT_EMAIL as string | undefined;
 /** Same as Home Asset hover: just under critical damping, ~0.6 s, no bounce. */
 const EXPAND_STIFFNESS = 70;
@@ -221,10 +221,19 @@ export class ContactView implements View {
     button.disabled = true;
     this.setStatus('Sending…', false);
     try {
+      const help = data.getAll('help').map(String);
       const response = await fetch(ENDPOINT, {
         method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: data,
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.get('name') ?? '',
+          company: data.get('company') ?? '',
+          email: data.get('email') ?? '',
+          help,
+          budget: data.get('budget') ?? '',
+          message: data.get('message') ?? '',
+          website: data.get('website') ?? '',
+        }),
       });
       if (!response.ok) throw new Error(String(response.status));
       this.form.reset();
