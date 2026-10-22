@@ -7,6 +7,7 @@ import { Chrome } from '../ui/chrome';
 import { Loader } from '../ui/overlays/loader';
 import { saturate } from '../utils/math';
 import { AboutView } from './about/about-view';
+import { pageView } from './analytics';
 import { ContactView } from './contact/contact-view';
 import { assetsOf, works } from './data/works';
 import { HomeView } from './home/home-view';
@@ -181,6 +182,7 @@ export class App {
 
     const prev = this.current;
     if (prev === next && route.view !== 'work') return;
+    pageView();
     const reduced = this.viewport.state.reducedMotion;
     this.morph = null;
     for (const view of Object.values(this.views)) view.hidden = null;
