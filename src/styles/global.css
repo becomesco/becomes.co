@@ -291,12 +291,46 @@ a {
   outline: none;
 }
 
+.work-header__intro {
+  margin-top: clamp(28px, 3.3vw, 52px);
+}
+
+.work-header__text,
+.work-header__services {
+  margin: 0;
+  max-width: 33.6em;
+  font-size: clamp(15px, 1.11vw, 19px);
+  line-height: 1.25;
+  text-wrap: pretty;
+}
+
+.work-header__text + .work-header__text {
+  margin-top: clamp(14px, 1.4vw, 22px);
+}
+
+.work-header__services {
+  margin-top: clamp(20px, 2.1vw, 36px);
+}
+
+.work-header__services-label {
+  opacity: 0.55;
+}
+
 .work-header__visit {
   margin-top: clamp(24px, 3.3vw, 52px);
 }
 
 .work-header__visit[hidden] {
   display: none;
+}
+
+.work-cta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+  opacity: 0;
 }
 
 .about__content {

@@ -12,7 +12,7 @@ import type { AppContext, DrawList, View } from '../view';
 /**
  * A Work View reads top to bottom: the clicked Asset, then one section per Screen (the whole
  * page in a frame), then every other Asset of the Work together in one collage, tilted and
- * scattered like magnets on a fridge.
+ * scattered like magnets on a fridge, then the contact link.
  */
 type Kind = 'hero' | 'screen' | 'magnet';
 
@@ -128,6 +128,7 @@ export class WorkView implements View {
   work: Work | null = null;
 
   private header: HTMLElement;
+  private cta: HTMLElement;
   private cards: Card[] = [];
   /** `cards` in draw order. */
   private drawn: Card[] = [];
@@ -135,6 +136,8 @@ export class WorkView implements View {
   private openedAt = 0;
   private now = 0;
   private headerStyle = '';
+  private ctaStyle = '';
+  private ctaTop = 0;
   private contentTransform = '';
   private content: HTMLElement;
   private seed = 0;
@@ -143,6 +146,7 @@ export class WorkView implements View {
     this.root = document.querySelector<HTMLElement>('[data-view="work"]')!;
     this.content = this.root.querySelector<HTMLElement>('.work__content')!;
     this.header = this.root.querySelector<HTMLElement>('.work-header')!;
+    this.cta = this.root.querySelector<HTMLElement>('.work-cta')!;
   }
 
   /** Show a Work. `heroAssetId` goes first so the clicked Asset can morph into it. */
@@ -162,6 +166,7 @@ export class WorkView implements View {
     this.renderHeader(work);
     this.openedAt = this.now;
     this.headerStyle = '';
+    this.ctaStyle = '';
     this.scroll.to(0, true);
     this.layout();
   }
@@ -201,8 +206,10 @@ export class WorkView implements View {
     this.drawn = this.cards;
     if (magnets.length) y += this.collage(magnets, grid.margin, y, W, vw, vh, gap) + section;
 
+    this.ctaTop = y;
+    this.cta.style.top = `${y}px`;
     this.scroll.setEase(reducedMotion ? 60 : 9);
-    this.scroll.setMax(y - section + clamp(vw * 0.08, 60, 140) - vh);
+    this.scroll.setMax(y + this.cta.offsetHeight + clamp(vw * 0.08, 60, 140) - vh);
   }
 
   update(frame: FrameTime): boolean {
@@ -227,6 +234,16 @@ export class WorkView implements View {
       this.headerStyle = headerStyle;
       this.header.style.opacity = (headerIn * this.presence).toFixed(3);
       this.header.style.transform = `translate3d(0, ${((1 - headerIn) * 28).toFixed(2)}px, 0)`;
+    }
+
+    const ctaTop = this.ctaTop - s;
+    const ctaScroll = saturate((vh - ctaTop) / (vh * 0.2));
+    const ctaReveal = easeOutCubic(ctaScroll);
+    const ctaStyle = `${(ctaReveal * this.presence).toFixed(3)}|${((1 - ctaReveal) * 28).toFixed(2)}`;
+    if (ctaStyle !== this.ctaStyle) {
+      this.ctaStyle = ctaStyle;
+      this.cta.style.opacity = (ctaReveal * this.presence).toFixed(3);
+      this.cta.style.transform = `translate3d(0, ${((1 - ctaReveal) * 28).toFixed(2)}px, 0)`;
     }
 
     for (let i = 0; i < this.cards.length; i++) {
@@ -303,6 +320,8 @@ export class WorkView implements View {
   sleep(): void {
     this.header.style.opacity = '0';
     this.headerStyle = '';
+    this.cta.style.opacity = '0';
+    this.ctaStyle = '';
   }
 
   /** Within a viewport of the screen, where a texture is worth loading ahead. */
@@ -456,6 +475,15 @@ export class WorkView implements View {
     logo.style.setProperty('--logo-w', String(work.logo.width));
     logo.style.setProperty('--logo-h', String(work.logo.height));
     this.header.querySelector('.work-header__headline')!.textContent = work.headline.toLowerCase();
+    this.header.querySelector('.work-header__intro')!.replaceChildren(
+      ...work.intro.map((text) => {
+        const p = document.createElement('p');
+        p.className = 'work-header__text';
+        p.textContent = text;
+        return p;
+      }),
+    );
+    this.header.querySelector('.work-header__services > span:last-child')!.textContent = `${work.services.join(', ')}.`;
     const visit = this.header.querySelector<HTMLAnchorElement>('.work-header__visit')!;
     visit.hidden = !work.url;
     if (work.url) visit.href = work.url;

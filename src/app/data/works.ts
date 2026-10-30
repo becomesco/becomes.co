@@ -37,6 +37,10 @@ export interface Work {
   slug: string;
   name: string;
   headline: string;
+  /** Plain summary under the headline in the Work View. One string per paragraph. */
+  intro: readonly string[];
+  /** The "What we did" line under the intro, in order. */
+  services: readonly string[];
   url?: string;
   logo: { src: string; width: number; height: number };
   /** Background glow while the Work is in view, sRGB 0-1. */
@@ -81,6 +85,11 @@ export const works: readonly Work[] = [
     slug: 'bcms',
     name: 'BCMS',
     headline: 'Branded, designed and built a headless CMS thousands of companies run on.',
+    intro: [
+      'BCMS is a headless CMS. We built the brand, the web app, the docs and thebcms.com on one design system.',
+      'Editors model content in the browser, developers query an API with generated TypeScript types, and open-source starters cover the common frameworks.',
+    ],
+    services: ['Product strategy', 'branding', 'UX/UI design', 'development', 'launch'],
     url: 'https://thebcms.com',
     logo: { src: '/logos/bcms.svg', width: 32, height: 32 },
     assets: [
@@ -161,6 +170,12 @@ export const works: readonly Work[] = [
     slug: 'pyure',
     name: 'Pyure',
     headline: 'An eclectic brand, turned into a live, modern website built to keep scaling.',
+    intro: [
+      'Pyure measures the carbon footprint of digital advertising. They had a brand, but not a website that could carry it.',
+      'We extended the brand for the web and designed and built a site that explains Measure, the eBadge and the demo, and can grow with the product.',
+    ],
+    services: ['Creative direction', 'brand extension', 'UX/UI design', 'development', 'launch'],
+    url: 'https://pyure.ai',
     logo: { src: '/logos/pyure.svg', width: 103, height: 26 },
     assets: [
       { media: 'pyure/hero-copy', width: 560, frame: true },
@@ -241,6 +256,12 @@ export const works: readonly Work[] = [
     slug: 'milmedic',
     name: 'Milmedic',
     headline: 'A leading ophthalmology clinic, modernised. Bookings went through the roof.',
+    intro: [
+      'Milmedic is an ophthalmology clinic. We moved them off an old WordPress site to a new multilingual one, and tidied up their digital branding on the way.',
+      'Every service and condition has its own page in each language, with online vision tests and a direct path to booking.',
+    ],
+    services: ['Digital branding', 'UX/UI design', 'development', 'migration', 'launch'],
+    url: 'https://www.milmedic.co.rs/en',
     logo: { src: '/logos/milmedic.svg', width: 47, height: 76 },
     assets: [
       { media: 'milmedic/hero-desktop' },
@@ -301,6 +322,11 @@ export const works: readonly Work[] = [
     slug: 'heroic-rankings',
     name: 'Heroic Rankings',
     headline: 'A brand scaled for the web, and a website turned into a truly heroic experience.',
+    intro: [
+      'Heroic Rankings is an SEO agency. We unified their brand across pages, cards and campaigns, then designed and built a fast website.',
+      'The site is also their test bed: URL structures and pages can move freely for SEO experiments without costing speed.',
+    ],
+    services: ['Branding', 'UX/UI design', 'development', 'launch'],
     url: 'https://heroicrankings.com',
     logo: { src: '/logos/heroic-rankings.svg', width: 108.416, height: 30 },
     assets: [
@@ -361,6 +387,11 @@ export const works: readonly Work[] = [
     slug: 'videotoflip',
     name: 'Video to Flip',
     headline: 'Playful on the surface, a beast underneath. Branded and built from the ground up.',
+    intro: [
+      'Video to Flip turns a short video into a printed flipbook. We took it from idea to launch.',
+      'The front is a simple ordering flow. Behind it are video processing tuned for print, order management and email workflows.',
+    ],
+    services: ['Concept', 'product strategy', 'branding', 'UX/UI design', 'development', 'launch'],
     url: 'https://videotoflip.com',
     logo: { src: '/logos/videotoflip.svg', width: 50, height: 37 },
     assets: [
@@ -438,6 +469,11 @@ export const works: readonly Work[] = [
     slug: 'basket',
     name: 'Basket',
     headline: 'Ordering healthy snacks, made fun and sophisticated on top of an already fine brand.',
+    intro: [
+      'Basket sells healthy snacks online. We designed and built their shop on top of the existing brand.',
+      'Underneath is a custom order system and a local payment integration, so checkout works the way their customers already pay.',
+    ],
+    services: ['UX/UI design', 'development', 'payment integration'],
     logo: { src: '/logos/basket.svg', width: 127, height: 40 },
     assets: [
       { media: 'basket/illustration-backpack' },
@@ -491,6 +527,11 @@ export const works: readonly Work[] = [
     slug: 'kooper',
     name: 'Kooper',
     headline: 'Kids reading more, with carefully crafted AI experiences around books they love.',
+    intro: [
+      'Kooper is a reading app for kids, on web and tablet. It started as our own question: what if books played like a game?',
+      'AI is built around each story and stays inside the book. Daily challenges, levels and badges turn chapters into progress.',
+    ],
+    services: ['Concept', 'product strategy', 'UX/UI design', 'development'],
     logo: { src: '/logos/kooper.svg', width: 99, height: 25 },
     assets: [
       { media: 'kooper/book-cards', cut: ['right'] },
@@ -559,6 +600,12 @@ export const works: readonly Work[] = [
     slug: 'getcv',
     name: 'GetCV',
     headline: 'A truly human job application tracker, for studios that still care about people.',
+    intro: [
+      'GetCV is a hiring app for agencies and studios. We designed and built it, from job posts to candidate review.',
+      'Teams write their own questions, candidates answer as themselves, and both sides can see where things stand.',
+    ],
+    services: ['Product strategy', 'branding', 'UX/UI design', 'development'],
+    url: 'https://getcv.io',
     logo: { src: '/logos/getcv.svg', width: 128, height: 30 },
     assets: [
       { media: 'getcv/phone' },
