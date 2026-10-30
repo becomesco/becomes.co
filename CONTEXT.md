@@ -16,6 +16,10 @@ _Avoid_: image, texture, attachment
 An Asset drawn in code, not exported: the paper card with its shadow and the Work's copy typed on it (`note` in `works.ts`). About uses the same card for its own copy, outside any Work.
 _Avoid_: sticky, note image
 
+**Screen**:
+A full page of a Work, exported from `media/source/<work>/screens/` (`screens` in `works.ts`). The Work View shows the clicked Asset first, then one section per Screen with the whole page in a frame, then the Work's other Assets together in one collage. Not an Asset: never on Home, not clickable.
+_Avoid_: screenshot, page
+
 **Other**:
 The grid that closes Home, under the "other projects" title: media in glass frames drawn in code (`others` in `works.ts`), with bare client logos (`clients`, also listed on About) scattered between them. Not Assets: no Work, no View, not clickable.
 _Avoid_: archive, gallery

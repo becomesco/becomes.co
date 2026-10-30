@@ -202,7 +202,13 @@ export class WebGpuRenderer implements RenderBackend {
     let n = 0;
     for (const s of sprites) {
       if (s.opacity <= 0.002 || s.w <= 0 || s.h <= 0) continue;
-      if (s.x > this.width || s.y > this.height || s.x + s.w < 0 || s.y + s.h + Math.abs(s.bend) < 0) continue;
+      // How far a turned sprite's corners swing past its unturned rect.
+      const swing = s.rotation ? (s.w + s.h) * 0.5 * Math.abs(Math.sin(s.rotation)) : 0;
+      const x0 = s.x - swing;
+      const y0 = s.y - swing;
+      const x1 = s.x + s.w + swing;
+      const y1 = s.y + s.h + Math.abs(s.bend) + swing;
+      if (x0 > this.width || y0 > this.height || x1 < 0 || y1 < 0) continue;
       let group: GPUBindGroup | null = this.textures.empty;
       if (s.texture) {
         group = this.textures.use(s.texture, s.iw * Math.max(1, s.zoom) * this.pixelRatio, 1);
@@ -233,13 +239,13 @@ export class WebGpuRenderer implements RenderBackend {
       data[o + 18] = 1;
       data[o + 19] = s.image;
       data[o + 20] = s.zoom;
-      data[o + 21] = s.hover;
+      data[o + 21] = s.rotation;
       data[o + 22] = s.focusX;
       data[o + 23] = s.focusY;
       data[o + 24] = s.lift;
       data[o + 25] = s.texture && 'shadowed' in s.texture && s.texture.shadowed ? 1 : 0;
       const [gx0, gy0, gx1, gy1] = this.glassBounds;
-      const glassed = gx1 > gx0 && s.x < gx1 && s.x + s.w > gx0 && s.y < gy1 && s.y + s.h + Math.abs(s.bend) > gy0;
+      const glassed = gx1 > gx0 && x0 < gx1 && x1 > gx0 && y0 < gy1 && y1 > gy0;
       data[o + 26] = glassed ? 1 : 0;
       data[o + 27] = glassed ? GLASS_REACH : 0;
       this.drawGroups[n] = group;

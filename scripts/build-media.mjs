@@ -2,7 +2,9 @@
 // Output: public/media/<group>/<name>.webp (source resolution up to MAX_EDGE, treated as 2x)
 //         public/media/<group>/<name>.half.webp (1x)
 //         src/app/data/media.json (pixel sizes and URLs keyed "<group>/<name>")
-import { readdir, mkdir, writeFile } from 'node:fs/promises';
+// Screens in media/source/<group>/screens/ go to public/media/<group>/screens/<name>.<tile>(.half).webp,
+// listed in src/app/data/screens.json keyed "<group>/screens/<name>".
+import { readdir, mkdir, rm, writeFile } from 'node:fs/promises';
 import { join, extname, basename } from 'node:path';
 import sharp from 'sharp';
 
@@ -128,47 +130,104 @@ async function matte(input, floodDistance) {
   return sharp(data, { raw: { width, height, channels: 4 } });
 }
 
-const manifest = {};
-const groups = (await readdir(sourceDir, { withFileTypes: true })).filter((d) => d.isDirectory());
+// Full-page screens from media/source/<group>/screens/, shown whole in a Work View. Wider than
+// MAX_EDGE so they stay sharp at full width. Pages run far taller than a GPU texture can be,
+// so each one is cut into strips of TILE_ROWS, each running TILE_OVERLAP rows into the next
+// so the strips meet without a seam.
+const SCREENS = 'screens';
+const SCREEN_WIDTH = 2304;
+const TILE_ROWS = 4096;
+const TILE_OVERLAP = 8;
+const screensPath = join(root, 'src/app/data/screens.json');
 
-for (const group of groups) {
-  const files = (await readdir(join(sourceDir, group.name))).filter((f) => /\.(png|jpe?g)$/i.test(f)).sort();
-  await mkdir(join(outDir, group.name), { recursive: true });
+const manifest = {};
+const screens = {};
+const groups = (await readdir(sourceDir, { withFileTypes: true })).filter((d) => d.isDirectory());
+const webp = { quality: 84, alphaQuality: 92, effort: 5, smartSubsample: true };
+
+async function build(dir) {
+  const entries = await readdir(join(sourceDir, dir), { withFileTypes: true });
+  const files = entries.filter((f) => f.isFile() && /\.(png|jpe?g)$/i.test(f.name)).map((f) => f.name).sort();
+  await mkdir(join(outDir, dir), { recursive: true });
 
   for (const file of files) {
     const name = basename(file, extname(file));
-    const input = join(sourceDir, group.name, file);
+    const input = join(sourceDir, dir, file);
     const meta = await sharp(input).metadata();
     const scale = Math.min(1, MAX_EDGE / Math.max(meta.width, meta.height));
     const width = Math.round(meta.width * scale);
     const height = Math.round(meta.height * scale);
-    const matteKey = `${group.name}/${name}`;
+    const matteKey = `${dir}/${name}`;
     const flood = MATTE_OVERRIDES[matteKey] ?? (MATTE.has(matteKey) ? FLOOD_DISTANCE : null);
     const matted = /\.png$/i.test(file) && flood !== null ? await matte(input, flood) : null;
     const source = matted ? await matted.png().toBuffer() : input;
     const hasAlpha = Boolean(matted) || meta.hasAlpha;
-    const webp = { quality: 84, alphaQuality: 92, effort: 5, smartSubsample: true };
 
     const fullName = `${name}.webp`;
     const halfName = `${name}.half.webp`;
     const full = sharp(source);
     if (scale < 1) full.resize(width, height, { kernel: 'lanczos3' });
-    await full.webp(webp).toFile(join(outDir, group.name, fullName));
+    await full.webp(webp).toFile(join(outDir, dir, fullName));
     await sharp(source)
       .resize(Math.max(1, Math.round(width / 2)), Math.max(1, Math.round(height / 2)), { kernel: 'lanczos3' })
       .webp(webp)
-      .toFile(join(outDir, group.name, halfName));
+      .toFile(join(outDir, dir, halfName));
 
-    manifest[`${group.name}/${name}`] = {
+    manifest[`${dir}/${name}`] = {
       px: [width, height],
       alpha: hasAlpha,
-      src: `/media/${group.name}/${fullName}`,
-      half: `/media/${group.name}/${halfName}`,
+      src: `/media/${dir}/${fullName}`,
+      half: `/media/${dir}/${halfName}`,
     };
-    console.log(`${group.name}/${name} ${width}x${height}`);
+    console.log(`${dir}/${name} ${width}x${height}`);
+  }
+  if (entries.some((e) => e.isDirectory() && e.name === SCREENS)) await buildScreens(`${dir}/${SCREENS}`);
+}
+
+/** `input` at `width` px wide, decoded to raw pixels. */
+async function decodeAt(input, width) {
+  const { data, info } = await sharp(input).resize(width, null, { kernel: 'lanczos3' }).raw().toBuffer({ resolveWithObject: true });
+  return { data, raw: { width: info.width, height: info.height, channels: info.channels } };
+}
+
+async function buildScreens(dir) {
+  const files = (await readdir(join(sourceDir, dir))).filter((f) => /\.(png|jpe?g)$/i.test(f)).sort();
+  await rm(join(outDir, dir), { recursive: true, force: true });
+  await mkdir(join(outDir, dir), { recursive: true });
+
+  for (const file of files) {
+    const name = basename(file, extname(file));
+    const input = join(sourceDir, dir, file);
+    const meta = await sharp(input).metadata();
+    const full = await decodeAt(input, Math.min(SCREEN_WIDTH, meta.width));
+    const half = await decodeAt(input, Math.round(full.raw.width / 2));
+    const { width, height } = full.raw;
+
+    const tiles = [];
+    for (let top = 0; top < height; top += TILE_ROWS) {
+      const rows = Math.min(TILE_ROWS + TILE_OVERLAP, height - top);
+      const halfTop = Math.round(top / 2);
+      const halfRows = Math.min(Math.round(rows / 2), half.raw.height - halfTop);
+      const k = tiles.length;
+      await sharp(full.data, { raw: full.raw })
+        .extract({ left: 0, top, width, height: rows })
+        .webp(webp)
+        .toFile(join(outDir, dir, `${name}.${k}.webp`));
+      await sharp(half.data, { raw: half.raw })
+        .extract({ left: 0, top: halfTop, width: half.raw.width, height: halfRows })
+        .webp(webp)
+        .toFile(join(outDir, dir, `${name}.${k}.half.webp`));
+      tiles.push({ top, px: [width, rows], src: `/media/${dir}/${name}.${k}.webp`, half: `/media/${dir}/${name}.${k}.half.webp` });
+    }
+    screens[`${dir}/${name}`] = { px: [width, height], tiles };
+    console.log(`${dir}/${name} ${width}x${height}, ${tiles.length} tiles`);
   }
 }
 
+for (const group of groups) await build(group.name);
+
 await mkdir(join(root, 'src/app/data'), { recursive: true });
 await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
+await writeFile(screensPath, `${JSON.stringify(screens, null, 2)}\n`);
 console.log(`\n${Object.keys(manifest).length} entries -> ${manifestPath}`);
+console.log(`${Object.keys(screens).length} screens -> ${screensPath}`);

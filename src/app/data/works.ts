@@ -1,4 +1,5 @@
 import media from './media.json';
+import screenMedia from './screens.json';
 import type { FileTexture, TextureRef } from '../../graphics/scene/types';
 import { OTHER_INSET } from '../home/other';
 import { noteTexture } from '../note';
@@ -25,6 +26,13 @@ export interface NoteAssetDef {
 
 export type AssetDef = MediaAssetDef | NoteAssetDef;
 
+/** A full page from `media/source/<work>/screens/`, shown whole in its own section of the Work View. Not an Asset. */
+export interface ScreenDef {
+  media: keyof typeof screenMedia;
+  /** A tablet screen: sits two to a row on desktop. */
+  tablet?: boolean;
+}
+
 export interface Work {
   slug: string;
   name: string;
@@ -34,6 +42,23 @@ export interface Work {
   /** Background glow while the Work is in view, sRGB 0-1. */
   glow?: readonly [number, number, number];
   assets: readonly AssetDef[];
+  /** In View order, after the clicked Asset. */
+  screens: readonly ScreenDef[];
+}
+
+/** One strip of a Screen: `top` and `rows` in px of the full page, running into the next strip by its overlap. */
+export interface ScreenTile {
+  texture: FileTexture;
+  top: number;
+  rows: number;
+}
+
+export interface Screen {
+  id: string;
+  /** Pixel size of the whole page at 2x. */
+  px: readonly [number, number];
+  tiles: ScreenTile[];
+  tablet: boolean;
 }
 
 export interface Asset {
@@ -120,6 +145,17 @@ export const works: readonly Work[] = [
       { media: 'bcms/lock', width: 280 },
       { media: 'bcms/history', width: 360 },
     ],
+    screens: [
+      { media: 'bcms/screens/dashboard' },
+      { media: 'bcms/screens/editor' },
+      { media: 'bcms/screens/editor-light' },
+      { media: 'bcms/screens/editor-2' },
+      { media: 'bcms/screens/media' },
+      { media: 'bcms/screens/kanban' },
+      { media: 'bcms/screens/comments' },
+      { media: 'bcms/screens/reorder' },
+      { media: 'bcms/screens/color-picker' },
+    ],
   },
   {
     slug: 'pyure',
@@ -167,6 +203,14 @@ export const works: readonly Work[] = [
       { media: 'pyure/glass-cylinder', width: 600 },
       { media: 'pyure/moss-rock', width: 400 },
       { media: 'pyure/leaf-icon', width: 160, frame: true },
+    ],
+    screens: [
+      { media: 'pyure/screens/landing' },
+      { media: 'pyure/screens/why' },
+      { media: 'pyure/screens/why-2' },
+      { media: 'pyure/screens/clients' },
+      { media: 'pyure/screens/nav' },
+      { media: 'pyure/screens/contact' },
     ],
   },
   // {
@@ -242,6 +286,16 @@ export const works: readonly Work[] = [
       { media: 'milmedic/icon-report', width: 120, frame: true },
       { media: 'milmedic/icon-tumor', width: 120, frame: true },
     ],
+    screens: [
+      { media: 'milmedic/screens/home' },
+      { media: 'milmedic/screens/exams' },
+      { media: 'milmedic/screens/prices' },
+      { media: 'milmedic/screens/rle' },
+      { media: 'milmedic/screens/about' },
+      { media: 'milmedic/screens/team' },
+      { media: 'milmedic/screens/contact' },
+      { media: 'milmedic/screens/privacy' },
+    ],
   },
   {
     slug: 'heroic-rankings',
@@ -292,6 +346,15 @@ export const works: readonly Work[] = [
       { media: 'heroic-rankings/partner-envato', width: 180 },
       { media: 'heroic-rankings/hands-raised', width: 420 },
       { media: 'heroic-rankings/partner-serpstat', width: 180 },
+    ],
+    screens: [
+      { media: 'heroic-rankings/screens/home' },
+      { media: 'heroic-rankings/screens/seo-tech' },
+      { media: 'heroic-rankings/screens/seo-local' },
+      { media: 'heroic-rankings/screens/case-affinda' },
+      { media: 'heroic-rankings/screens/partnership' },
+      { media: 'heroic-rankings/screens/team' },
+      { media: 'heroic-rankings/screens/contact' },
     ],
   },
   {
@@ -362,6 +425,14 @@ export const works: readonly Work[] = [
       { media: 'videotoflip/step-order', width: 360 },
       { media: 'videotoflip/feature-print', width: 420 },
     ],
+    screens: [
+      { media: 'videotoflip/screens/landing' },
+      { media: 'videotoflip/screens/create' },
+      { media: 'videotoflip/screens/trim' },
+      { media: 'videotoflip/screens/cover' },
+      { media: 'videotoflip/screens/payment' },
+      { media: 'videotoflip/screens/error' },
+    ],
   },
   {
     slug: 'basket',
@@ -407,6 +478,13 @@ export const works: readonly Work[] = [
       { media: 'basket/illustration-picnic' },
       { media: 'basket/product-page', width: 600, frame: true },
       { media: 'basket/illustration-slope', width: 600 },
+    ],
+    screens: [
+      { media: 'basket/screens/home' },
+      { media: 'basket/screens/product' },
+      { media: 'basket/screens/cart' },
+      { media: 'basket/screens/checkout' },
+      { media: 'basket/screens/about' },
     ],
   },
   {
@@ -459,6 +537,22 @@ export const works: readonly Work[] = [
       { media: 'kooper/book-to-the-sea', width: 220 },
       { media: 'kooper/tablet-review', width: 360, frame: true },
       { media: 'kooper/tablet-end-dark', width: 360, frame: true },
+    ],
+    screens: [
+      { media: 'kooper/screens/join' },
+      { media: 'kooper/screens/loading' },
+      { media: 'kooper/screens/books' },
+      { media: 'kooper/screens/dashboard', tablet: true },
+      { media: 'kooper/screens/browse', tablet: true },
+      { media: 'kooper/screens/reader', tablet: true },
+      { media: 'kooper/screens/tooltip', tablet: true },
+      { media: 'kooper/screens/type-size', tablet: true },
+      { media: 'kooper/screens/dictionary', tablet: true },
+      { media: 'kooper/screens/bookmark', tablet: true },
+      { media: 'kooper/screens/quiz', tablet: true },
+      { media: 'kooper/screens/reader-end', tablet: true },
+      { media: 'kooper/screens/reader-end-2', tablet: true },
+      { media: 'kooper/screens/confirm' },
     ],
   },
   {
@@ -513,6 +607,23 @@ export const works: readonly Work[] = [
       { media: 'getcv/job-preview', width: 560, frame: true },
       { media: 'getcv/mobile-menu', width: 280 },
       { media: 'getcv/job-created', width: 520, frame: true },
+    ],
+    screens: [
+      { media: 'getcv/screens/dashboard' },
+      { media: 'getcv/screens/team' },
+      { media: 'getcv/screens/profile' },
+      { media: 'getcv/screens/invite' },
+      { media: 'getcv/screens/job-start' },
+      { media: 'getcv/screens/job-dept' },
+      { media: 'getcv/screens/job-format' },
+      { media: 'getcv/screens/job-sidebar' },
+      { media: 'getcv/screens/job-sidebar-2' },
+      { media: 'getcv/screens/job-questions' },
+      { media: 'getcv/screens/job-prompt' },
+      { media: 'getcv/screens/job-preview' },
+      { media: 'getcv/screens/job-preview-light' },
+      { media: 'getcv/screens/job-created' },
+      { media: 'getcv/screens/thanks' },
     ],
   },
 ];
@@ -630,6 +741,18 @@ export function assetsOf(work: Work): Asset[] {
       frame,
       note: !file,
     };
+  });
+}
+
+export function screensOf(work: Work): Screen[] {
+  return work.screens.map((def) => {
+    const entry = screenMedia[def.media];
+    const tiles = entry.tiles.map((tile, k) => ({
+      texture: { key: `${def.media}:${k}`, src: tile.src, half: tile.half, px: tile.px as [number, number] },
+      top: tile.top,
+      rows: tile.px[1],
+    }));
+    return { id: def.media, px: entry.px as [number, number], tiles, tablet: def.tablet ?? false };
   });
 }
 

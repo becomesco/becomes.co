@@ -91,7 +91,8 @@ export class DomRenderer implements RenderBackend {
     const dpr = window.devicePixelRatio || 1;
     for (let i = 0; i < scene.sprites.length; i++) {
       const s = scene.sprites[i];
-      if (s.opacity <= 0.002 || s.y > window.innerHeight || s.y + s.h < 0) continue;
+      const swing = s.rotation ? (s.w + s.h) * 0.5 * Math.abs(Math.sin(s.rotation)) : 0;
+      if (s.opacity <= 0.002 || s.y - swing > window.innerHeight || s.y + s.h + swing < 0) continue;
       this.draw(s, i, dpr);
     }
     for (const [id, node] of this.nodes) {
@@ -173,7 +174,7 @@ export class DomRenderer implements RenderBackend {
     style.zIndex = String(order);
     style.width = `${s.w}px`;
     style.height = `${s.h}px`;
-    style.transform = `translate3d(${s.x}px, ${s.y}px, 0)`;
+    style.transform = `translate3d(${s.x}px, ${s.y}px, 0)${s.rotation ? ` rotate(${s.rotation}rad)` : ''}`;
     style.opacity = String(s.opacity);
     style.borderRadius = `${s.radius}px`;
     style.setProperty('--card', String(s.card));

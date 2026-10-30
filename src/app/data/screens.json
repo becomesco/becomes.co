@@ -1,0 +1,1480 @@
+{
+  "basket/screens/about": {
+    "px": [
+      2304,
+      4973
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/basket/screens/about.0.webp",
+        "half": "/media/basket/screens/about.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          877
+        ],
+        "src": "/media/basket/screens/about.1.webp",
+        "half": "/media/basket/screens/about.1.half.webp"
+      }
+    ]
+  },
+  "basket/screens/cart": {
+    "px": [
+      2304,
+      1492
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1492
+        ],
+        "src": "/media/basket/screens/cart.0.webp",
+        "half": "/media/basket/screens/cart.0.half.webp"
+      }
+    ]
+  },
+  "basket/screens/checkout": {
+    "px": [
+      2304,
+      2669
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          2669
+        ],
+        "src": "/media/basket/screens/checkout.0.webp",
+        "half": "/media/basket/screens/checkout.0.half.webp"
+      }
+    ]
+  },
+  "basket/screens/home": {
+    "px": [
+      2304,
+      4626
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/basket/screens/home.0.webp",
+        "half": "/media/basket/screens/home.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          530
+        ],
+        "src": "/media/basket/screens/home.1.webp",
+        "half": "/media/basket/screens/home.1.half.webp"
+      }
+    ]
+  },
+  "basket/screens/product": {
+    "px": [
+      2304,
+      1196
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1196
+        ],
+        "src": "/media/basket/screens/product.0.webp",
+        "half": "/media/basket/screens/product.0.half.webp"
+      }
+    ]
+  },
+  "bcms/screens/color-picker": {
+    "px": [
+      2304,
+      2606
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          2606
+        ],
+        "src": "/media/bcms/screens/color-picker.0.webp",
+        "half": "/media/bcms/screens/color-picker.0.half.webp"
+      }
+    ]
+  },
+  "bcms/screens/comments": {
+    "px": [
+      2304,
+      7099
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/bcms/screens/comments.0.webp",
+        "half": "/media/bcms/screens/comments.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          3003
+        ],
+        "src": "/media/bcms/screens/comments.1.webp",
+        "half": "/media/bcms/screens/comments.1.half.webp"
+      }
+    ]
+  },
+  "bcms/screens/dashboard": {
+    "px": [
+      2304,
+      1536
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1536
+        ],
+        "src": "/media/bcms/screens/dashboard.0.webp",
+        "half": "/media/bcms/screens/dashboard.0.half.webp"
+      }
+    ]
+  },
+  "bcms/screens/editor-2": {
+    "px": [
+      2304,
+      7099
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/bcms/screens/editor-2.0.webp",
+        "half": "/media/bcms/screens/editor-2.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          3003
+        ],
+        "src": "/media/bcms/screens/editor-2.1.webp",
+        "half": "/media/bcms/screens/editor-2.1.half.webp"
+      }
+    ]
+  },
+  "bcms/screens/editor-light": {
+    "px": [
+      2304,
+      3237
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3237
+        ],
+        "src": "/media/bcms/screens/editor-light.0.webp",
+        "half": "/media/bcms/screens/editor-light.0.half.webp"
+      }
+    ]
+  },
+  "bcms/screens/editor": {
+    "px": [
+      2304,
+      1944
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1944
+        ],
+        "src": "/media/bcms/screens/editor.0.webp",
+        "half": "/media/bcms/screens/editor.0.half.webp"
+      }
+    ]
+  },
+  "bcms/screens/kanban": {
+    "px": [
+      2304,
+      1536
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1536
+        ],
+        "src": "/media/bcms/screens/kanban.0.webp",
+        "half": "/media/bcms/screens/kanban.0.half.webp"
+      }
+    ]
+  },
+  "bcms/screens/media": {
+    "px": [
+      2304,
+      1763
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1763
+        ],
+        "src": "/media/bcms/screens/media.0.webp",
+        "half": "/media/bcms/screens/media.0.half.webp"
+      }
+    ]
+  },
+  "bcms/screens/reorder": {
+    "px": [
+      2304,
+      1538
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1538
+        ],
+        "src": "/media/bcms/screens/reorder.0.webp",
+        "half": "/media/bcms/screens/reorder.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/dashboard": {
+    "px": [
+      2304,
+      3330
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3330
+        ],
+        "src": "/media/getcv/screens/dashboard.0.webp",
+        "half": "/media/getcv/screens/dashboard.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/invite": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/getcv/screens/invite.0.webp",
+        "half": "/media/getcv/screens/invite.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/job-created": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/getcv/screens/job-created.0.webp",
+        "half": "/media/getcv/screens/job-created.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/job-dept": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/getcv/screens/job-dept.0.webp",
+        "half": "/media/getcv/screens/job-dept.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/job-format": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/getcv/screens/job-format.0.webp",
+        "half": "/media/getcv/screens/job-format.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/job-preview-light": {
+    "px": [
+      2304,
+      3576
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3576
+        ],
+        "src": "/media/getcv/screens/job-preview-light.0.webp",
+        "half": "/media/getcv/screens/job-preview-light.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/job-preview": {
+    "px": [
+      2304,
+      3576
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3576
+        ],
+        "src": "/media/getcv/screens/job-preview.0.webp",
+        "half": "/media/getcv/screens/job-preview.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/job-prompt": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/getcv/screens/job-prompt.0.webp",
+        "half": "/media/getcv/screens/job-prompt.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/job-questions": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/getcv/screens/job-questions.0.webp",
+        "half": "/media/getcv/screens/job-questions.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/job-sidebar-2": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/getcv/screens/job-sidebar-2.0.webp",
+        "half": "/media/getcv/screens/job-sidebar-2.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/job-sidebar": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/getcv/screens/job-sidebar.0.webp",
+        "half": "/media/getcv/screens/job-sidebar.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/job-start": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/getcv/screens/job-start.0.webp",
+        "half": "/media/getcv/screens/job-start.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/profile": {
+    "px": [
+      2304,
+      1824
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1824
+        ],
+        "src": "/media/getcv/screens/profile.0.webp",
+        "half": "/media/getcv/screens/profile.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/team": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/getcv/screens/team.0.webp",
+        "half": "/media/getcv/screens/team.0.half.webp"
+      }
+    ]
+  },
+  "getcv/screens/thanks": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/getcv/screens/thanks.0.webp",
+        "half": "/media/getcv/screens/thanks.0.half.webp"
+      }
+    ]
+  },
+  "heroic-rankings/screens/case-affinda": {
+    "px": [
+      2304,
+      8973
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/case-affinda.0.webp",
+        "half": "/media/heroic-rankings/screens/case-affinda.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/case-affinda.1.webp",
+        "half": "/media/heroic-rankings/screens/case-affinda.1.half.webp"
+      },
+      {
+        "top": 8192,
+        "px": [
+          2304,
+          781
+        ],
+        "src": "/media/heroic-rankings/screens/case-affinda.2.webp",
+        "half": "/media/heroic-rankings/screens/case-affinda.2.half.webp"
+      }
+    ]
+  },
+  "heroic-rankings/screens/contact": {
+    "px": [
+      2304,
+      3093
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3093
+        ],
+        "src": "/media/heroic-rankings/screens/contact.0.webp",
+        "half": "/media/heroic-rankings/screens/contact.0.half.webp"
+      }
+    ]
+  },
+  "heroic-rankings/screens/home": {
+    "px": [
+      2304,
+      17392
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/home.0.webp",
+        "half": "/media/heroic-rankings/screens/home.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/home.1.webp",
+        "half": "/media/heroic-rankings/screens/home.1.half.webp"
+      },
+      {
+        "top": 8192,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/home.2.webp",
+        "half": "/media/heroic-rankings/screens/home.2.half.webp"
+      },
+      {
+        "top": 12288,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/home.3.webp",
+        "half": "/media/heroic-rankings/screens/home.3.half.webp"
+      },
+      {
+        "top": 16384,
+        "px": [
+          2304,
+          1008
+        ],
+        "src": "/media/heroic-rankings/screens/home.4.webp",
+        "half": "/media/heroic-rankings/screens/home.4.half.webp"
+      }
+    ]
+  },
+  "heroic-rankings/screens/partnership": {
+    "px": [
+      2304,
+      14288
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/partnership.0.webp",
+        "half": "/media/heroic-rankings/screens/partnership.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/partnership.1.webp",
+        "half": "/media/heroic-rankings/screens/partnership.1.half.webp"
+      },
+      {
+        "top": 8192,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/partnership.2.webp",
+        "half": "/media/heroic-rankings/screens/partnership.2.half.webp"
+      },
+      {
+        "top": 12288,
+        "px": [
+          2304,
+          2000
+        ],
+        "src": "/media/heroic-rankings/screens/partnership.3.webp",
+        "half": "/media/heroic-rankings/screens/partnership.3.half.webp"
+      }
+    ]
+  },
+  "heroic-rankings/screens/seo-local": {
+    "px": [
+      2304,
+      10882
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/seo-local.0.webp",
+        "half": "/media/heroic-rankings/screens/seo-local.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/seo-local.1.webp",
+        "half": "/media/heroic-rankings/screens/seo-local.1.half.webp"
+      },
+      {
+        "top": 8192,
+        "px": [
+          2304,
+          2690
+        ],
+        "src": "/media/heroic-rankings/screens/seo-local.2.webp",
+        "half": "/media/heroic-rankings/screens/seo-local.2.half.webp"
+      }
+    ]
+  },
+  "heroic-rankings/screens/seo-tech": {
+    "px": [
+      2304,
+      10450
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/seo-tech.0.webp",
+        "half": "/media/heroic-rankings/screens/seo-tech.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/heroic-rankings/screens/seo-tech.1.webp",
+        "half": "/media/heroic-rankings/screens/seo-tech.1.half.webp"
+      },
+      {
+        "top": 8192,
+        "px": [
+          2304,
+          2258
+        ],
+        "src": "/media/heroic-rankings/screens/seo-tech.2.webp",
+        "half": "/media/heroic-rankings/screens/seo-tech.2.half.webp"
+      }
+    ]
+  },
+  "heroic-rankings/screens/team": {
+    "px": [
+      2304,
+      2355
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          2355
+        ],
+        "src": "/media/heroic-rankings/screens/team.0.webp",
+        "half": "/media/heroic-rankings/screens/team.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/bookmark": {
+    "px": [
+      1668,
+      2388
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1668,
+          2388
+        ],
+        "src": "/media/kooper/screens/bookmark.0.webp",
+        "half": "/media/kooper/screens/bookmark.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/books": {
+    "px": [
+      2304,
+      2670
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          2670
+        ],
+        "src": "/media/kooper/screens/books.0.webp",
+        "half": "/media/kooper/screens/books.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/browse": {
+    "px": [
+      1668,
+      3368
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1668,
+          3368
+        ],
+        "src": "/media/kooper/screens/browse.0.webp",
+        "half": "/media/kooper/screens/browse.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/confirm": {
+    "px": [
+      1440,
+      1009
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1440,
+          1009
+        ],
+        "src": "/media/kooper/screens/confirm.0.webp",
+        "half": "/media/kooper/screens/confirm.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/dashboard": {
+    "px": [
+      1668,
+      3000
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1668,
+          3000
+        ],
+        "src": "/media/kooper/screens/dashboard.0.webp",
+        "half": "/media/kooper/screens/dashboard.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/dictionary": {
+    "px": [
+      1668,
+      2388
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1668,
+          2388
+        ],
+        "src": "/media/kooper/screens/dictionary.0.webp",
+        "half": "/media/kooper/screens/dictionary.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/join": {
+    "px": [
+      1440,
+      1009
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1440,
+          1009
+        ],
+        "src": "/media/kooper/screens/join.0.webp",
+        "half": "/media/kooper/screens/join.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/loading": {
+    "px": [
+      2304,
+      1614
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1614
+        ],
+        "src": "/media/kooper/screens/loading.0.webp",
+        "half": "/media/kooper/screens/loading.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/quiz": {
+    "px": [
+      1668,
+      2388
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1668,
+          2388
+        ],
+        "src": "/media/kooper/screens/quiz.0.webp",
+        "half": "/media/kooper/screens/quiz.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/reader-end-2": {
+    "px": [
+      1668,
+      2388
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1668,
+          2388
+        ],
+        "src": "/media/kooper/screens/reader-end-2.0.webp",
+        "half": "/media/kooper/screens/reader-end-2.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/reader-end": {
+    "px": [
+      1668,
+      2388
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1668,
+          2388
+        ],
+        "src": "/media/kooper/screens/reader-end.0.webp",
+        "half": "/media/kooper/screens/reader-end.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/reader": {
+    "px": [
+      1668,
+      2388
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1668,
+          2388
+        ],
+        "src": "/media/kooper/screens/reader.0.webp",
+        "half": "/media/kooper/screens/reader.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/tooltip": {
+    "px": [
+      1668,
+      2388
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1668,
+          2388
+        ],
+        "src": "/media/kooper/screens/tooltip.0.webp",
+        "half": "/media/kooper/screens/tooltip.0.half.webp"
+      }
+    ]
+  },
+  "kooper/screens/type-size": {
+    "px": [
+      1668,
+      2388
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1668,
+          2388
+        ],
+        "src": "/media/kooper/screens/type-size.0.webp",
+        "half": "/media/kooper/screens/type-size.0.half.webp"
+      }
+    ]
+  },
+  "milmedic/screens/about": {
+    "px": [
+      2304,
+      8304
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/milmedic/screens/about.0.webp",
+        "half": "/media/milmedic/screens/about.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/milmedic/screens/about.1.webp",
+        "half": "/media/milmedic/screens/about.1.half.webp"
+      },
+      {
+        "top": 8192,
+        "px": [
+          2304,
+          112
+        ],
+        "src": "/media/milmedic/screens/about.2.webp",
+        "half": "/media/milmedic/screens/about.2.half.webp"
+      }
+    ]
+  },
+  "milmedic/screens/contact": {
+    "px": [
+      2304,
+      4546
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/milmedic/screens/contact.0.webp",
+        "half": "/media/milmedic/screens/contact.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          450
+        ],
+        "src": "/media/milmedic/screens/contact.1.webp",
+        "half": "/media/milmedic/screens/contact.1.half.webp"
+      }
+    ]
+  },
+  "milmedic/screens/exams": {
+    "px": [
+      2304,
+      5235
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/milmedic/screens/exams.0.webp",
+        "half": "/media/milmedic/screens/exams.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          1139
+        ],
+        "src": "/media/milmedic/screens/exams.1.webp",
+        "half": "/media/milmedic/screens/exams.1.half.webp"
+      }
+    ]
+  },
+  "milmedic/screens/home": {
+    "px": [
+      2304,
+      14683
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/milmedic/screens/home.0.webp",
+        "half": "/media/milmedic/screens/home.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/milmedic/screens/home.1.webp",
+        "half": "/media/milmedic/screens/home.1.half.webp"
+      },
+      {
+        "top": 8192,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/milmedic/screens/home.2.webp",
+        "half": "/media/milmedic/screens/home.2.half.webp"
+      },
+      {
+        "top": 12288,
+        "px": [
+          2304,
+          2395
+        ],
+        "src": "/media/milmedic/screens/home.3.webp",
+        "half": "/media/milmedic/screens/home.3.half.webp"
+      }
+    ]
+  },
+  "milmedic/screens/prices": {
+    "px": [
+      2304,
+      5302
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/milmedic/screens/prices.0.webp",
+        "half": "/media/milmedic/screens/prices.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          1206
+        ],
+        "src": "/media/milmedic/screens/prices.1.webp",
+        "half": "/media/milmedic/screens/prices.1.half.webp"
+      }
+    ]
+  },
+  "milmedic/screens/privacy": {
+    "px": [
+      2304,
+      3581
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3581
+        ],
+        "src": "/media/milmedic/screens/privacy.0.webp",
+        "half": "/media/milmedic/screens/privacy.0.half.webp"
+      }
+    ]
+  },
+  "milmedic/screens/rle": {
+    "px": [
+      2304,
+      3453
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3453
+        ],
+        "src": "/media/milmedic/screens/rle.0.webp",
+        "half": "/media/milmedic/screens/rle.0.half.webp"
+      }
+    ]
+  },
+  "milmedic/screens/team": {
+    "px": [
+      2304,
+      3981
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3981
+        ],
+        "src": "/media/milmedic/screens/team.0.webp",
+        "half": "/media/milmedic/screens/team.0.half.webp"
+      }
+    ]
+  },
+  "pyure/screens/clients": {
+    "px": [
+      2304,
+      3928
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3928
+        ],
+        "src": "/media/pyure/screens/clients.0.webp",
+        "half": "/media/pyure/screens/clients.0.half.webp"
+      }
+    ]
+  },
+  "pyure/screens/contact": {
+    "px": [
+      2304,
+      2426
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          2426
+        ],
+        "src": "/media/pyure/screens/contact.0.webp",
+        "half": "/media/pyure/screens/contact.0.half.webp"
+      }
+    ]
+  },
+  "pyure/screens/landing": {
+    "px": [
+      2304,
+      10158
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/pyure/screens/landing.0.webp",
+        "half": "/media/pyure/screens/landing.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/pyure/screens/landing.1.webp",
+        "half": "/media/pyure/screens/landing.1.half.webp"
+      },
+      {
+        "top": 8192,
+        "px": [
+          2304,
+          1966
+        ],
+        "src": "/media/pyure/screens/landing.2.webp",
+        "half": "/media/pyure/screens/landing.2.half.webp"
+      }
+    ]
+  },
+  "pyure/screens/nav": {
+    "px": [
+      2304,
+      1280
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1280
+        ],
+        "src": "/media/pyure/screens/nav.0.webp",
+        "half": "/media/pyure/screens/nav.0.half.webp"
+      }
+    ]
+  },
+  "pyure/screens/why-2": {
+    "px": [
+      2304,
+      7298
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/pyure/screens/why-2.0.webp",
+        "half": "/media/pyure/screens/why-2.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          3202
+        ],
+        "src": "/media/pyure/screens/why-2.1.webp",
+        "half": "/media/pyure/screens/why-2.1.half.webp"
+      }
+    ]
+  },
+  "pyure/screens/why": {
+    "px": [
+      2304,
+      5419
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/pyure/screens/why.0.webp",
+        "half": "/media/pyure/screens/why.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          1323
+        ],
+        "src": "/media/pyure/screens/why.1.webp",
+        "half": "/media/pyure/screens/why.1.half.webp"
+      }
+    ]
+  },
+  "videotoflip/screens/cover": {
+    "px": [
+      2304,
+      3842
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3842
+        ],
+        "src": "/media/videotoflip/screens/cover.0.webp",
+        "half": "/media/videotoflip/screens/cover.0.half.webp"
+      }
+    ]
+  },
+  "videotoflip/screens/create": {
+    "px": [
+      2304,
+      3842
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3842
+        ],
+        "src": "/media/videotoflip/screens/create.0.webp",
+        "half": "/media/videotoflip/screens/create.0.half.webp"
+      }
+    ]
+  },
+  "videotoflip/screens/error": {
+    "px": [
+      2304,
+      3842
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3842
+        ],
+        "src": "/media/videotoflip/screens/error.0.webp",
+        "half": "/media/videotoflip/screens/error.0.half.webp"
+      }
+    ]
+  },
+  "videotoflip/screens/landing": {
+    "px": [
+      2304,
+      15189
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/videotoflip/screens/landing.0.webp",
+        "half": "/media/videotoflip/screens/landing.0.half.webp"
+      },
+      {
+        "top": 4096,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/videotoflip/screens/landing.1.webp",
+        "half": "/media/videotoflip/screens/landing.1.half.webp"
+      },
+      {
+        "top": 8192,
+        "px": [
+          2304,
+          4104
+        ],
+        "src": "/media/videotoflip/screens/landing.2.webp",
+        "half": "/media/videotoflip/screens/landing.2.half.webp"
+      },
+      {
+        "top": 12288,
+        "px": [
+          2304,
+          2901
+        ],
+        "src": "/media/videotoflip/screens/landing.3.webp",
+        "half": "/media/videotoflip/screens/landing.3.half.webp"
+      }
+    ]
+  },
+  "videotoflip/screens/payment": {
+    "px": [
+      2304,
+      3842
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3842
+        ],
+        "src": "/media/videotoflip/screens/payment.0.webp",
+        "half": "/media/videotoflip/screens/payment.0.half.webp"
+      }
+    ]
+  },
+  "videotoflip/screens/trim": {
+    "px": [
+      2304,
+      3842
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          3842
+        ],
+        "src": "/media/videotoflip/screens/trim.0.webp",
+        "half": "/media/videotoflip/screens/trim.0.half.webp"
+      }
+    ]
+  }
+}

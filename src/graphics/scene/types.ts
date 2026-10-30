@@ -64,6 +64,8 @@ export interface Sprite {
   zoom: number;
   /** Strength of a `shadowed` texture's shadow, 0 to 1: lower presses the Asset flat. */
   lift: number;
+  /** Turn about the outer rect's center, radians, clockwise on screen. */
+  rotation: number;
 }
 
 export interface Glow {
@@ -124,5 +126,6 @@ export function createSprite(id: string, texture: TextureRef | null): Sprite {
     focusY: 0,
     zoom: 1,
     lift: 1,
+    rotation: 0,
   };
 }

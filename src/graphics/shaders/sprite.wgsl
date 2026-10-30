@@ -23,7 +23,7 @@ struct Sprite {
   shape: vec4f,  // outer radius, inner radius, card amount, opacity
   fade: vec4f,   // edge fade top, right, bottom, left (fraction of image)
   extra: vec4f,  // bend px, has texture, border px, image opacity
-  motion: vec4f, // image zoom, hover (unused; its scale is applied on the CPU), zoom focus x, y (-1..1 across the image)
+  motion: vec4f, // image zoom, rotation radians about the rect center, zoom focus x, y (-1..1 across the image)
   layer: vec4f,  // shadow strength 0..1, shadowed texture (image above, shadow below), under glass, quad reach px
 };
 
@@ -81,6 +81,11 @@ fn vs(@builtin(vertex_index) vertex: u32, @builtin(instance_index) instance: u32
   var p = s.rect.xy + local;
   let across = clamp(local.x / max(size.x, 1.0), 0.0, 1.0);
   p.y += s.extra.x * sin(across * PI);
+  // Turned on screen only: the fragment shades in the sprite's own unturned space.
+  let center = s.rect.xy + size * 0.5;
+  let turn = vec2f(cos(s.motion.y), sin(s.motion.y));
+  let d = p - center;
+  p = center + vec2f(d.x * turn.x - d.y * turn.y, d.x * turn.y + d.y * turn.x);
 
   var out: VertexOut;
   out.position = vec4f(p.x / frame.viewport.x * 2.0 - 1.0, 1.0 - p.y / frame.viewport.y * 2.0, 0.0, 1.0);
