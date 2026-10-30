@@ -50,6 +50,7 @@ export class Morph {
     s.hover = lerp(a.hover, to.hover, t);
     s.lift = lerp(a.lift, to.lift, t);
     s.rotation = lerp(a.rotation, to.rotation, t);
+    s.duotone = lerp(a.duotone, to.duotone, t);
     s.fade = t < 0.5 ? a.fade : to.fade;
     // A soft arc through the move so the Asset feels carried, not slid.
     s.bend = Math.sin(t * Math.PI) * Math.min(28, Math.abs(to.y - a.y) * 0.05);

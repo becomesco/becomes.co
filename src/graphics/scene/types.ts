@@ -66,6 +66,8 @@ export interface Sprite {
   lift: number;
   /** Turn about the outer rect's center, radians, clockwise on screen. */
   rotation: number;
+  /** How far the image is mapped onto the two-color duotone, 0 to 1. */
+  duotone: number;
 }
 
 export interface Glow {
@@ -127,5 +129,6 @@ export function createSprite(id: string, texture: TextureRef | null): Sprite {
     zoom: 1,
     lift: 1,
     rotation: 0,
+    duotone: 0,
   };
 }

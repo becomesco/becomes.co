@@ -25,6 +25,7 @@ struct Sprite {
   extra: vec4f,  // bend px, has texture, border px, image opacity
   motion: vec4f, // image zoom, rotation radians about the rect center, zoom focus x, y (-1..1 across the image)
   layer: vec4f,  // shadow strength 0..1, shadowed texture (image above, shadow below), under glass, quad reach px
+  tone: vec4f,   // duotone 0..1, unused x3
 };
 
 @group(0) @binding(0) var<uniform> frame: Frame;
@@ -58,6 +59,13 @@ const GLASS_RIM_AT: f32 = 16.0;
 const GLASS_TAPS: u32 = 8u;
 const GOLDEN_ANGLE: f32 = 2.39996323;
 const LUMA: vec3f = vec3f(0.2126, 0.7152, 0.0722);
+
+/** Duotone ends, sRGB: shadows go to the ink, highlights to the page (`--ink`, `--bg`). */
+const DUOTONE_DARK: vec3f = vec3f(0.0, 0.0, 0.0);
+const DUOTONE_LIGHT: vec3f = vec3f(0.894, 0.886, 0.863);
+/** Luma range stretched across the duotone, so flat UI captures still get both ends. */
+const DUOTONE_LOW: f32 = 0.08;
+const DUOTONE_HIGH: f32 = 0.92;
 
 struct VertexOut {
   @builtin(position) position: vec4f,
@@ -159,6 +167,23 @@ fn spectrum(u: f32) -> vec3f {
   return vec3f(1.0 - u, 1.0 - abs(2.0 * u - 1.0), u) + 0.25;
 }
 
+/**
+ * Texture coordinates for `ip` (css px into the inner rect). Magnified about the focus, which
+ * stays under the cursor; with the focus inside the image the zoomed view never reaches past its edges.
+ */
+fn imageUv(s: Sprite, ip: vec2f) -> vec2f {
+  let uv = ip / max(s.inner.zw, vec2f(1.0));
+  let focus = s.motion.zw * 0.5 + 0.5;
+  return focus + (uv - focus) / max(s.motion.x, 1.0);
+}
+
+/** Premultiplied `img` mapped by its luma onto the duotone, `amount` of the way. */
+fn duotone(img: vec4f, amount: f32) -> vec4f {
+  let rgb = img.rgb / max(img.a, 1e-3);
+  let l = smoothstep(DUOTONE_LOW, DUOTONE_HIGH, dot(rgb, LUMA));
+  return vec4f(mix(rgb, mix(DUOTONE_DARK, DUOTONE_LIGHT, l), amount) * img.a, img.a);
+}
+
 /** The sprite at `local` (css px from its outer rect's corner), premultiplied. */
 fn shade(s: Sprite, local: vec2f, aa: f32) -> vec4f {
   let size = s.rect.zw;
@@ -171,13 +196,13 @@ fn shade(s: Sprite, local: vec2f, aa: f32) -> vec4f {
   let ip = local + s.rect.xy - s.inner.xy;
   let center = s.inner.zw * 0.5;
   let uv = ip / max(s.inner.zw, vec2f(1.0));
-  // Magnified about the focus, which stays under the cursor; with the focus inside the image
-  // the zoomed view never reaches past its edges.
-  let focus = s.motion.zw * 0.5 + 0.5;
-  let texel = sampleImage(s, focus + (uv - focus) / max(s.motion.x, 1.0));
+  let texel = sampleImage(s, imageUv(s, ip));
   let di = roundedBox(ip - center, center, s.shape.y);
   let innerCoverage = clamp(0.5 - di / aa, 0.0, 1.0);
   var img = texel * innerCoverage * edgeFade(uv, s.fade) * s.extra.y * s.extra.w;
+  if (s.tone.x > 0.001) {
+    img = duotone(img, s.tone.x);
+  }
 
   // Glass card: 30% white fill, 1px white border.
   let fill = vec4f(0.3) * card;

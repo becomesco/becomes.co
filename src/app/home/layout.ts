@@ -95,6 +95,11 @@ interface Body {
 }
 
 const ENTRY_MARGIN = 48;
+/** Parallax: furthest an Asset's scroll speed strays from 1, on wide and narrow screens. Bigger Assets lean nearer and faster. */
+const DEPTH_FIELD = 0.26;
+const DEPTH_STACK = 0.1;
+/** Under 1 pushes depths off the middle, so neighbours visibly part instead of all drifting near speed 1. */
+const DEPTH_SPREAD = 0.55;
 /** Empty ground after the last section, in viewport heights, for the Glass mark to fly back in over. */
 const CLOSING = 1;
 /**
@@ -140,7 +145,7 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
   const mode: LayoutMode = laneCols >= 2 && vh >= 480 ? 'field' : 'stack';
   const laneRight = columnX(grid, laneCols - 1) + grid.column;
 
-  const depth = options.reducedMotion ? 0 : mode === 'field' ? 0.12 : 0.05;
+  const depth = options.reducedMotion ? 0 : mode === 'field' ? DEPTH_FIELD : DEPTH_STACK;
   const sizeScale = mode === 'field' ? clamp(width / 1440, 0.62, 1.3) : clamp(width / 620, 0.55, 1);
   const maxH = vh * (mode === 'field' ? 0.62 : 0.56);
   // Center Assets cross the title, so they stay small, as they are in Figma.
@@ -183,8 +188,8 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
       let x = box.x;
       if (mode === 'field' && zone === 'right') x = width - (x + box.w);
 
-      const z = clamp(0.5 * ((box.w * box.h) / (maxArea * sizeScale * sizeScale)) + 0.5 * random(), 0, 1);
-      const v = 1 + depth * (z * 2 - 1);
+      const z = clamp(0.5 * ((box.w * box.h) / (maxArea * sizeScale * sizeScale)) + 0.5 * random(), 0, 1) * 2 - 1;
+      const v = 1 + depth * Math.sign(z) * Math.abs(z) ** DEPTH_SPREAD;
       const reach = (vh / 2 + box.h / 2 + ENTRY_MARGIN) / v;
       const gapY = grid.gutter * range(random, 1.6, 4.2);
 
