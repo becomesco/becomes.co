@@ -38,15 +38,6 @@ const LENS_SPEED = 1400;
 const LENS_SPEED_EASE = 0.3;
 /** Rate, per second, at which the measured cursor speed is smoothed. */
 const LENS_SPEED_RATE = 10;
-/** Scroll speeds, px/s, between which Assets go from photo to fully duotone (Notes excepted). */
-const DUOTONE_FROM = 160;
-const DUOTONE_FULL = 2400;
-/**
- * Rates, per second, the duotone follows scroll speed at: Assets the content is moving
- * towards react first, the far side last, so the dots and their release ripple across.
- */
-const DUOTONE_RATE_LEAD = 9;
-const DUOTONE_RATE_LAG = 3.5;
 /** How far each manifesto line sits below rest before the intro brings it in, px. */
 const RISE = 28;
 /**
@@ -318,8 +309,6 @@ export class HomeView implements View {
   private lensSpeed = 0;
   private lensLast: { x: number; y: number } | null = null;
   private lastPrefetch = Number.NaN;
-  /** Scroll duotone of each placement, 0 to 1. */
-  private duotone = new Map<number, number>();
   private press = new NotePress();
   private words: HTMLElement[];
   private lines: Line[] = [];
@@ -495,7 +484,6 @@ export class HomeView implements View {
     this.settle();
     this.sprites.clear();
     this.hover.clear();
-    this.duotone.clear();
     this.lastPrefetch = Number.NaN;
   }
 
@@ -534,7 +522,6 @@ export class HomeView implements View {
     const lens = this.presence > 0.9 && pointer.inside ? this.otherAt(pointer.x, pointer.y) : null;
     if (this.updateZoom(lens, pointer.x, pointer.y, frame.dt, reducedMotion)) active = true;
 
-    const speed = reducedMotion ? 0 : smoothstep(DUOTONE_FROM, DUOTONE_FULL, Math.abs(this.scroll.velocity));
     if (this.press.update(this.scroll.velocity, frame.dt, reducedMotion)) active = true;
     for (const p of this.visible) {
       let spring = this.hover.get(p.index);
@@ -544,8 +531,7 @@ export class HomeView implements View {
       }
       spring.target = p.index === hovered ? 1 : 0;
       if (spring.update(frame.dt)) active = true;
-      if (this.updateDuotone(p, s, vh, speed, frame.dt)) active = true;
-      const sprite = this.place(p, s, vh, spring.value, this.duotone.get(p.index) ?? 0, reducedMotion);
+      const sprite = this.place(p, s, vh, spring.value);
       if (this.ctx.engine.appear(p.asset.texture) < 1) active = true;
       sprite.opacity *= this.ctx.engine.appear(p.asset.texture);
     }
@@ -612,8 +598,7 @@ export class HomeView implements View {
     const layout = this.layoutState;
     const placement = layout?.placements.find((p) => p.index === index);
     if (!layout || !placement) return null;
-    const { reducedMotion } = this.ctx.viewport.state;
-    const sprite = this.place(placement, this.scroll.current, layout.height, 0, 0, reducedMotion);
+    const sprite = this.place(placement, this.scroll.current, layout.height, 0);
     return { ...sprite, opacity: 1 };
   }
 
@@ -672,7 +657,7 @@ export class HomeView implements View {
     return next !== target;
   }
 
-  private place(p: Placement, s: number, vh: number, hover: number, duotone: number, reduced: boolean): Sprite {
+  private place(p: Placement, s: number, vh: number, hover: number): Sprite {
     let sprite = this.sprites.get(p.index);
     if (!sprite) {
       sprite = createSprite(`home:${p.index}`, p.asset.texture);
@@ -680,8 +665,7 @@ export class HomeView implements View {
       this.sprites.set(p.index, sprite);
     }
     const cy = vh / 2 + (p.anchor - s) * p.speed;
-    const edge = reduced ? 0 : smoothstep(vh * 0.28, vh * 0.62, Math.abs(cy - vh / 2));
-    const scale = (1 - 0.07 * edge) * (1 + HOVER_SCALE * hover);
+    const scale = 1 + HOVER_SCALE * hover;
     const w = p.w * scale;
     const h = p.h * scale;
     const x = p.x + (p.w - w) / 2;
@@ -707,7 +691,6 @@ export class HomeView implements View {
       sprite.iy = y;
     }
     sprite.hover = hover;
-    sprite.duotone = duotone;
     sprite.lift = this.press.lift;
     sprite.opacity = 1;
     sprite.image = 1;
@@ -770,21 +753,6 @@ export class HomeView implements View {
       if (p.sMax >= from) out.push(p);
     }
     return out.reverse();
-  }
-
-  /** Eases a placement's scroll duotone towards `speed`. Notes stay readable. Returns true while still easing. */
-  private updateDuotone(p: Placement, s: number, vh: number, speed: number, dt: number): boolean {
-    if (p.asset.note) return false;
-    const current = this.duotone.get(p.index) ?? 0;
-    if (current === speed) return false;
-    const cy = vh / 2 + (p.anchor - s) * p.speed;
-    // Content moves up while scrolling down, so the top of the screen leads; reversed going up.
-    const along = saturate(cy / vh);
-    const lag = this.scroll.velocity < 0 ? 1 - along : along;
-    let next = damp(current, speed, lerp(DUOTONE_RATE_LEAD, DUOTONE_RATE_LAG, lag), dt);
-    if (Math.abs(next - speed) < 1e-4) next = speed;
-    this.duotone.set(p.index, next);
-    return next !== speed;
   }
 
   /** The visible Other piece whose image is under screen point `x`, `y`, as placed this frame. Client logos don't zoom. */

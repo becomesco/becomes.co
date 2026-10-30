@@ -248,7 +248,6 @@ export class WebGpuRenderer implements RenderBackend {
       const glassed = gx1 > gx0 && x0 < gx1 && x1 > gx0 && y0 < gy1 && y1 > gy0;
       data[o + 26] = glassed ? 1 : 0;
       data[o + 27] = glassed ? GLASS_REACH : 0;
-      data[o + 28] = s.duotone;
       this.drawGroups[n] = group;
       n++;
     }
