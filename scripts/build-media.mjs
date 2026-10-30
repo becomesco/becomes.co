@@ -46,13 +46,6 @@ const MATTE = new Set([
   'kooper/joystick',
   'milmedic/card-keratoconus',
   'milmedic/hero-desktop',
-  'pov/app-clip',
-  'pov/artwork',
-  'pov/get-started',
-  'pov/group-670',
-  'pov/group-730',
-  'pov/phone-grid',
-  'pov/qr-code',
   'videotoflip/confetti',
   'videotoflip/feature-occasion',
   'videotoflip/sticker-blue',
@@ -142,7 +135,8 @@ const screensPath = join(root, 'src/app/data/screens.json');
 
 const manifest = {};
 const screens = {};
-const groups = (await readdir(sourceDir, { withFileTypes: true })).filter((d) => d.isDirectory());
+const SKIP_GROUPS = new Set(['pov']);
+const groups = (await readdir(sourceDir, { withFileTypes: true })).filter((d) => d.isDirectory() && !SKIP_GROUPS.has(d.name));
 const webp = { quality: 84, alphaQuality: 92, effort: 5, smartSubsample: true };
 
 async function build(dir) {
