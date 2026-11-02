@@ -189,7 +189,7 @@ export class WorkView implements View {
       ? Math.min(W * 0.585, vh * 0.86)
       : clamp((W * hero.asset!.height) / hero.asset!.width + 48, W * 0.8, vh * 0.72);
     this.fit(hero, grid.margin, y, W, heroHeight, desktop);
-    y += heroHeight + gap;
+    y += hero.h + gap;
 
     const screens = this.cards.filter((c) => c.kind === 'screen');
     for (let i = 0; i < screens.length; ) {
@@ -329,6 +329,10 @@ export class WorkView implements View {
     return top < vh * 2 && top + h > -vh;
   }
 
+  /**
+   * First Asset of the View: sized into `h` at most, then sitting at the top of that slot.
+   * Centering a short Asset in the full section puts it under the header and often off-screen.
+   */
   private fit(card: Card, x: number, y: number, w: number, h: number, desktop: boolean): void {
     const asset = card.asset!;
     const pad = desktop ? Math.max(32, w * 0.07) : 20;
@@ -339,11 +343,11 @@ export class WorkView implements View {
     card.x = x;
     card.y = y;
     card.w = w;
-    card.h = h;
     card.iw = asset.width * scale;
     card.ih = asset.height * scale;
     card.ix = x + pad + framePad + (availW - card.iw) / 2;
-    card.iy = y + pad + framePad + (availH - card.ih) / 2;
+    card.iy = y + pad + framePad;
+    card.h = card.ih + pad * 2 + framePad * 2;
   }
 
   /** A Screen's frame, centered in a `w` wide slot at `y`, with the whole page in it. */
