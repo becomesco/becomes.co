@@ -174,6 +174,34 @@ export const works: readonly Work[] = [
       { media: 'bcms/screens/reorder' },
       { media: 'bcms/screens/color-picker' },
     ],
+    story: [
+      {
+        after: 1,
+        text: [
+          'We started BCMS in 2019. Dev tools have a long tradition of being badly designed and barely thought through, and a CMS has less excuse than most: at the end of the day, it’s used by content writers, marketers and founders, not developers.',
+          'We knew content inside out, and we like tools that feel good in a browser. So we built the CMS we wanted to use.',
+        ],
+      },
+      {
+        after: 3,
+        text: [
+          'The brand, the web app, the docs and thebcms.com all come from one design system. Editors model content in the browser, with no schema file in a repo, and developers import TypeScript types generated from the same templates.',
+        ],
+      },
+      {
+        after: 5,
+        text: [
+          'Along the way, BCMS picked up ideas other CMSs didn’t have: widgets inside rich text, a proper file system, images transformed on the fly, its own take on translations, functions and cron jobs.',
+          'More are on the way ;)',
+        ],
+      },
+      {
+        after: 7,
+        text: [
+          'Today, more than 4,000 companies run their content on BCMS. Most of the people clicking around in it every day aren’t developers, which was the whole point.',
+        ],
+      },
+    ],
   },
   {
     slug: 'pyure',
@@ -235,6 +263,28 @@ export const works: readonly Work[] = [
       { media: 'pyure/screens/clients' },
       { media: 'pyure/screens/nav' },
       { media: 'pyure/screens/contact' },
+    ],
+    story: [
+      {
+        after: 1,
+        text: [
+          'Pyure came to us with a brand new website, freshly finished by another agency. They weren’t happy with it. It didn’t look like them, and it didn’t say what they wanted to say.',
+        ],
+      },
+      {
+        after: 3,
+        text: [
+          'So we started again from their brand: glass, moss and strong type, made bigger and bolder for the web.',
+          'The site has a lot to explain, from Measure and the eBadge to the demo, and it still feels organic, not like another ad-tech dashboard.',
+        ],
+      },
+      {
+        after: 5,
+        text: [
+          'A company that measures the carbon of digital ads should have a light website. Images are WebP, the motion is tiny WebM loops instead of heavy video, and animations only start once they scroll into view.',
+          'Content lives in BCMS, so the site can keep growing with the product.',
+        ],
+      },
     ],
   },
   {
@@ -302,6 +352,32 @@ export const works: readonly Work[] = [
       { media: 'milmedic/screens/contact' },
       { media: 'milmedic/screens/privacy' },
     ],
+    story: [
+      {
+        after: 1,
+        text: [
+          'Milmedic is one of the leading eye clinics in Serbia, and their old WordPress site didn’t show it. We moved them to a new one in Serbian and English, and tidied up their digital branding on the way.',
+        ],
+      },
+      {
+        after: 2,
+        text: [
+          'Moving a clinic’s website is mostly about not losing anyone on the way. We consolidated the URL structure and pointed every old address to its new home, about 40 of them, so patients and Google both kept finding the right page.',
+        ],
+      },
+      {
+        after: 4,
+        text: [
+          'We also built online vision tests, the first of their kind in Serbia. Patients check their sharpness, contrast, colour vision and the Amsler grid, one eye at a time, then book the exam they need.',
+        ],
+      },
+      {
+        after: 6,
+        text: [
+          'In the months after launch, Google showed the site 55% more often and clicks went up 22%, compared with the same stretch before. Rankings held steady through the move, and scheduled appointments went up.',
+        ],
+      },
+    ],
   },
   {
     slug: 'heroic-rankings',
@@ -366,6 +442,26 @@ export const works: readonly Work[] = [
       { media: 'heroic-rankings/screens/partnership' },
       { media: 'heroic-rankings/screens/team' },
       { media: 'heroic-rankings/screens/contact' },
+    ],
+    story: [
+      {
+        after: 1,
+        text: [
+          'Heroic Rankings is an SEO agency, so their own website gets judged harder than most. We started with the brand, and unified it so every page, card and campaign reads as one.',
+        ],
+      },
+      {
+        after: 3,
+        text: [
+          'Then we built a site that doubles as their lab. With BCMS behind it, the team structures and restructures pages and URLs themselves, runs their own experiments and draws their own conclusions, without breaking anything.',
+        ],
+      },
+      {
+        after: 5,
+        text: [
+          'Technical SEO was the brief, not a bonus. Lighthouse gives the site a perfect 100 for SEO, pages load fast, and nothing jumps around while they do.',
+        ],
+      },
     ],
   },
   {
@@ -448,6 +544,27 @@ export const works: readonly Work[] = [
       { media: 'videotoflip/screens/cover' },
       { media: 'videotoflip/screens/payment' },
       { media: 'videotoflip/screens/error' },
+    ],
+    story: [
+      {
+        after: 1,
+        text: [
+          'Video to Flip is our own product, from the first idea to the last pixel. We branded it playful and warm, because every order is a memory someone wants to keep offline.',
+        ],
+      },
+      {
+        after: 3,
+        text: [
+          'The front is simple: upload, trim, pick a cover, order. The hard part is the one nobody sees.',
+          'People upload whatever their phone made, in an enormous range of encodings, formats, aspect ratios and resolutions. The site handles all of it, picks the sharpest frames, and tunes them for print.',
+        ],
+      },
+      {
+        after: 5,
+        text: [
+          'Underneath are order management, email workflows and all that video processing, built to scale. So far, it has shipped almost 10,000 flipbooks.',
+        ],
+      },
     ],
   },
   {
@@ -543,7 +660,7 @@ export const works: readonly Work[] = [
     name: 'Kooper',
     headline: 'Kids reading more, with carefully crafted AI experiences around books they love.',
     intro: [
-      'Kooper is a reading app for kids, on web and tablet. It started as our own question: what if books played like a game?',
+      'Kooper is a reading app for kids, on web and tablet. It started as a client’s rough idea, and we shaped it into a product.',
       'AI is built around each story and stays inside the book. Daily challenges, levels and badges turn chapters into progress.',
     ],
     services: ['Concept', 'product strategy', 'UX/UI design', 'development'],
@@ -554,8 +671,8 @@ export const works: readonly Work[] = [
       { media: 'kooper/joystick' },
       {
         note: [
-          'We started with a question: what if books were an immersive, gamified experience?',
-          'Kooper is our answer, on web and tablet.',
+          'It started with a question: what if AI let kids experience books in more ways?',
+          'Kooper is the answer we built, on web and tablet.',
         ],
       },
       { media: 'kooper/level-up', width: 400 },
@@ -609,6 +726,32 @@ export const works: readonly Work[] = [
       { media: 'kooper/screens/reader-end', tablet: true },
       { media: 'kooper/screens/reader-end-2', tablet: true },
       { media: 'kooper/screens/confirm' },
+    ],
+    story: [
+      {
+        after: 3,
+        text: [
+          'Kooper came to us as a rough idea: what if AI could let kids experience books in more ways than just reading them? We turned it into a product, and built it for web and tablet.',
+        ],
+      },
+      {
+        after: 7,
+        text: [
+          'Kids don’t just read the story, they get to play inside it. They get to know the characters better, explore playgrounds built around the book, and even work on the ending.',
+        ],
+      },
+      {
+        after: 9,
+        text: [
+          'Putting AI in front of kids comes with a lot of constraints, and we kept every one of them. It runs on local models, works only with the book in front of it, and doesn’t wander off into the rest of the internet.',
+        ],
+      },
+      {
+        after: 11,
+        text: [
+          'Daily challenges, levels and badges turn chapters into progress, so kids come back for the next page the way they’d come back to a game.',
+        ],
+      },
     ],
   },
   {
@@ -686,6 +829,27 @@ export const works: readonly Work[] = [
       { media: 'getcv/screens/job-preview-light' },
       { media: 'getcv/screens/job-created' },
       { media: 'getcv/screens/thanks' },
+    ],
+    story: [
+      {
+        after: 2,
+        text: [
+          'GetCV is our own product. We started it in early 2020, when AI was just creeping into hiring: candidates sent the same generic application everywhere, and companies were starting to sort hundreds of them by machine, without meeting anyone.',
+        ],
+      },
+      {
+        after: 10,
+        text: [
+          'We think people should be hired by people. So GetCV adds a little friction, on purpose.',
+          'Studios write their own questions, and candidates answer in set formats that ask them to think, not paste. Different approach to hiring, different design, different mindset.',
+        ],
+      },
+      {
+        after: 14,
+        text: [
+          'Looking back, 2020 was still a more human time for hiring than today. A little well-designed friction turned out to be the secret sauce.',
+        ],
+      },
     ],
   },
 ];
