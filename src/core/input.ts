@@ -1,6 +1,8 @@
 import type { VirtualScroll } from './scroll';
 
 const LINE_HEIGHT = 16;
+/** Wheel and fling distance against native scrolling. A finger drag still tracks 1:1. */
+const SPEED = 0.9;
 
 interface TouchSample {
   t: number;
@@ -54,7 +56,7 @@ export class ScrollInput {
     else if (event.deltaMode === 2) delta *= this.pageHeight();
     // Trackpads report horizontal swipes on deltaX; let them scroll too when dominant.
     if (Math.abs(event.deltaX) > Math.abs(delta) * 1.5) delta = event.deltaX;
-    this.scroll.add(delta);
+    this.scroll.add(delta * SPEED);
     this.wake();
   };
 
@@ -92,7 +94,7 @@ export class ScrollInput {
       const last = recent[recent.length - 1];
       const ms = Math.max(16, last.t - first.t);
       const velocity = ((first.y - last.y) / ms) * 1000;
-      this.scroll.add(velocity * 0.3);
+      this.scroll.add(velocity * 0.3 * SPEED);
     }
     this.samples = [];
     this.dragged = null;
