@@ -64,6 +64,12 @@
   cursor: default;
 }
 
+.is-drag-scrolling,
+.is-drag-scrolling * {
+  cursor: default;
+  user-select: none;
+}
+
 html,
 body {
   margin: 0;
