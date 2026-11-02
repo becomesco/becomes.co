@@ -1,13 +1,17 @@
 declare global {
   interface Window {
+    dataLayer?: unknown[];
     gtag?: (...args: unknown[]) => void;
   }
 }
 
+const GA_ID = import.meta.env.VITE_GA_ID as string | undefined;
+
 export function pageView(): void {
-  window.gtag?.('config', 'UA-172016979-2', {
-    page_path: location.pathname,
+  if (!GA_ID) return;
+  window.gtag?.('event', 'page_view', {
     page_title: document.title,
     page_location: location.href,
+    page_path: location.pathname,
   });
 }

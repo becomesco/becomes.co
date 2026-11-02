@@ -13,6 +13,7 @@ import { assetsOf, works } from './data/works';
 import { HomeView } from './home/home-view';
 import { Morph } from './morph';
 import { Router, type Route } from './router';
+import { applyRouteMeta } from './site';
 import type { AppContext, DrawList, NavigationIntent, View, ViewName } from './view';
 import { WorkView } from './work/work-view';
 
@@ -30,12 +31,6 @@ interface Fade {
   duration: number;
   t: number;
 }
-
-const TITLES: Record<Exclude<ViewName, 'work'>, string> = {
-  home: 'Becomes · a design and technology studio for a more interesting internet.',
-  about: 'About · Becomes',
-  contact: 'Contact · Becomes',
-};
 
 export class App {
   private scheduler = new Scheduler();
@@ -169,7 +164,7 @@ export class App {
 
   private onRoute = (route: Route, intent: NavigationIntent, kind: 'initial' | 'push' | 'pop'): void => {
     const next = this.views[route.view];
-    document.title = route.view === 'work' ? `${route.work.name} · Becomes` : TITLES[route.view];
+    applyRouteMeta(route);
     this.chrome.setView(route.view);
 
     if (kind === 'initial') {

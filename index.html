@@ -6,22 +6,52 @@
     <title>Becomes · a design and technology studio for a more interesting internet.</title>
     <meta
       name="description"
-      content="Becomes is a small creative web development studio delivering the fastest websites and web apps. Strategy, brand, web and product, carried by one team."
+      content="Becomes is a design and technology studio for a more interesting internet. Brands, products and experiences, from one team."
     />
     <meta name="theme-color" content="#e4e2dc" />
+    <link rel="canonical" href="https://becomes.co/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Becomes" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://becomes.co/" />
+    <meta property="og:title" content="Becomes · a design and technology studio for a more interesting internet." />
+    <meta
+      property="og:description"
+      content="Becomes is a design and technology studio for a more interesting internet. Brands, products and experiences, from one team."
+    />
+    <meta property="og:image" content="https://becomes.co/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The Becomes Glass mark" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@becomesco" />
+    <meta name="twitter:title" content="Becomes · a design and technology studio for a more interesting internet." />
+    <meta
+      name="twitter:description"
+      content="Becomes is a design and technology studio for a more interesting internet. Brands, products and experiences, from one team."
+    />
+    <meta name="twitter:image" content="https://becomes.co/og.jpg" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="/fonts/grillmaster-extwide-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/grillmaster-extwide-medium.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/grillmaster-wide-regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/media/brand/glass-mark.mesh" as="fetch" type="application/octet-stream" crossorigin />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-172016979-2"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-      gtag('config', 'UA-172016979-2');
+      (function () {
+        var id = '%VITE_GA_ID%';
+        if (!id || id.charAt(0) === '%') return;
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          dataLayer.push(arguments);
+        }
+        window.gtag = gtag;
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+        document.head.appendChild(script);
+        gtag('js', new Date());
+        gtag('config', id);
+      })();
     </script>
     <script type="module" src="/src/app/main.ts"></script>
   </head>
@@ -113,7 +143,7 @@
                   </label>
                   <label class="field">
                     <span class="field__label">What’s your name?</span>
-                    <input class="field__input" placeholder="Full names" name="name" autocomplete="name" required />
+                    <input class="field__input" placeholder="Full name" name="name" autocomplete="name" required />
                   </label>
                   <label class="field">
                     <span class="field__label">What’s your company’s name?</span>
@@ -131,7 +161,7 @@
                     />
                   </label>
                   <fieldset class="field contact-help">
-                    <legend class="field__label">How can we help? (select all that applies)</legend>
+                    <legend class="field__label">How can we help? (select all that apply)</legend>
                     <div class="contact-help__pills">
                       <label class="contact-help__option">
                         <input type="checkbox" name="help" value="strategy" />
@@ -168,7 +198,7 @@
                       class="field__input field__input--area"
                       name="message"
                       rows="3"
-                      placeholder="What are you trying to achieve"
+                      placeholder="What are you trying to achieve?"
                       required
                     ></textarea>
                   </label>

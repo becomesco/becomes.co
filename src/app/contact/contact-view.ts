@@ -263,7 +263,7 @@ export class ContactView implements View {
   }
 
   private collapseToSent(): void {
-    this.setStatus('Thanks. We will get back to you shortly.', false);
+    this.setStatus('Thanks. We’ll get back to you shortly.', false);
     const inner = this.brief.querySelector<HTMLElement>('.contact-card__inner')!;
     this.openH = this.brief.offsetHeight;
     const pad = this.openH - inner.offsetHeight;

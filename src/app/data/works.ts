@@ -146,7 +146,7 @@ export const works: readonly Work[] = [
       { media: 'bcms/starter-podcast', width: 340 },
       {
         note: [
-          'We shipped open-source starters for  Next, Nuxt, Astro, Gatsby or Svelte, with the API already wired.',
+          'We shipped open-source starters for Next, Nuxt, Astro, Gatsby or Svelte, with the API already wired.',
           'There are finished sites for blogs, shops, job boards, recipes, podcasts...',
         ],
       },
@@ -716,7 +716,8 @@ export interface Client {
   height: number;
   /**
    * Height on About at the 1440 design size, CSS px, set from each logo's aspect and ink
-   * coverage so they all carry about the same weight. About's list in index.html repeats these.
+   * coverage so they all carry about the same weight. About paints this list; index.html keeps
+   * the same order for the first paint and for no-JS.
    */
   size: number;
   /** Fixed place among the logos in Home's Other grid, 0 first. The rest fill the gaps in a new order each visit. */

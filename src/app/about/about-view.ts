@@ -4,7 +4,7 @@ import { VirtualScroll } from '../../core/scroll';
 import { createSprite, type Sprite, type TextureRef } from '../../graphics/scene/types';
 import type { MarkSpot } from '../../ui/overlays/loader';
 import { clamp, easeOutCubic, saturate } from '../../utils/math';
-import { textureFor } from '../data/works';
+import { clients, textureFor } from '../data/works';
 import { createGrid } from '../home/grid';
 import { NotePress, noteTexture } from '../note';
 import type { AppContext, DrawList, View } from '../view';
@@ -74,6 +74,21 @@ export class AboutView implements View, MarkSpot {
     this.root = document.querySelector<HTMLElement>('[data-view="about"]')!;
     this.content = this.root.querySelector<HTMLElement>('.about__content')!;
     this.copy = this.root.querySelector<HTMLElement>('.about__copy')!;
+    const list = this.root.querySelector<HTMLUListElement>('.about__clients-list');
+    if (list) {
+      list.replaceChildren(
+        ...clients.map((client) => {
+          const item = document.createElement('li');
+          const img = document.createElement('img');
+          img.src = client.src;
+          img.alt = client.name;
+          img.draggable = false;
+          img.style.setProperty('--logo-h', String(client.size));
+          item.append(img);
+          return item;
+        }),
+      );
+    }
   }
 
   open(): void {
