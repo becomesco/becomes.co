@@ -26,6 +26,8 @@ function isInteractive(target: EventTarget | null): boolean {
 
 /** Mouse travel before a press becomes a drag. Matches the tap distance in `Pointer`. */
 const MOUSE_DRAG_DISTANCE = 8;
+/** Scroll distance per pixel of mouse drag, and of its fling. Touch stays 1:1. */
+const MOUSE_DRAG_GAIN = 1.3;
 
 /**
  * Wheel, touch, mouse drag, and keyboard into the virtual scroll. Handlers only
@@ -40,6 +42,7 @@ export class ScrollInput {
   private mouseId: number | null = null;
   private mouseDownY = 0;
   private mouseDragging = false;
+  private dragGain = 1;
 
   private get scroll(): VirtualScroll {
     return this.dragged ?? this.active();
@@ -112,7 +115,7 @@ export class ScrollInput {
       this.mouseDragging = true;
       document.documentElement.classList.add('is-drag-scrolling');
       window.getSelection()?.removeAllRanges();
-      this.beginDrag(event.clientY, event.timeStamp);
+      this.beginDrag(event.clientY, event.timeStamp, MOUSE_DRAG_GAIN);
       return;
     }
     this.moveDrag(event.clientY, event.timeStamp);
@@ -141,7 +144,8 @@ export class ScrollInput {
     if (this.mouseId !== null) event.preventDefault();
   };
 
-  private beginDrag(y: number, t: number): void {
+  private beginDrag(y: number, t: number, gain = 1): void {
+    this.dragGain = gain;
     this.touchStartY = y;
     this.touchStartTarget = this.scroll.target;
     this.samples = [{ t, y }];
@@ -151,7 +155,7 @@ export class ScrollInput {
 
   private moveDrag(y: number, t: number): void {
     if (!this.scroll.enabled) return;
-    this.scroll.to(this.touchStartTarget + (this.touchStartY - y));
+    this.scroll.to(this.touchStartTarget + (this.touchStartY - y) * this.dragGain);
     this.samples.push({ t, y });
     if (this.samples.length > 8) this.samples.shift();
     this.wake();
@@ -166,7 +170,7 @@ export class ScrollInput {
       const last = recent[recent.length - 1];
       const ms = Math.max(16, last.t - first.t);
       const velocity = ((first.y - last.y) / ms) * 1000;
-      this.scroll.add(velocity * 0.3 * SPEED);
+      this.scroll.add(velocity * 0.3 * SPEED * this.dragGain);
     }
     this.samples = [];
     this.dragged = null;
