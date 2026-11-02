@@ -33,6 +33,14 @@ export interface ScreenDef {
   tablet?: boolean;
 }
 
+/** Longer copy in the Work View, between Screens: what we did there that is worth telling. Not an Asset. */
+export interface StoryDef {
+  /** Shown after this many Screens; 0 sits between the clicked Asset and the first Screen. */
+  after: number;
+  /** One string per paragraph. */
+  text: readonly string[];
+}
+
 export interface Work {
   slug: string;
   name: string;
@@ -48,6 +56,7 @@ export interface Work {
   assets: readonly AssetDef[];
   /** In View order, after the clicked Asset. */
   screens: readonly ScreenDef[];
+  story?: readonly StoryDef[];
 }
 
 /** One strip of a Screen: `top` and `rows` in px of the full page, running into the next strip by its overlap. */
@@ -449,7 +458,7 @@ export const works: readonly Work[] = [
       'Basket sells healthy snacks online. We designed and built their shop on top of the existing brand.',
       'Underneath is a custom order system and a local payment integration, so checkout works the way their customers already pay.',
     ],
-    services: ['UX/UI design', 'development', 'payment integration'],
+    services: ['UX/UI design', 'development', 'migration', 'payment integration'],
     logo: { src: '/logos/basket.svg', width: 127, height: 40 },
     assets: [
       { media: 'basket/illustration-backpack' },
@@ -497,6 +506,36 @@ export const works: readonly Work[] = [
       { media: 'basket/screens/cart' },
       { media: 'basket/screens/checkout' },
       { media: 'basket/screens/about' },
+    ],
+    story: [
+      {
+        after: 1,
+        text: [
+          'People loved Basket’s snacks. Buying them online was the hard part: the old WordPress shop kept breaking, and it frustrated the very customers it was there for.',
+          'So we moved Basket off WordPress and built a new shop from scratch.',
+        ],
+      },
+      {
+        after: 2,
+        text: [
+          'Basket’s packaging is easy to spot: the illustrations, the colours, the small nostalgic scenes. We carried that language into every page, so the site feels like the box you already know.',
+          'And it is fast. Pages open quickly, on phones too, so nothing slows the way from craving to cart.',
+        ],
+      },
+      {
+        after: 3,
+        text: [
+          'We built the order system for both sides of the counter. Customers get an account with every past order in it, and a sequence of emails keeps them in touch after they buy.',
+          'Basket’s team gets a full admin panel, with orders, customers and analytics in one place, so they can see what sells and act on it.',
+        ],
+      },
+      {
+        after: 4,
+        text: [
+          'We connected checkout directly to card payments from Banca Intesa, part of Intesa Sanpaolo. That is unusual for a small shop on the local market, and it lets customers pay by card the way they are used to.',
+          'A small shop, running on the kind of system usually built for much bigger ones.',
+        ],
+      },
     ],
   },
   {

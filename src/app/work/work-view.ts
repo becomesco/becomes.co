@@ -11,8 +11,8 @@ import type { AppContext, DrawList, View } from '../view';
 
 /**
  * A Work View reads top to bottom: the clicked Asset, then one section per Screen (the whole
- * page in a frame), then every other Asset of the Work together in one collage, tilted and
- * scattered like magnets on a fridge, then the contact link.
+ * page in a frame) with the Work's story copy between them, then every other Asset of the Work
+ * together in one collage, tilted and scattered like magnets on a fridge, then the contact link.
  */
 type Kind = 'hero' | 'screen' | 'magnet';
 
@@ -44,6 +44,14 @@ interface Card {
   /** Magnet: resting turn, radians, and scroll px past the viewport's bottom edge before it lands. */
   tilt: number;
   delay: number;
+}
+
+/** Story copy in the browser layer, placed between Screens. */
+interface Story {
+  el: HTMLElement;
+  after: number;
+  top: number;
+  style: string;
 }
 
 const CUT_FADE = 0.14;
@@ -130,6 +138,7 @@ export class WorkView implements View {
   private header: HTMLElement;
   private cta: HTMLElement;
   private cards: Card[] = [];
+  private stories: Story[] = [];
   /** `cards` in draw order. */
   private drawn: Card[] = [];
   private press = new NotePress();
@@ -164,6 +173,7 @@ export class WorkView implements View {
     ];
     this.seed = hashString(hero.id);
     this.renderHeader(work);
+    this.renderStory(work);
     this.openedAt = this.now;
     this.headerStyle = '';
     this.ctaStyle = '';
@@ -192,15 +202,38 @@ export class WorkView implements View {
     y += hero.h + gap;
 
     const screens = this.cards.filter((c) => c.kind === 'screen');
+    // A Story set after a Screen that shares a row lands after the whole row.
+    // Its text starts at the left edge of the Screen frame above it.
+    let told = 0;
+    let row: Card[] = [];
+    const tell = (shown: number) => {
+      for (; told < this.stories.length && this.stories[told].after <= shown; told++) {
+        const story = this.stories[told];
+        // Before any row, the first Screen is framed early just to read its edges; the loop frames it again.
+        if (!row.length && screens[0]) this.frame(screens[0], grid.margin, y, W);
+        const ref = row.length ? row : screens.slice(0, 1);
+        const left = ref.length ? ref[0].x : grid.margin;
+        const right = ref.length ? ref[ref.length - 1].x + ref[ref.length - 1].w : grid.margin + W;
+        story.top = y;
+        story.el.style.top = `${y}px`;
+        story.el.style.left = `${left}px`;
+        story.el.style.width = `${right - left}px`;
+        y += story.el.offsetHeight + section;
+      }
+    };
+    if (this.stories[0]?.after === 0) y += section - gap;
+    tell(0);
     for (let i = 0; i < screens.length; ) {
       const a = screens[i];
       const b = screens[i + 1];
-      const row = desktop && b && a.screen!.tablet && b.screen!.tablet ? [a, b] : [a];
+      row = desktop && b && a.screen!.tablet && b.screen!.tablet ? [a, b] : [a];
       const slot = (W - gap * (row.length - 1)) / row.length;
       row.forEach((card, k) => this.frame(card, grid.margin + k * (slot + gap), y, slot));
       y += Math.max(...row.map((c) => c.h)) + section;
       i += row.length;
+      tell(i);
     }
+    tell(Infinity);
 
     const magnets = this.cards.filter((c) => c.kind === 'magnet');
     this.drawn = this.cards;
@@ -244,6 +277,15 @@ export class WorkView implements View {
       this.ctaStyle = ctaStyle;
       this.cta.style.opacity = (ctaReveal * this.presence).toFixed(3);
       this.cta.style.transform = `translate3d(0, ${((1 - ctaReveal) * 28).toFixed(2)}px, 0)`;
+    }
+
+    for (const story of this.stories) {
+      const reveal = easeOutCubic(saturate((vh - (story.top - s)) / (vh * 0.25)));
+      const style = `${(reveal * this.presence).toFixed(3)}|${((1 - reveal) * 28).toFixed(2)}`;
+      if (style === story.style) continue;
+      story.style = style;
+      story.el.style.opacity = (reveal * this.presence).toFixed(3);
+      story.el.style.transform = `translate3d(0, ${((1 - reveal) * 28).toFixed(2)}px, 0)`;
     }
 
     for (let i = 0; i < this.cards.length; i++) {
@@ -322,6 +364,10 @@ export class WorkView implements View {
     this.headerStyle = '';
     this.cta.style.opacity = '0';
     this.ctaStyle = '';
+    for (const story of this.stories) {
+      story.el.style.opacity = '0';
+      story.style = '';
+    }
   }
 
   /** Within a viewport of the screen, where a texture is worth loading ahead. */
@@ -491,5 +537,24 @@ export class WorkView implements View {
     const visit = this.header.querySelector<HTMLAnchorElement>('.work-header__visit')!;
     visit.hidden = !work.url;
     if (work.url) visit.href = work.url;
+  }
+
+  private renderStory(work: Work): void {
+    for (const story of this.stories) story.el.remove();
+    const defs = [...(work.story ?? [])].sort((a, b) => a.after - b.after);
+    this.stories = defs.map((def) => {
+      const el = document.createElement('div');
+      el.className = 'work-story';
+      el.append(
+        ...def.text.map((text) => {
+          const p = document.createElement('p');
+          p.className = 'work-story__text';
+          p.textContent = text;
+          return p;
+        }),
+      );
+      this.cta.before(el);
+      return { el, after: def.after, top: 0, style: '' };
+    });
   }
 }

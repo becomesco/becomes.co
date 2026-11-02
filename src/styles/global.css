@@ -330,6 +330,22 @@ a {
   display: none;
 }
 
+.work-story {
+  position: absolute;
+  opacity: 0;
+}
+
+.work-story__text {
+  margin: 0;
+  max-width: 33.6em;
+  font-size: clamp(15px, 1.11vw, 19px);
+  line-height: 1.25;
+  text-wrap: pretty;
+}
+
+.work-story__text + .work-story__text {
+  margin-top: clamp(14px, 1.4vw, 22px);
+}
 .work-cta {
   position: absolute;
   left: 0;
