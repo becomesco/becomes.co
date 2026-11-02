@@ -307,8 +307,8 @@
   },
   "bcms/history": {
     "px": [
-      712,
-      592
+      744,
+      712
     ],
     "alpha": true,
     "src": "/media/bcms/history.webp",
@@ -2053,8 +2053,8 @@
   },
   "pyure/mark-glow": {
     "px": [
-      1210,
-      1059
+      1505,
+      1193
     ],
     "alpha": true,
     "src": "/media/pyure/mark-glow.webp",
@@ -2089,8 +2089,8 @@
   },
   "pyure/nav-glow": {
     "px": [
-      1494,
-      1000
+      1856,
+      1278
     ],
     "alpha": true,
     "src": "/media/pyure/nav-glow.webp",
@@ -2224,8 +2224,8 @@
   },
   "videotoflip/filmstrip": {
     "px": [
-      1500,
-      241
+      1488,
+      236
     ],
     "alpha": true,
     "src": "/media/videotoflip/filmstrip.webp",
@@ -2269,8 +2269,8 @@
   },
   "videotoflip/hero": {
     "px": [
-      1537,
-      724
+      2000,
+      726
     ],
     "alpha": true,
     "src": "/media/videotoflip/hero.webp",
