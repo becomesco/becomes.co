@@ -3,7 +3,7 @@ import type { FrameTime } from '../../core/scheduler';
 import { VirtualScroll } from '../../core/scroll';
 import { createSprite, NO_FADE, type EdgeFade, type GlassBox, type Sprite } from '../../graphics/scene/types';
 import type { LandingWord } from '../../ui/overlays/loader';
-import { clamp, damp, easeInOutCubic, lerp, saturate, smoothstep } from '../../utils/math';
+import { clamp, damp, easeInOutCubic, easeOutCubic, lerp, saturate, smoothstep } from '../../utils/math';
 import { clientTexture } from '../client';
 import { assetsOf, clients, others, textureFor, works, type Asset, type Client, type Work } from '../data/works';
 import { NotePress } from '../note';
@@ -17,6 +17,12 @@ const HOVER_STIFFNESS = 70;
 const HOVER_DAMPING = 16;
 /** How far an Asset grows at full hover. */
 const HOVER_SCALE = 0.05;
+/** Seconds an Asset takes to scale and fade in once it comes on screen. */
+const REVEAL_TIME = 0.5;
+/** Scale an Asset reveals from. */
+const REVEAL_SCALE = 0.5;
+/** Share of an Asset's height on screen before it reveals. */
+const REVEAL_AT = 0.1;
 /** Magnification of an Other piece under the cursor. */
 const OTHER_ZOOM = 2.2;
 /** Client logos in the Other grid against their size on About. */
@@ -291,6 +297,11 @@ export class HomeView implements View {
   private sprites = new Map<number, Sprite>();
   private hover = new Map<number, Spring>();
   private hovered = -1;
+  /** Reveal progress, 0 to 1, of each placement on screen; dropped once it leaves, so it reveals again next time. */
+  private reveal = new Map<number, number>();
+  private revealSeen = new Set<number>();
+  /** Set by a relayout, so Assets already on screen show outright instead of revealing again. */
+  private revealInstant = false;
   private visible: Placement[] = [];
   private otherTitle: Title;
   private otherSprites = others.map(otherSprite);
@@ -484,6 +495,8 @@ export class HomeView implements View {
     this.settle();
     this.sprites.clear();
     this.hover.clear();
+    this.reveal.clear();
+    this.revealInstant = previous !== null;
     this.lastPrefetch = Number.NaN;
   }
 
@@ -523,6 +536,7 @@ export class HomeView implements View {
     if (this.updateZoom(lens, pointer.x, pointer.y, frame.dt, reducedMotion)) active = true;
 
     if (this.press.update(this.scroll.velocity, frame.dt, reducedMotion)) active = true;
+    this.revealSeen.clear();
     for (const p of this.visible) {
       let spring = this.hover.get(p.index);
       if (!spring) {
@@ -531,11 +545,36 @@ export class HomeView implements View {
       }
       spring.target = p.index === hovered ? 1 : 0;
       if (spring.update(frame.dt)) active = true;
-      const sprite = this.place(p, s, vh, spring.value);
-      if (this.ctx.engine.appear(p.asset.texture) < 1) active = true;
-      sprite.opacity *= this.ctx.engine.appear(p.asset.texture);
+      const reveal = this.updateReveal(p, s, vh, frame.dt, reducedMotion);
+      if (reveal < 1) active = true;
+      const eased = easeOutCubic(reveal);
+      const sprite = this.place(p, s, vh, spring.value, reducedMotion ? 1 : lerp(REVEAL_SCALE, 1, eased));
+      sprite.opacity *= eased;
     }
+    for (const index of this.reveal.keys()) if (!this.revealSeen.has(index)) this.reveal.delete(index);
+    this.revealInstant = false;
     return active;
+  }
+
+  /**
+   * Reveal progress of a placement: starts once REVEAL_AT of it is on screen with its texture
+   * ready and Home showing, and resets once it is fully off screen, from either edge.
+   */
+  private updateReveal(p: Placement, s: number, vh: number, dt: number, reduced: boolean): number {
+    const top = vh / 2 + (p.anchor - s) * p.speed - p.h / 2;
+    const onScreen = Math.min(top + p.h, vh) - Math.max(top, 0);
+    let t = this.reveal.get(p.index);
+    if (onScreen <= 0) return t ?? 0;
+    this.revealSeen.add(p.index);
+    if (t === undefined) {
+      const ready = this.ctx.engine.appear(p.asset.texture) > 0;
+      if (!ready || onScreen < p.h * REVEAL_AT || this.presence < 0.5) return 0;
+      t = reduced || this.revealInstant ? 1 : 0;
+    } else {
+      t = reduced ? 1 : Math.min(1, t + dt / REVEAL_TIME);
+    }
+    this.reveal.set(p.index, t);
+    return t;
   }
 
   draw(out: DrawList): void {
@@ -598,6 +637,8 @@ export class HomeView implements View {
     const layout = this.layoutState;
     const placement = layout?.placements.find((p) => p.index === index);
     if (!layout || !placement) return null;
+    // The morph lands on this placement at full size, so it must not reveal again under it.
+    this.reveal.set(index, 1);
     const sprite = this.place(placement, this.scroll.current, layout.height, 0);
     return { ...sprite, opacity: 1 };
   }
@@ -657,7 +698,7 @@ export class HomeView implements View {
     return next !== target;
   }
 
-  private place(p: Placement, s: number, vh: number, hover: number): Sprite {
+  private place(p: Placement, s: number, vh: number, hover: number, reveal = 1): Sprite {
     let sprite = this.sprites.get(p.index);
     if (!sprite) {
       sprite = createSprite(`home:${p.index}`, p.asset.texture);
@@ -665,7 +706,7 @@ export class HomeView implements View {
       this.sprites.set(p.index, sprite);
     }
     const cy = vh / 2 + (p.anchor - s) * p.speed;
-    const scale = 1 + HOVER_SCALE * hover;
+    const scale = (1 + HOVER_SCALE * hover) * reveal;
     const w = p.w * scale;
     const h = p.h * scale;
     const x = p.x + (p.w - w) / 2;
