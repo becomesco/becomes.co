@@ -31,12 +31,10 @@ const REVEAL_SCALE = 0.5;
 /** Share of an Asset's height on screen before it reveals. */
 const REVEAL_AT = 0.1;
 /**
- * Px an Asset moves sideways per px it moves up. 0 is straight up; 1 is 45°. Works alternate:
- * the first travels bottom left to top right, the next bottom right to top left, and so on.
+ * Px an Asset moves right per px it moves up, so it travels bottom left to top right, 10° off vertical.
  * An Asset sits at its layout `x` as it passes the viewport center.
  */
-const DIAGONAL = 0.6;
-const DRIFT = new Map(works.map((work, i) => [work, i % 2 === 0 ? DIAGONAL : -DIAGONAL]));
+const DIAGONAL = Math.tan((10 * Math.PI) / 180);
 /** Magnification of an Other piece under the cursor. */
 const OTHER_ZOOM = 2.2;
 /** Client logos in the Other grid against their size on About. */
@@ -248,7 +246,7 @@ function glassOf(title: Title): GlassBox[] {
 
 /** Left edge of a placement at scroll `s`, shifted along the diagonal. */
 function xAt(p: Placement, s: number): number {
-  return p.x + (s - p.anchor) * p.speed * (DRIFT.get(p.asset.work) ?? 0);
+  return p.x + (s - p.anchor) * p.speed * DIAGONAL;
 }
 
 function fadeFor(asset: Asset): EdgeFade {
