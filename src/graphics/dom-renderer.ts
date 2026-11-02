@@ -1,4 +1,5 @@
 import type { RenderBackend } from './backend';
+import { fetchMedia } from './media-cache';
 import { pickLevel } from './resources';
 import { LAYER_GAP, type EdgeFade, type SceneFrame, type Sprite, type TextureRef } from './scene/types';
 
@@ -154,7 +155,12 @@ export class DomRenderer implements RenderBackend {
           done(false);
         });
     } else {
-      load(level === 2 ? ref.src : ref.half);
+      fetchMedia(level === 2 ? ref.src : ref.half)
+        .then((blob) => load(URL.createObjectURL(blob)))
+        .catch((error) => {
+          console.warn('[textures] failed', ref.key, error);
+          done(false);
+        });
     }
   }
 

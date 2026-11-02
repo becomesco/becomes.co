@@ -3,8 +3,10 @@ import type { RenderBackend } from './backend';
 import { detectCapabilities } from './capabilities';
 import { DomRenderer } from './dom-renderer';
 import { GlassMark } from './layers/glass-mark';
+import { preloadMedia } from './media-cache';
 import { AdaptiveQuality } from './quality';
 import { WebGpuRenderer } from './renderer';
+import { fileAt, pickLevel } from './resources';
 import type { SceneFrame, TextureRef } from './scene/types';
 
 export interface EngineOptions {
@@ -62,6 +64,16 @@ export class Engine {
 
   prefetch(ref: TextureRef, cssWidth: number): void {
     this.backend.prefetch(ref, cssWidth * this.renderRatio());
+  }
+
+  /**
+   * Downloads the files behind `items`, in order, at the resolution each will draw at, so later
+   * texture loads skip the network. Textures still decode on demand; `onProgress` gets 0 → 1.
+   */
+  preload(items: readonly { ref: TextureRef; cssWidth: number }[], onProgress: (share: number) => void): Promise<void> {
+    const ratio = this.renderRatio();
+    const urls = items.flatMap(({ ref, cssWidth }) => fileAt(ref, pickLevel(ref, cssWidth * ratio)) ?? []);
+    return preloadMedia(urls, onProgress);
   }
 
   /** The Glass mark on its own canvas, on this session's device. Null without WebGPU. */

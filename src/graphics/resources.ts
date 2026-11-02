@@ -1,3 +1,4 @@
+import { fetchMedia } from './media-cache';
 import type { TextureRef } from './scene/types';
 
 interface Entry {
@@ -29,16 +30,20 @@ const MAX_DRAW_SCALE = 4;
  * Resolution to load for a display width: 1 (`half`) or 2 (`src`) for files; for drawn
  * textures, the scale to draw at, so they stay 1:1 with device pixels when shown large.
  */
+/** The file a texture loads at a level, or null for a drawn texture. */
+export function fileAt(ref: TextureRef, level: number): string | null {
+  if ('draw' in ref) return null;
+  return level === 2 ? ref.src : ref.half;
+}
+
 export function pickLevel(ref: TextureRef, devicePx: number): number {
   const ratio = devicePx / (ref.px[0] * 0.5);
   if ('draw' in ref) return Math.min(MAX_DRAW_SCALE, Math.max(1, Math.ceil(ratio / DRAW_STEP - 0.01) * DRAW_STEP));
   return ratio <= 1.15 ? 1 : 2;
 }
 
-async function decode(url: string, signal: AbortSignal): Promise<ImageBitmap> {
-  const response = await fetch(url, { signal });
-  if (!response.ok) throw new Error(`${response.status} ${url}`);
-  const blob = await response.blob();
+async function decode(url: string): Promise<ImageBitmap> {
+  const blob = await fetchMedia(url);
   return createImageBitmap(blob, { premultiplyAlpha: 'none', colorSpaceConversion: 'none' });
 }
 
@@ -159,7 +164,7 @@ export class TextureStore {
     const { ref } = entry;
     const url = 'draw' in ref ? ref.key : level === 2 ? ref.src : ref.half;
     try {
-      const source = 'draw' in ref ? await ref.draw(level) : await decode(url, this.abort.signal);
+      const source = 'draw' in ref ? await ref.draw(level) : await decode(url);
       if (this.abort.signal.aborted) {
         if (source instanceof ImageBitmap) source.close();
         return;

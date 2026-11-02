@@ -5,7 +5,7 @@ import { Viewport } from '../core/viewport';
 import { Engine } from '../graphics/engine';
 import { Chrome } from '../ui/chrome';
 import { Loader } from '../ui/overlays/loader';
-import { saturate } from '../utils/math';
+import { lerp, saturate } from '../utils/math';
 import { AboutView } from './about/about-view';
 import { pageView } from './analytics';
 import { ContactView } from './contact/contact-view';
@@ -17,6 +17,10 @@ import type { AppContext, DrawList, NavigationIntent, View, ViewName } from './v
 import { WorkView } from './work/work-view';
 
 const BACKGROUND: readonly [number, number, number] = [228 / 255, 226 / 255, 220 / 255];
+/** Loader progress once fonts and the Engine are up; Home's media downloads fill the rest. */
+const MEDIA_FROM = 0.2;
+/** Longest the Loader holds Home for its media, in seconds; past it, downloads finish behind Home. */
+const MEDIA_WAIT = 15;
 
 interface Fade {
   view: View;
@@ -73,7 +77,7 @@ export class App {
     });
     this.scheduler.wake();
 
-    const fonts = document.fonts.ready.then(() => this.loader.setProgress(0.45));
+    const fonts = document.fonts.ready.then(() => this.loader.setProgress(0.1));
     const engine = Engine.create({
       canvas: document.querySelector<HTMLCanvasElement>('.stage__canvas')!,
       fallbackHost: document.querySelector<HTMLElement>('.stage__fallback')!,
@@ -86,7 +90,7 @@ export class App {
     );
     const [created] = await Promise.all([engine, fonts]);
     this.engine = created;
-    this.loader.setProgress(0.7);
+    this.loader.setProgress(MEDIA_FROM);
 
     const ctx: AppContext = {
       engine: this.engine,
@@ -133,7 +137,11 @@ export class App {
     this.router = new Router(this.onRoute);
     this.router.start();
     this.ready = true;
-    this.loader.setProgress(1);
+    const media = this.engine.preload(this.home.preloads(), (share) =>
+      this.loader.setProgress(lerp(MEDIA_FROM, 1, share)),
+    );
+    const timeout = new Promise((resolve) => setTimeout(resolve, MEDIA_WAIT * 1000));
+    void Promise.race([media, timeout]).then(() => this.loader.setProgress(1));
     if (import.meta.env.DEV) (window as unknown as { __app: App }).__app = this;
     this.wake();
   }

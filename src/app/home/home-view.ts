@@ -1,7 +1,14 @@
 import { Spring } from '../../core/motion';
 import type { FrameTime } from '../../core/scheduler';
 import { VirtualScroll } from '../../core/scroll';
-import { createSprite, NO_FADE, type EdgeFade, type GlassBox, type Sprite } from '../../graphics/scene/types';
+import {
+  createSprite,
+  NO_FADE,
+  type EdgeFade,
+  type GlassBox,
+  type Sprite,
+  type TextureRef,
+} from '../../graphics/scene/types';
 import type { LandingWord } from '../../ui/overlays/loader';
 import { clamp, damp, easeInOutCubic, easeOutCubic, lerp, saturate, smoothstep } from '../../utils/math';
 import { clientTexture } from '../client';
@@ -524,8 +531,8 @@ export class HomeView implements View {
 
     if (!(Math.abs(s - this.lastPrefetch) < vh * 0.25)) {
       this.lastPrefetch = s;
-      for (const p of this.query(layout, s - vh * 0.5, s + vh * 1.75)) this.ctx.engine.prefetch(p.asset.texture, p.w);
-      this.otherCells(layout, s, -vh * 0.5, vh * 1.75, (sprite) => this.ctx.engine.prefetch(sprite.texture!, sprite.iw));
+      for (const p of this.query(layout, s - vh, s + vh * 3)) this.ctx.engine.prefetch(p.asset.texture, p.w);
+      this.otherCells(layout, s, -vh, vh * 3, (sprite) => this.ctx.engine.prefetch(sprite.texture!, sprite.iw));
     }
     this.otherVisible.length = 0;
     this.otherCells(layout, s, 0, vh, (sprite) => {
@@ -653,6 +660,20 @@ export class HomeView implements View {
     this.reveal.set(index, 1);
     const sprite = this.place(placement, this.scroll.current, layout.height, 0);
     return { ...sprite, opacity: 1 };
+  }
+
+  /** Every texture Home draws and the CSS width it draws it at, top to bottom. Empty before layout. */
+  preloads(): { ref: TextureRef; cssWidth: number }[] {
+    const layout = this.layoutState;
+    if (!layout) return [];
+    const list = layout.placements.map((p) => ({
+      ref: p.asset.texture,
+      cssWidth: p.asset.frame ? p.w - OTHER_INSET * 2 : p.w,
+    }));
+    layout.other?.cells.forEach((cell, i) => {
+      list.push({ ref: this.otherSprites[i].texture!, cssWidth: cell.w - OTHER_INSET * 2 });
+    });
+    return list;
   }
 
   /** The visible placement of an Asset closest to the viewport center. */
