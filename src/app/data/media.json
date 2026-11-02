@@ -208,7 +208,7 @@
   },
   "basket/shop-grid": {
     "px": [
-      1472,
+      1471,
       1498
     ],
     "alpha": true,
@@ -1558,7 +1558,7 @@
   },
   "other/closet-catalog": {
     "px": [
-      1732,
+      1729,
       852
     ],
     "alpha": true,
@@ -1765,7 +1765,7 @@
   },
   "other/natuera-product": {
     "px": [
-      1438,
+      1437,
       1290
     ],
     "alpha": true,
