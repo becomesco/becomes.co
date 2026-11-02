@@ -26,6 +26,15 @@ type Zone = 'left' | 'center' | 'right';
 /** Chance the next Asset after a side one goes to the center; about 30% of a Work's Assets end up there. */
 const CENTER_CHANCE = 0.42;
 
+/** Every Asset against its size in `works.ts`, short of drawing it past its 2x source. */
+const GROW = 1.2;
+/**
+ * A Work's wider half of Assets is big, the rest small. Each zone takes big and small in turn,
+ * so both sizes turn up everywhere; these stretch the two halves apart.
+ */
+const BIG = 1.12;
+const SMALL = 0.9;
+
 export interface TitleBox {
   width: number;
   height: number;
@@ -147,9 +156,9 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
 
   const depth = options.reducedMotion ? 0 : mode === 'field' ? DEPTH_FIELD : DEPTH_STACK;
   const sizeScale = mode === 'field' ? clamp(width / 1440, 0.62, 1.3) : clamp(width / 620, 0.55, 1);
-  const maxH = vh * (mode === 'field' ? 0.62 : 0.56);
-  // Center Assets cross the title, so they stay small, as they are in Figma.
-  const centerMaxH = vh * 0.42;
+  const maxH = vh * (mode === 'field' ? 0.66 : 0.6);
+  // Center Assets cross the title, so they stay shorter than side ones.
+  const centerMaxH = vh * 0.54;
   const pinShort = vh * 0.28;
   const step = vh * 0.035;
 
@@ -174,24 +183,33 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
     // A Work's Assets stay below the fold while the previous title is still pinned.
     const previousP1 = k > 0 ? out[k - 1].p1 : -Infinity;
     let zone: Zone = random() < 0.5 ? 'left' : 'right';
-    const maxArea = Math.max(1, ...section.assets.map((a) => a.width * a.height));
+    const maxArea = Math.max(1, ...section.assets.map((a) => a.width * a.height)) * (GROW * BIG) ** 2;
+    const big = bigHalf(section.assets);
+    const lastBig = new Map<Zone, boolean>();
+    const pool = shuffle(section.assets, random);
 
-    for (const asset of shuffle(section.assets, random)) {
-      const forced: Zone | null = asset.cut.has('left') ? 'left' : asset.cut.has('right') ? 'right' : null;
-      if (mode === 'field') zone = forced ?? nextZone(zone, random);
+    while (pool.length) {
+      if (mode === 'field') zone = nextZone(zone, random);
+      const lane: Zone = mode === 'field' ? zone : 'center';
+      const asset: Asset = pool.splice(pickNext(pool, lane, mode, big, lastBig.get(lane) ?? random() < 0.5), 1)[0];
+      if (mode === 'field') zone = forcedZone(asset) ?? zone;
+      lastBig.set(mode === 'field' ? zone : 'center', big.has(asset));
 
+      const sharp = asset.note ? Infinity : Math.max(1, asset.texture.px[0] / 2 / asset.width);
+      const grow = Math.min(GROW * (big.has(asset) ? BIG : SMALL), sharp);
+      const scale = sizeScale * grow;
       const box = mode === 'stack'
-        ? stackBox(asset, grid, sizeScale, maxH, random)
+        ? stackBox(asset, grid, scale, maxH, random)
         : zone === 'center'
-          ? centerBox(asset, grid, sizeScale, centerMaxH, random)
-          : sideBox(asset, grid, laneCols, laneRight, sizeScale, maxH, random);
+          ? centerBox(asset, grid, scale, centerMaxH, random)
+          : sideBox(asset, grid, laneCols, laneRight, scale, maxH, random);
       let x = box.x;
       if (mode === 'field' && zone === 'right') x = width - (x + box.w);
 
       const z = clamp(0.5 * ((box.w * box.h) / (maxArea * sizeScale * sizeScale)) + 0.5 * random(), 0, 1) * 2 - 1;
       const v = 1 + depth * Math.sign(z) * Math.abs(z) ** DEPTH_SPREAD;
       const reach = (vh / 2 + box.h / 2 + ENTRY_MARGIN) / v;
-      const gapY = grid.gutter * range(random, 1.6, 4.2);
+      const gapY = grid.gutter * range(random, 1.2, 3.4);
 
       const body: Body = { x0: x, x1: x + box.w, h: box.h, a: Math.max(cursor, previousP1 + reach), v, s0: 0, s1: 0 };
       for (let tries = 0; tries < 600; tries++) {
@@ -216,7 +234,7 @@ export function computeLayout(sections: readonly SectionInput[], options: Layout
       };
       placements.push(placement);
       placed.push(placement);
-      cursor = body.a + vh * (mode === 'field' ? range(random, 0.08, 0.2) : range(random, 0.04, 0.14));
+      cursor = body.a + vh * (mode === 'field' ? range(random, 0.05, 0.16) : range(random, 0.04, 0.14));
     }
 
     const lastAnchor = placed.length ? Math.max(...placed.map((p) => p.anchor)) : layout.p1;
@@ -265,6 +283,27 @@ interface Box {
   h: number;
 }
 
+function forcedZone(asset: Asset): Zone | null {
+  return asset.cut.has('left') ? 'left' : asset.cut.has('right') ? 'right' : null;
+}
+
+/** The wider half of `assets` by area at their `works.ts` size. */
+function bigHalf(assets: readonly Asset[]): Set<Asset> {
+  const sorted = [...assets].sort((a, b) => b.width * b.height - a.width * a.height);
+  return new Set(sorted.slice(0, Math.ceil(sorted.length / 2)));
+}
+
+/**
+ * Index in `pool` of the next Asset for `lane`: the other size from the one `lane` last took,
+ * among Assets free to go there. Cut Assets only go to their own side.
+ */
+function pickNext(pool: readonly Asset[], lane: Zone, mode: LayoutMode, big: Set<Asset>, lastWasBig: boolean): number {
+  const fits = (a: Asset) => mode === 'stack' || (forcedZone(a) ?? lane) === lane;
+  const best = pool.findIndex((a) => fits(a) && big.has(a) !== lastWasBig);
+  if (best >= 0) return best;
+  return Math.max(0, pool.findIndex(fits));
+}
+
 /** The zone after `zone`: never the same twice, so the field keeps moving around the title. */
 function nextZone(zone: Zone, random: Random): Zone {
   if (zone === 'center') return random() < 0.5 ? 'left' : 'right';
@@ -273,13 +312,13 @@ function nextZone(zone: Zone, random: Random): Zone {
 }
 
 /**
- * Center box, up to a third of the grid wide, around the viewport center and nudged up to
+ * Center box, up to five twelfths of the grid wide, around the viewport center and nudged up to
  * a column and a half either way on half-column steps.
  */
 function centerBox(asset: Asset, grid: Grid, scale: number, maxH: number, random: Random): Box {
   const aspect = asset.height / asset.width;
-  const maxSpan = Math.max(2, Math.round(grid.columns / 3));
-  let span = clamp(spanFor(grid, asset.width * scale * range(random, 0.8, 1.05)), 1, maxSpan);
+  const maxSpan = Math.max(2, Math.round((grid.columns * 5) / 12));
+  let span = clamp(spanFor(grid, asset.width * scale * range(random, 0.92, 1.06)), 1, maxSpan);
   while (span > 1 && spanWidth(grid, span) * aspect > maxH) span--;
   const w = spanWidth(grid, span);
   const nudge = (Math.floor(random() * 7) - 3) / 2;
@@ -298,8 +337,8 @@ function sideBox(
 ): Box {
   const aspect = asset.height / asset.width;
   const cut = asset.cut.has('left') || asset.cut.has('right');
-  const maxSpan = laneCols + Math.max(1, Math.floor(laneCols * 0.6));
-  let span = clamp(spanFor(grid, asset.width * scale * range(random, 0.85, 1.15)), 1, maxSpan);
+  const maxSpan = laneCols + Math.max(1, Math.round(laneCols * 0.67));
+  let span = clamp(spanFor(grid, asset.width * scale * range(random, 0.94, 1.08)), 1, maxSpan);
   while (span > 1 && spanWidth(grid, span) * aspect > maxH) span--;
 
   for (;;) {
@@ -313,6 +352,9 @@ function sideBox(
       let x = columnX(grid, Math.floor(random() * (slots + 1)) / 2);
       if (span >= 2 && random() < 0.22) x -= w * range(random, 0.1, 0.28);
       return { x, w, h };
+    } else if (random() < 0.6) {
+      // Big ones reach in under the title rather than off the edge; the title's glass keeps it readable.
+      return { x: columnX(grid, Math.floor(random() * 2) / 2), w, h };
     } else {
       const x = laneRight - w;
       if (-x <= w * 0.35) return { x, w, h };
@@ -324,7 +366,7 @@ function sideBox(
 function stackBox(asset: Asset, grid: Grid, scale: number, maxH: number, random: Random): Box {
   const aspect = asset.height / asset.width;
   const minSpan = Math.min(2, grid.columns);
-  let span = clamp(spanFor(grid, asset.width * scale * range(random, 0.85, 1.15)), minSpan, grid.columns);
+  let span = clamp(spanFor(grid, asset.width * scale * range(random, 0.94, 1.08)), minSpan, grid.columns);
   while (span > minSpan && spanWidth(grid, span) * aspect > maxH) span--;
   const w = spanWidth(grid, span);
   const h = w * aspect;
