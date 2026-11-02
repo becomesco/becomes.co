@@ -23,6 +23,11 @@ const REVEAL_TIME = 0.5;
 const REVEAL_SCALE = 0.5;
 /** Share of an Asset's height on screen before it reveals. */
 const REVEAL_AT = 0.1;
+/**
+ * Px an Asset moves right per px it moves up, so it travels bottom left to top right.
+ * 0 is straight up; 1 is 45°. An Asset sits at its layout `x` as it passes the viewport center.
+ */
+const DIAGONAL = 0.6;
 /** Magnification of an Other piece under the cursor. */
 const OTHER_ZOOM = 2.2;
 /** Client logos in the Other grid against their size on About. */
@@ -230,6 +235,11 @@ function glassOf(title: Title): GlassBox[] {
     if (rect.height > 0) out.push(box(cx - half, rect.top, cx + half, rect.bottom));
   }
   return out;
+}
+
+/** Left edge of a placement at scroll `s`, shifted along the diagonal. */
+function xAt(p: Placement, s: number): number {
+  return p.x + (s - p.anchor) * p.speed * DIAGONAL;
 }
 
 function fadeFor(asset: Asset): EdgeFade {
@@ -562,7 +572,9 @@ export class HomeView implements View {
    */
   private updateReveal(p: Placement, s: number, vh: number, dt: number, reduced: boolean): number {
     const top = vh / 2 + (p.anchor - s) * p.speed - p.h / 2;
-    const onScreen = Math.min(top + p.h, vh) - Math.max(top, 0);
+    const left = xAt(p, s);
+    const across = Math.min(left + p.w, this.ctx.viewport.state.width) - Math.max(left, 0);
+    const onScreen = across > 0 ? Math.min(top + p.h, vh) - Math.max(top, 0) : 0;
     let t = this.reveal.get(p.index);
     if (onScreen <= 0) return t ?? 0;
     this.revealSeen.add(p.index);
@@ -709,7 +721,7 @@ export class HomeView implements View {
     const scale = (1 + HOVER_SCALE * hover) * reveal;
     const w = p.w * scale;
     const h = p.h * scale;
-    const x = p.x + (p.w - w) / 2;
+    const x = xAt(p, s) + (p.w - w) / 2;
     const y = cy - h / 2;
     sprite.x = x;
     sprite.y = y;
@@ -862,7 +874,8 @@ export class HomeView implements View {
     for (let i = this.visible.length - 1; i >= 0; i--) {
       const p = this.visible[i];
       const cy = layout.height / 2 + (p.anchor - s) * p.speed;
-      if (x >= p.x && x <= p.x + p.w && y >= cy - p.h / 2 && y <= cy + p.h / 2) return p.index;
+      const left = xAt(p, s);
+      if (x >= left && x <= left + p.w && y >= cy - p.h / 2 && y <= cy + p.h / 2) return p.index;
     }
     return -1;
   }
