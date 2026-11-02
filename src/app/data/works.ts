@@ -206,7 +206,7 @@ export const works: readonly Work[] = [
       { media: 'pyure/glass-ribbon', width: 400 },
       { media: 'pyure/contact-form', width: 400 },
       { media: 'pyure/ribbon-card', width: 320, frame: true },
-      { media: 'pyure/mark-glow', width: 320 },
+      { media: 'pyure/mark-glow', width: 600 },
       { media: 'pyure/copy-owners', width: 360 },
       {
         note: [
