@@ -13,8 +13,8 @@ export interface EngineOptions {
   canvas: HTMLCanvasElement;
   /** Element the HTML/CSS fallback draws into. */
   fallbackHost: HTMLElement;
-  /** Something changed that needs a frame (texture loaded, backend swapped). */
-  invalidate: () => void;
+  /** Something changed that needs `frames` more frames, or the scheduler's default (texture loaded, backend swapped). */
+  invalidate: (frames?: number) => void;
   onBackendChange?: (kind: RenderBackend['kind']) => void;
 }
 

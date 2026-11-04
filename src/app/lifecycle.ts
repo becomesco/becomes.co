@@ -76,7 +76,7 @@ export class App {
     const engine = Engine.create({
       canvas: document.querySelector<HTMLCanvasElement>('.stage__canvas')!,
       fallbackHost: document.querySelector<HTMLElement>('.stage__fallback')!,
-      invalidate: this.wake,
+      invalidate: (frames) => this.scheduler.wake(frames),
       onBackendChange: (kind) => document.documentElement.classList.toggle('no-webgpu', kind === 'dom'),
     });
     engine.then(

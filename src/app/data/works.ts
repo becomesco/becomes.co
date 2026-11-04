@@ -485,6 +485,7 @@ export const works: readonly Work[] = [
           'We branded it playful and warm. Every order is a memory someone wants to keep offline.',
         ],
       },
+      { media: 'videotoflip/flipping-couple', width: 520 },
       { media: 'videotoflip/flipbook-hands', width: 520 },
       { media: 'videotoflip/sticker-blue' },
       { media: 'videotoflip/sticker-retro', width: 380 },
@@ -499,6 +500,7 @@ export const works: readonly Work[] = [
           'Email workflows, an order management system and powerful video processing, all built to scale.',
         ],
       },
+      { media: 'videotoflip/flipping-dog', width: 480 },
       { media: 'videotoflip/about', width: 520, cut: ['right'] },
       { media: 'videotoflip/palette', width: 520 },
       { media: 'videotoflip/filmstrip', width: 480 },
@@ -522,6 +524,7 @@ export const works: readonly Work[] = [
           'And from upload to checkout, the site stays fast.',
         ],
       },
+      { media: 'videotoflip/flipping-together', width: 480 },
       { media: 'videotoflip/use-corporate', width: 300 },
       { media: 'videotoflip/wordmark-stacked', width: 400 },
       { media: 'videotoflip/step-customize', width: 360 },
@@ -941,7 +944,8 @@ export const clients: readonly Client[] = [
 
 export function textureFor(key: keyof typeof media): FileTexture {
   const entry = media[key];
-  return { key, src: entry.src, half: entry.half, px: entry.px as [number, number] };
+  const video = 'video' in entry ? entry.video : undefined;
+  return { key, src: entry.src, half: entry.half, px: entry.px as [number, number], video };
 }
 
 function assetHeight(width: number, pw: number, ph: number, frame: boolean): number {

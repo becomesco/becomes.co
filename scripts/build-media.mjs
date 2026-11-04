@@ -1,12 +1,17 @@
-// Builds delivery media from media/source/<group>/<name>.(png|jpg).
+// Builds delivery media from media/source/<group>/<name>.(png|jpg|mp4|mov).
 // Output: public/media/<group>/<name>.webp (source resolution up to MAX_EDGE, treated as 2x)
 //         public/media/<group>/<name>.half.webp (1x)
 //         src/app/data/media.json (pixel sizes and URLs keyed "<group>/<name>")
+// Videos also get public/media/<group>/<name>(.half).mp4, listed under `video`; their webp is the first frame.
 // Screens in media/source/<group>/screens/ go to public/media/<group>/screens/<name>.<tile>(.half).webp,
 // listed in src/app/data/screens.json keyed "<group>/screens/<name>".
+import { execFile } from 'node:child_process';
 import { readdir, mkdir, rm, writeFile } from 'node:fs/promises';
 import { join, extname, basename } from 'node:path';
+import { promisify } from 'node:util';
 import sharp from 'sharp';
+
+const run = promisify(execFile);
 
 const root = new URL('..', import.meta.url).pathname;
 const sourceDir = join(root, 'media/source');
@@ -139,10 +144,63 @@ const SKIP_GROUPS = new Set(['pov']);
 const groups = (await readdir(sourceDir, { withFileTypes: true })).filter((d) => d.isDirectory() && !SKIP_GROUPS.has(d.name));
 const webp = { quality: 84, alphaQuality: 92, effort: 5, smartSubsample: true };
 
+// Videos loop silently on the canvas, so they ship without audio, at a steady frame rate, as
+// H.264: hardware-decoded on every browser, which keeps playback off the CPU. Each frame is
+// copied into the Asset's texture, so the 2x file stays at VIDEO_WIDTH however large the source.
+const VIDEO = /\.(mp4|mov)$/i;
+const VIDEO_WIDTH = 1280;
+const VIDEO_FPS = 30;
+const VIDEO_CRF = 28;
+
+async function encodeVideo(input, width, output) {
+  await run('ffmpeg', [
+    '-v', 'error', '-y', '-i', input, '-an',
+    '-vf', `fps=${VIDEO_FPS},scale=${width}:-2:flags=lanczos,format=yuv420p`,
+    '-c:v', 'libx264', '-profile:v', 'high', '-preset', 'veryslow', '-crf', String(VIDEO_CRF),
+    '-g', String(VIDEO_FPS * 2), '-movflags', '+faststart', output,
+  ]);
+}
+
+async function firstFrame(video) {
+  const { stdout } = await run('ffmpeg', ['-v', 'error', '-i', video, '-frames:v', '1', '-f', 'image2pipe', '-c:v', 'png', '-'], {
+    encoding: 'buffer',
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  return stdout;
+}
+
+async function buildVideo(dir, file) {
+  const name = basename(file, extname(file));
+  const input = join(sourceDir, dir, file);
+  const { stdout } = await run('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width', '-of', 'csv=p=0', input]);
+  const width = Math.min(VIDEO_WIDTH, Number(stdout.trim()));
+  const half = Math.round(width / 4) * 2;
+  const outputs = { src: `${name}.mp4`, half: `${name}.half.mp4` };
+  await encodeVideo(input, width, join(outDir, dir, outputs.src));
+  await encodeVideo(input, half, join(outDir, dir, outputs.half));
+
+  // Posters come from the encoded files, so they match the frames that replace them pixel for pixel.
+  const full = await firstFrame(join(outDir, dir, outputs.src));
+  const meta = await sharp(full).metadata();
+  await sharp(full).webp(webp).toFile(join(outDir, dir, `${name}.webp`));
+  await sharp(await firstFrame(join(outDir, dir, outputs.half))).webp(webp).toFile(join(outDir, dir, `${name}.half.webp`));
+
+  manifest[`${dir}/${name}`] = {
+    px: [meta.width, meta.height],
+    alpha: false,
+    src: `/media/${dir}/${name}.webp`,
+    half: `/media/${dir}/${name}.half.webp`,
+    video: { src: `/media/${dir}/${outputs.src}`, half: `/media/${dir}/${outputs.half}` },
+  };
+  console.log(`${dir}/${name} ${meta.width}x${meta.height} video`);
+}
+
 async function build(dir) {
   const entries = await readdir(join(sourceDir, dir), { withFileTypes: true });
   const files = entries.filter((f) => f.isFile() && /\.(png|jpe?g)$/i.test(f.name)).map((f) => f.name).sort();
   await mkdir(join(outDir, dir), { recursive: true });
+
+  for (const file of entries.filter((f) => f.isFile() && VIDEO.test(f.name)).map((f) => f.name).sort()) await buildVideo(dir, file);
 
   for (const file of files) {
     const name = basename(file, extname(file));

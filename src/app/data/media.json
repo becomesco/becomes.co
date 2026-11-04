@@ -2114,6 +2114,45 @@
     "src": "/media/pyure/ribbon-card.webp",
     "half": "/media/pyure/ribbon-card.half.webp"
   },
+  "videotoflip/flipping-couple": {
+    "px": [
+      1280,
+      720
+    ],
+    "alpha": false,
+    "src": "/media/videotoflip/flipping-couple.webp",
+    "half": "/media/videotoflip/flipping-couple.half.webp",
+    "video": {
+      "src": "/media/videotoflip/flipping-couple.mp4",
+      "half": "/media/videotoflip/flipping-couple.half.mp4"
+    }
+  },
+  "videotoflip/flipping-dog": {
+    "px": [
+      1280,
+      720
+    ],
+    "alpha": false,
+    "src": "/media/videotoflip/flipping-dog.webp",
+    "half": "/media/videotoflip/flipping-dog.half.webp",
+    "video": {
+      "src": "/media/videotoflip/flipping-dog.mp4",
+      "half": "/media/videotoflip/flipping-dog.half.mp4"
+    }
+  },
+  "videotoflip/flipping-together": {
+    "px": [
+      1280,
+      720
+    ],
+    "alpha": false,
+    "src": "/media/videotoflip/flipping-together.webp",
+    "half": "/media/videotoflip/flipping-together.half.webp",
+    "video": {
+      "src": "/media/videotoflip/flipping-together.mp4",
+      "half": "/media/videotoflip/flipping-together.half.mp4"
+    }
+  },
   "videotoflip/about": {
     "px": [
       1680,

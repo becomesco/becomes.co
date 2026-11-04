@@ -1,3 +1,4 @@
+import { Clips } from './clips';
 import { fetchMedia } from './media-cache';
 import type { TextureRef } from './scene/types';
 
@@ -59,14 +60,16 @@ export class TextureStore {
   private bytes = 0;
   readonly empty: GPUBindGroup;
   private emptyTexture: GPUTexture;
+  private clips: Clips;
   private now = 0;
 
   constructor(
     private device: GPUDevice,
     private layout: GPUBindGroupLayout,
     private budget: number,
-    private onLoad: () => void,
+    private onLoad: (frames?: number) => void,
   ) {
+    this.clips = new Clips(device, () => onLoad(1));
     this.emptyTexture = device.createTexture({
       size: [1, 1],
       format: 'rgba8unorm',
@@ -85,7 +88,15 @@ export class TextureStore {
     const entry = this.entry(ref);
     entry.lastUsed = this.now;
     this.want(entry, pickLevel(ref, devicePx), priority);
+    if (entry.texture && 'video' in ref && ref.video) {
+      this.clips.show(ref.key, entry.level === 2 ? ref.video.src : ref.video.half, entry.texture);
+    }
     return entry.bindGroup;
+  }
+
+  /** End of a frame: video Assets that were not drawn in it pause. */
+  settle(): void {
+    this.clips.settle();
   }
 
   prefetch(ref: TextureRef, devicePx: number): void {
@@ -107,6 +118,7 @@ export class TextureStore {
 
   destroy(): void {
     this.abort.abort();
+    this.clips.destroy();
     for (const entry of this.entries.values()) entry.texture?.destroy();
     this.entries.clear();
     this.emptyTexture.destroy();
@@ -184,6 +196,7 @@ export class TextureStore {
       if (source instanceof ImageBitmap) source.close();
 
       if (entry.texture) {
+        this.clips.release(ref.key);
         entry.texture.destroy();
         this.bytes -= entry.bytes;
       } else {
@@ -217,6 +230,7 @@ export class TextureStore {
       .sort((a, b) => a.lastUsed - b.lastUsed);
     for (const entry of candidates) {
       if (this.bytes <= this.budget * 0.8) break;
+      this.clips.release(entry.ref.key);
       entry.texture?.destroy();
       this.bytes -= entry.bytes;
       entry.texture = null;

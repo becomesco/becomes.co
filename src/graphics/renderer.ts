@@ -15,7 +15,7 @@ import type { GlassBox, SceneFrame, Sprite, TextureRef } from './scene/types';
 
 export interface RendererOptions {
   onLost: (message: string) => void;
-  onTextureLoad: () => void;
+  onTextureLoad: (frames?: number) => void;
   textureBudget: number;
 }
 
@@ -152,6 +152,7 @@ export class WebGpuRenderer implements RenderBackend {
     device.queue.writeBuffer(this.backgroundBuffer, 0, b);
 
     const count = this.packSprites(scene.sprites);
+    this.textures.settle();
 
     const encoder = device.createCommandEncoder();
     this.frameTexture = this.context.getCurrentTexture();

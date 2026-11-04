@@ -8,6 +8,11 @@ interface TextureBase {
 export interface FileTexture extends TextureBase {
   src: string;
   half: string;
+  /**
+   * A muted loop over the image, which is its first frame. Same sizes per level, so frames are
+   * copied into the image's texture while it is drawn.
+   */
+  video?: { src: string; half: string };
 }
 
 /** Rows of clear pixels between the two layers of a `shadowed` texture. */
