@@ -189,6 +189,7 @@ export class App {
     const reduced = this.viewport.state.reducedMotion;
     this.morph = null;
     for (const view of Object.values(this.views)) view.hidden = null;
+    if (next === this.home) this.home.cancelDeparture();
 
     this.show(next, route, intent);
     this.current = next;
@@ -271,14 +272,14 @@ export class App {
       fade.t += frame.dt;
       const p = saturate((fade.t - fade.delay) / fade.duration);
       fade.view.presence = fade.from + (fade.to - fade.from) * p;
-      if (p >= 1 && fade.to === 0) {
+      if (p >= 1 && fade.to === 0 && !fade.view.lingering?.()) {
         fade.view.sleep?.();
         fade.view.root.hidden = true;
         fade.view.root.setAttribute('inert', '');
         fade.view.scroll.enabled = true;
       }
     }
-    this.fades = this.fades.filter((f) => f.t < f.delay + f.duration);
+    this.fades = this.fades.filter((f) => f.t < f.delay + f.duration || (f.to === 0 && f.view.lingering?.()));
     if (this.fades.length) active = true;
 
     for (const view of Object.values(this.views)) {
@@ -300,6 +301,9 @@ export class App {
       if (view !== this.current && !view.root.hidden) view.draw(list);
     }
     this.current.draw(list);
+    for (const view of Object.values(this.views)) {
+      if (view !== this.current && !view.root.hidden) view.drawOver?.(list);
+    }
     if (this.morph) list.sprites.push(this.morph.sprite);
     this.engine.render({ sprites: list.sprites, background: BACKGROUND, glows: list.glows, glass: list.glass }, frame);
     this.loader.draw(this.engine.frameTexture);

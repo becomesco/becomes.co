@@ -93,6 +93,24 @@ const CTA_AT = 0.1;
 const CTA_RATE = 7;
 /** How far below rest the contact link starts, px. */
 const CTA_RISE = 12;
+/**
+ * Drop of a Work's other on-screen Assets when one of them opens it: a spring each (ζ ≈ 0.7), so they
+ * fall away with weight, staggered outward from the clicked Asset.
+ */
+const DEPART_STIFFNESS = 80;
+const DEPART_DAMPING = 12.5;
+const DEPART_STAGGER = 0.055;
+/** Px past the bottom edge each Asset aims for, so the spring is still moving as it leaves. */
+const DEPART_MARGIN = 120;
+/** Longest Home lingers for a drop, s. */
+const DEPART_MAX = 2.5;
+
+interface Departure {
+  delay: number;
+  /** Px down to just below the screen. */
+  distance: number;
+  spring: Spring;
+}
 
 interface Title {
   el: HTMLElement;
@@ -370,6 +388,9 @@ export class HomeView implements View {
   private ctaIn = 0;
   /** The Glass mark's way out, from the Loader: 0 at rest, 1 gone. */
   private markAway = 0;
+  /** The opened Work's other Assets dropping off screen, by placement, and seconds since the drop began. */
+  private departing = new Map<number, Departure>();
+  private departClock = 0;
 
   constructor(private ctx: AppContext) {
     this.root = document.querySelector<HTMLElement>('[data-view="home"]')!;
@@ -553,6 +574,7 @@ export class HomeView implements View {
     if (this.updateZoom(lens, pointer.x, pointer.y, frame.dt, reducedMotion)) active = true;
 
     if (this.press.update(this.scroll.velocity, frame.dt, reducedMotion)) active = true;
+    if (this.updateDeparture(frame.dt)) active = true;
     this.revealSeen.clear();
     for (const p of this.visible) {
       let spring = this.hover.get(p.index);
@@ -567,6 +589,9 @@ export class HomeView implements View {
       const eased = easeOutCubic(reveal);
       const sprite = this.place(p, s, vh, spring.value, reducedMotion ? 1 : lerp(REVEAL_SCALE, 1, eased));
       sprite.opacity *= eased;
+      const drop = this.departing.get(p.index)?.spring.value ?? 0;
+      sprite.y += drop;
+      sprite.iy += drop;
     }
     for (const index of this.reveal.keys()) if (!this.revealSeen.has(index)) this.reveal.delete(index);
     this.revealInstant = false;
@@ -601,7 +626,7 @@ export class HomeView implements View {
     if (!layout || this.presence <= 0.001) return;
     for (const p of this.visible) {
       const sprite = this.sprites.get(p.index);
-      if (!sprite || sprite.id === this.hidden) continue;
+      if (!sprite || sprite.id === this.hidden || this.departing.has(p.index)) continue;
       sprite.opacity *= this.presence;
       out.sprites.push(sprite);
     }
@@ -636,6 +661,25 @@ export class HomeView implements View {
     }
   }
 
+  /** The dropping Assets, at full opacity: they leave by falling off screen, not by Home's fade. */
+  drawOver(out: DrawList): void {
+    for (const p of this.visible) {
+      const sprite = this.departing.has(p.index) ? this.sprites.get(p.index) : undefined;
+      if (sprite) out.sprites.push(sprite);
+    }
+  }
+
+  lingering(): boolean {
+    if (!this.departing.size || this.departClock >= DEPART_MAX) return false;
+    for (const drop of this.departing.values()) if (drop.spring.value < drop.distance - DEPART_MARGIN) return true;
+    return false;
+  }
+
+  /** Puts dropped Assets back, for a return to Home before they finished leaving. */
+  cancelDeparture(): void {
+    this.departing.clear();
+  }
+
   pointerTarget(x: number, y: number): boolean {
     return this.hitTest(x, y, this.scroll.current) >= 0;
   }
@@ -646,9 +690,51 @@ export class HomeView implements View {
     const sprite = this.sprites.get(index);
     const placement = this.layoutState?.placements.find((p) => p.index === index);
     if (!sprite || !placement) return;
+    this.depart(placement, sprite);
     this.ctx.navigate(`/${placement.asset.work.slug}`, {
       morph: { sprite: { ...sprite, opacity: 1 }, assetId: placement.asset.id, placement: index },
     });
+  }
+
+  /** Sends the clicked Asset's Work's other on-screen Assets down off screen, nearest first. */
+  private depart(clicked: Placement, origin: Sprite): void {
+    this.departing.clear();
+    this.departClock = 0;
+    const { height: vh, reducedMotion } = this.ctx.viewport.state;
+    if (reducedMotion) return;
+    const ox = origin.x + origin.w / 2;
+    const oy = origin.y + origin.h / 2;
+    const siblings: { index: number; top: number; d: number }[] = [];
+    for (const p of this.visible) {
+      if (p.index === clicked.index || p.asset.work !== clicked.asset.work) continue;
+      const sprite = this.sprites.get(p.index);
+      if (!sprite || sprite.opacity <= 0.01 || sprite.y >= vh || sprite.y + sprite.h <= 0) continue;
+      const d = Math.hypot(sprite.x + sprite.w / 2 - ox, sprite.y + sprite.h / 2 - oy);
+      siblings.push({ index: p.index, top: sprite.y, d });
+    }
+    siblings.sort((a, b) => a.d - b.d);
+    siblings.forEach(({ index, top }, k) => {
+      this.departing.set(index, {
+        delay: k * DEPART_STAGGER,
+        distance: vh - top + DEPART_MARGIN,
+        spring: new Spring(0, DEPART_STIFFNESS, DEPART_DAMPING),
+      });
+    });
+  }
+
+  private updateDeparture(dt: number): boolean {
+    if (!this.departing.size) return false;
+    this.departClock += dt;
+    let moving = false;
+    for (const drop of this.departing.values()) {
+      if (this.departClock < drop.delay) {
+        moving = true;
+        continue;
+      }
+      drop.spring.target = drop.distance;
+      if (drop.spring.update(dt)) moving = true;
+    }
+    return moving && this.departClock < DEPART_MAX;
   }
 
   /** Live sprite of a placement at the current scroll, for a morph back to Home. */
@@ -695,6 +781,7 @@ export class HomeView implements View {
   }
 
   sleep(): void {
+    this.departing.clear();
     for (const title of this.titles) {
       title.el.style.visibility = 'hidden';
       title.el.style.filter = '';

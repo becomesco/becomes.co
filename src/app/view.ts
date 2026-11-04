@@ -37,6 +37,10 @@ export interface View {
   layout(): void;
   update(frame: FrameTime): boolean;
   draw(out: DrawList): void;
+  /** Sprites drawn over the current View, from a View on its way out. */
+  drawOver?(out: DrawList): void;
+  /** True while the View still has something on screen after its presence reaches 0; it isn't hidden until then. */
+  lingering?(): boolean;
   /** Called after the View is fully hidden. */
   sleep?(): void;
   pointerTarget?(x: number, y: number): boolean;
