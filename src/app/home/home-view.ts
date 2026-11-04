@@ -10,7 +10,7 @@ import {
   type TextureRef,
 } from '../../graphics/scene/types';
 import type { LandingWord } from '../../ui/overlays/loader';
-import { clamp, damp, easeInOutCubic, easeOutCubic, lerp, saturate, smoothstep } from '../../utils/math';
+import { clamp, damp, easeOutCubic, lerp, saturate, smoothstep } from '../../utils/math';
 import { clientTexture } from '../client';
 import { assetsOf, clients, others, textureFor, works, type Asset, type Client, type Work } from '../data/works';
 import { NotePress } from '../note';
@@ -65,9 +65,9 @@ const RISE = 28;
 const LINE_START = 0.45;
 const LINE_STAGGER = 0.12;
 /** Seconds for one title to morph into the next once the scroll crosses a threshold. */
-const MORPH_TIME = 0.9;
+const MORPH_TIME = 1.1;
 /** Blur of each title halfway through a morph, as a share of its font size. */
-const MORPH_BLUR = 0.07;
+const MORPH_BLUR = 0.11;
 /** Extra scroll the manifesto stays for before the first Work's title, as a share of viewport height. */
 const MANIFESTO_HOLD = 0.3;
 /** Dead band either side of a threshold, as a share of viewport height, so resting on it can't flicker. */
@@ -75,7 +75,7 @@ const THRESHOLD_BAND = 0.03;
 /** Longest blur a fading title reaches, as a multiple of its halfway blur. */
 const MORPH_BLUR_MAX = 6;
 /** Alpha the gooey filter snaps to solid at full strength, and how steep that edge is. */
-const GOO_CUT = 0.35;
+const GOO_CUT = 0.25;
 const GOO_SLOPE = 30;
 const GOO_ID = 'home-title-morph';
 /**
@@ -944,7 +944,8 @@ export class HomeView implements View {
     }
 
     const morphing = this.leaving >= 0;
-    const t = morphing ? easeInOutCubic(this.morph) : 1;
+    // A gentle ease: a steep one rushes through the middle, which is where the titles weld and swell.
+    const t = morphing ? smoothstep(0, 1, this.morph) : 1;
     // The threshold only welds blurred shapes; let go of it before either title is sharp, or its hard alpha edge shows.
     this.setGoo(morphing ? smoothstep(0.04, 0.3, Math.min(t, 1 - t)) : 0);
     const visibility = presence > 0.001 ? 'visible' : 'hidden';
