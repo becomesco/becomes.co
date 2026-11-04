@@ -387,6 +387,8 @@ a {
   font-size: clamp(30px, 3.47vw, 64px);
   line-height: 1.1;
   letter-spacing: -0.01em;
+  word-spacing: var(--thin-space);
+  text-transform: lowercase;
   outline: none;
 }
 
