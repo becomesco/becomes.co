@@ -1,7 +1,7 @@
 import media from './media.json';
 import screenMedia from './screens.json';
 import type { FileTexture, TextureRef } from '../../graphics/scene/types';
-import { OTHER_INSET } from '../home/other';
+import { OTHER_INSET, OTHER_RADIUS } from '../home/other';
 import { noteTexture } from '../note';
 
 /**
@@ -17,6 +17,8 @@ export interface MediaAssetDef {
   cut?: readonly CutEdge[];
   /** Glass frame with inset image, like the Other grid on Home. */
   frame?: boolean;
+  /** Rounded corners without a frame, at the frame's radius. */
+  rounded?: boolean;
 }
 
 /** A Note: paper and shadow drawn in code, with this copy typed on it. One string per paragraph. */
@@ -83,6 +85,8 @@ export interface Asset {
   height: number;
   cut: ReadonlySet<CutEdge>;
   frame: boolean;
+  /** Corner radius of an unframed image, CSS px; 0 for square. */
+  radius: number;
   /** A Note rather than exported media. */
   note: boolean;
 }
@@ -300,6 +304,7 @@ export const works: readonly Work[] = [
     logo: { src: '/logos/milmedic.svg', width: 47, height: 76 },
     assets: [
       { media: 'milmedic/hero-desktop' },
+      { media: 'milmedic/hero', width: 560, rounded: true },
       { media: 'milmedic/hero-mobile', width: 320, frame: true },
       { media: 'milmedic/menu-mobile', width: 300 },
       { media: 'milmedic/why-choose', width: 600 },
@@ -476,6 +481,7 @@ export const works: readonly Work[] = [
     url: 'https://videotoflip.com',
     logo: { src: '/logos/videotoflip.svg', width: 50, height: 37 },
     assets: [
+      { media: 'videotoflip/flipping-hero', width: 560, rounded: true },
       { media: 'videotoflip/feature-occasion' },
       { media: 'videotoflip/confetti' },
       { media: 'videotoflip/mark-v' },
@@ -486,7 +492,6 @@ export const works: readonly Work[] = [
         ],
       },
       { media: 'videotoflip/flipping-couple', width: 520 },
-      { media: 'videotoflip/flipbook-hands', width: 520 },
       { media: 'videotoflip/sticker-blue' },
       { media: 'videotoflip/sticker-retro', width: 380 },
       { media: 'videotoflip/player', width: 440, cut: ['left'] },
@@ -530,7 +535,6 @@ export const works: readonly Work[] = [
       { media: 'videotoflip/step-customize', width: 360 },
       { media: 'videotoflip/feature-custom-options', width: 420 },
       { media: 'videotoflip/cover-colors', width: 440 },
-      { media: 'videotoflip/flipbook-open', width: 480 },
       { media: 'videotoflip/use-weddings', width: 300 },
       { media: 'videotoflip/step-preview', width: 360 },
       { media: 'videotoflip/feature-digital-mockup', width: 420 },
@@ -944,8 +948,8 @@ export const clients: readonly Client[] = [
 
 export function textureFor(key: keyof typeof media): FileTexture {
   const entry = media[key];
-  const video = 'video' in entry ? entry.video : undefined;
-  return { key, src: entry.src, half: entry.half, px: entry.px as [number, number], video };
+  const frames = 'frames' in entry ? entry.frames : undefined;
+  return { key, src: entry.src, half: entry.half, px: entry.px as [number, number], frames };
 }
 
 function assetHeight(width: number, pw: number, ph: number, frame: boolean): number {
@@ -969,6 +973,7 @@ export function assetsOf(work: Work): Asset[] {
       height: assetHeight(width, pw, ph, frame),
       cut: new Set(file?.cut ?? []),
       frame,
+      radius: file?.rounded ? OTHER_RADIUS : 0,
       note: !file,
     };
   });

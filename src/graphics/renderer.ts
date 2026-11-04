@@ -19,6 +19,17 @@ export interface RendererOptions {
   textureBudget: number;
 }
 
+/**
+ * Where a scrubbed video is in its clip: 0 until the whole frame is on screen (bottom edge at
+ * the viewport's bottom), 1 once its top edge reaches the viewport's top. A frame taller than
+ * the viewport plays while it covers it, top edge at the top to bottom edge at the bottom.
+ */
+function scrubProgress(y: number, h: number, viewport: number): number {
+  const travel = Math.abs(viewport - h);
+  if (travel < 1) return y > 0 ? 0 : 1;
+  return h < viewport ? 1 - y / travel : -y / travel;
+}
+
 /** Owns the GPU lifecycle for one device: context, pipelines, buffers, submission. */
 export class WebGpuRenderer implements RenderBackend {
   readonly kind = 'webgpu';
@@ -212,7 +223,8 @@ export class WebGpuRenderer implements RenderBackend {
       if (x0 > this.width || y0 > this.height || x1 < 0 || y1 < 0) continue;
       let group: GPUBindGroup | null = this.textures.empty;
       if (s.texture) {
-        group = this.textures.use(s.texture, s.iw * Math.max(1, s.zoom) * this.pixelRatio, 1);
+        const progress = scrubProgress(s.y, s.h, this.height);
+        group = this.textures.use(s.texture, s.iw * Math.max(1, s.zoom) * this.pixelRatio, 1, progress);
         if (!group) {
           if (s.card <= 0.001) continue;
           group = this.textures.empty;

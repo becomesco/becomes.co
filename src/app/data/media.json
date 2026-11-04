@@ -1259,6 +1259,19 @@
     "src": "/media/kooper/top-bar.webp",
     "half": "/media/kooper/top-bar.half.webp"
   },
+  "milmedic/hero": {
+    "px": [
+      1280,
+      676
+    ],
+    "alpha": false,
+    "src": "/media/milmedic/hero/0.webp",
+    "half": "/media/milmedic/hero/0.half.webp",
+    "frames": {
+      "count": 90,
+      "dir": "/media/milmedic/hero"
+    }
+  },
   "milmedic/brand-palette": {
     "px": [
       956,
@@ -2120,11 +2133,11 @@
       720
     ],
     "alpha": false,
-    "src": "/media/videotoflip/flipping-couple.webp",
-    "half": "/media/videotoflip/flipping-couple.half.webp",
-    "video": {
-      "src": "/media/videotoflip/flipping-couple.mp4",
-      "half": "/media/videotoflip/flipping-couple.half.mp4"
+    "src": "/media/videotoflip/flipping-couple/0.webp",
+    "half": "/media/videotoflip/flipping-couple/0.half.webp",
+    "frames": {
+      "count": 90,
+      "dir": "/media/videotoflip/flipping-couple"
     }
   },
   "videotoflip/flipping-dog": {
@@ -2133,11 +2146,24 @@
       720
     ],
     "alpha": false,
-    "src": "/media/videotoflip/flipping-dog.webp",
-    "half": "/media/videotoflip/flipping-dog.half.webp",
-    "video": {
-      "src": "/media/videotoflip/flipping-dog.mp4",
-      "half": "/media/videotoflip/flipping-dog.half.mp4"
+    "src": "/media/videotoflip/flipping-dog/0.webp",
+    "half": "/media/videotoflip/flipping-dog/0.half.webp",
+    "frames": {
+      "count": 90,
+      "dir": "/media/videotoflip/flipping-dog"
+    }
+  },
+  "videotoflip/flipping-hero": {
+    "px": [
+      1280,
+      720
+    ],
+    "alpha": false,
+    "src": "/media/videotoflip/flipping-hero/0.webp",
+    "half": "/media/videotoflip/flipping-hero/0.half.webp",
+    "frames": {
+      "count": 90,
+      "dir": "/media/videotoflip/flipping-hero"
     }
   },
   "videotoflip/flipping-together": {
@@ -2146,11 +2172,24 @@
       720
     ],
     "alpha": false,
-    "src": "/media/videotoflip/flipping-together.webp",
-    "half": "/media/videotoflip/flipping-together.half.webp",
-    "video": {
-      "src": "/media/videotoflip/flipping-together.mp4",
-      "half": "/media/videotoflip/flipping-together.half.mp4"
+    "src": "/media/videotoflip/flipping-together/0.webp",
+    "half": "/media/videotoflip/flipping-together/0.half.webp",
+    "frames": {
+      "count": 90,
+      "dir": "/media/videotoflip/flipping-together"
+    }
+  },
+  "videotoflip/mark-v": {
+    "px": [
+      886,
+      886
+    ],
+    "alpha": true,
+    "src": "/media/videotoflip/mark-v/0.webp",
+    "half": "/media/videotoflip/mark-v/0.half.webp",
+    "frames": {
+      "count": 5,
+      "dir": "/media/videotoflip/mark-v"
     }
   },
   "videotoflip/about": {
@@ -2288,24 +2327,6 @@
     "src": "/media/videotoflip/flipbook-fan.webp",
     "half": "/media/videotoflip/flipbook-fan.half.webp"
   },
-  "videotoflip/flipbook-hands": {
-    "px": [
-      2000,
-      1240
-    ],
-    "alpha": true,
-    "src": "/media/videotoflip/flipbook-hands.webp",
-    "half": "/media/videotoflip/flipbook-hands.half.webp"
-  },
-  "videotoflip/flipbook-open": {
-    "px": [
-      1320,
-      568
-    ],
-    "alpha": true,
-    "src": "/media/videotoflip/flipbook-open.webp",
-    "half": "/media/videotoflip/flipbook-open.half.webp"
-  },
   "videotoflip/hero": {
     "px": [
       2000,
@@ -2314,15 +2335,6 @@
     "alpha": true,
     "src": "/media/videotoflip/hero.webp",
     "half": "/media/videotoflip/hero.half.webp"
-  },
-  "videotoflip/mark-v": {
-    "px": [
-      746,
-      746
-    ],
-    "alpha": true,
-    "src": "/media/videotoflip/mark-v.webp",
-    "half": "/media/videotoflip/mark-v.half.webp"
   },
   "videotoflip/occasion": {
     "px": [

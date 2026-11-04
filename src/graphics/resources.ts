@@ -1,4 +1,4 @@
-import { Clips } from './clips';
+import { Scrubs } from './scrubs';
 import { fetchMedia } from './media-cache';
 import type { TextureRef } from './scene/types';
 
@@ -60,7 +60,7 @@ export class TextureStore {
   private bytes = 0;
   readonly empty: GPUBindGroup;
   private emptyTexture: GPUTexture;
-  private clips: Clips;
+  private scrubs: Scrubs;
   private now = 0;
 
   constructor(
@@ -69,7 +69,7 @@ export class TextureStore {
     private budget: number,
     private onLoad: (frames?: number) => void,
   ) {
-    this.clips = new Clips(device, () => onLoad(1));
+    this.scrubs = new Scrubs(device, () => onLoad(1));
     this.emptyTexture = device.createTexture({
       size: [1, 1],
       format: 'rgba8unorm',
@@ -84,19 +84,20 @@ export class TextureStore {
   }
 
   /** Bind group for drawing, or null while nothing is uploaded yet. */
-  use(ref: TextureRef, devicePx: number, priority = 1): GPUBindGroup | null {
+  /** `progress` places a scrubbed video: 0 until it is wholly on screen, 1 as its top reaches the top. */
+  use(ref: TextureRef, devicePx: number, priority = 1, progress = 0): GPUBindGroup | null {
     const entry = this.entry(ref);
     entry.lastUsed = this.now;
     this.want(entry, pickLevel(ref, devicePx), priority);
-    if (entry.texture && 'video' in ref && ref.video) {
-      this.clips.show(ref.key, entry.level === 2 ? ref.video.src : ref.video.half, entry.texture);
+    if (entry.texture && 'frames' in ref && ref.frames) {
+      this.scrubs.show(ref.key, ref.frames, entry.level, entry.texture, progress);
     }
     return entry.bindGroup;
   }
 
-  /** End of a frame: video Assets that were not drawn in it pause. */
+  /** End of a frame: video Assets that were not drawn in it drop their decoded frames. */
   settle(): void {
-    this.clips.settle();
+    this.scrubs.settle();
   }
 
   prefetch(ref: TextureRef, devicePx: number): void {
@@ -118,7 +119,7 @@ export class TextureStore {
 
   destroy(): void {
     this.abort.abort();
-    this.clips.destroy();
+    this.scrubs.destroy();
     for (const entry of this.entries.values()) entry.texture?.destroy();
     this.entries.clear();
     this.emptyTexture.destroy();
@@ -196,7 +197,7 @@ export class TextureStore {
       if (source instanceof ImageBitmap) source.close();
 
       if (entry.texture) {
-        this.clips.release(ref.key);
+        this.scrubs.release(ref.key);
         entry.texture.destroy();
         this.bytes -= entry.bytes;
       } else {
@@ -230,7 +231,7 @@ export class TextureStore {
       .sort((a, b) => a.lastUsed - b.lastUsed);
     for (const entry of candidates) {
       if (this.bytes <= this.budget * 0.8) break;
-      this.clips.release(entry.ref.key);
+      this.scrubs.release(entry.ref.key);
       entry.texture?.destroy();
       this.bytes -= entry.bytes;
       entry.texture = null;

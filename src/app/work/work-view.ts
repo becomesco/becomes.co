@@ -90,8 +90,8 @@ function createCard(kind: Kind, id: string, texture: TextureRef | null, asset: A
   });
   const frame = kind === 'screen' || Boolean(asset?.frame);
   sprite.card = frame ? 1 : 0;
-  sprite.radius = frame ? OTHER_RADIUS : 0;
-  sprite.innerRadius = frame ? OTHER_IMAGE_RADIUS : 0;
+  sprite.radius = frame ? OTHER_RADIUS : (asset?.radius ?? 0);
+  sprite.innerRadius = frame ? OTHER_IMAGE_RADIUS : (asset?.radius ?? 0);
   sprite.fade = asset ? cardFade(asset) : NO_FADE;
   return {
     kind,

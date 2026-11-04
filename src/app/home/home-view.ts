@@ -845,7 +845,8 @@ export class HomeView implements View {
       sprite.ih = h - OTHER_INSET * 2;
     } else {
       sprite.card = 0;
-      sprite.innerRadius = 0;
+      sprite.radius = p.asset.radius;
+      sprite.innerRadius = p.asset.radius;
       sprite.iw = w;
       sprite.ih = h;
       sprite.ix = x;

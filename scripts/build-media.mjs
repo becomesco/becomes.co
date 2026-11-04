@@ -2,11 +2,13 @@
 // Output: public/media/<group>/<name>.webp (source resolution up to MAX_EDGE, treated as 2x)
 //         public/media/<group>/<name>.half.webp (1x)
 //         src/app/data/media.json (pixel sizes and URLs keyed "<group>/<name>")
-// Videos also get public/media/<group>/<name>(.half).mp4, listed under `video`; their webp is the first frame.
+// Videos, and folders of numbered stills at media/source/<group>/<name>/, become
+// public/media/<group>/<name>/<frame>(.half).webp, listed under `frames`.
 // Screens in media/source/<group>/screens/ go to public/media/<group>/screens/<name>.<tile>(.half).webp,
 // listed in src/app/data/screens.json keyed "<group>/screens/<name>".
 import { execFile } from 'node:child_process';
-import { readdir, mkdir, rm, writeFile } from 'node:fs/promises';
+import { readdir, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join, extname, basename } from 'node:path';
 import { promisify } from 'node:util';
 import sharp from 'sharp';
@@ -144,55 +146,85 @@ const SKIP_GROUPS = new Set(['pov']);
 const groups = (await readdir(sourceDir, { withFileTypes: true })).filter((d) => d.isDirectory() && !SKIP_GROUPS.has(d.name));
 const webp = { quality: 84, alphaQuality: 92, effort: 5, smartSubsample: true };
 
-// Videos loop silently on the canvas, so they ship without audio, at a steady frame rate, as
-// H.264: hardware-decoded on every browser, which keeps playback off the CPU. Each frame is
-// copied into the Asset's texture, so the 2x file stays at VIDEO_WIDTH however large the source.
+// Videos scrub with scroll: each ships as FRAMES stills sampled evenly across the clip, and the
+// Asset shows the one for its place in the viewport. Stills, unlike a seeked video, show any
+// frame at once, on every browser. Frame 0 is the Asset's own image, so it doubles as the poster.
 const VIDEO = /\.(mp4|mov)$/i;
 const VIDEO_WIDTH = 1280;
-const VIDEO_FPS = 30;
-const VIDEO_CRF = 28;
-
-async function encodeVideo(input, width, output) {
-  await run('ffmpeg', [
-    '-v', 'error', '-y', '-i', input, '-an',
-    '-vf', `fps=${VIDEO_FPS},scale=${width}:-2:flags=lanczos,format=yuv420p`,
-    '-c:v', 'libx264', '-profile:v', 'high', '-preset', 'veryslow', '-crf', String(VIDEO_CRF),
-    '-g', String(VIDEO_FPS * 2), '-movflags', '+faststart', output,
-  ]);
-}
-
-async function firstFrame(video) {
-  const { stdout } = await run('ffmpeg', ['-v', 'error', '-i', video, '-frames:v', '1', '-f', 'image2pipe', '-c:v', 'png', '-'], {
-    encoding: 'buffer',
-    maxBuffer: 64 * 1024 * 1024,
-  });
-  return stdout;
-}
+const FRAMES = 90;
+const frameWebp = { quality: 76, effort: 5, smartSubsample: true };
 
 async function buildVideo(dir, file) {
   const name = basename(file, extname(file));
   const input = join(sourceDir, dir, file);
-  const { stdout } = await run('ffprobe', ['-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width', '-of', 'csv=p=0', input]);
-  const width = Math.min(VIDEO_WIDTH, Number(stdout.trim()));
-  const half = Math.round(width / 4) * 2;
-  const outputs = { src: `${name}.mp4`, half: `${name}.half.mp4` };
-  await encodeVideo(input, width, join(outDir, dir, outputs.src));
-  await encodeVideo(input, half, join(outDir, dir, outputs.half));
+  const { stdout } = await run('ffprobe', [
+    '-v', 'error', '-select_streams', 'v:0', '-count_packets',
+    '-show_entries', 'stream=width,nb_read_packets', '-of', 'csv=p=0', input,
+  ]);
+  const [sourceWidth, total] = stdout.trim().split(',').map(Number);
+  const width = Math.min(VIDEO_WIDTH, sourceWidth);
+  const count = Math.min(FRAMES, total);
+  const picks = Array.from({ length: count }, (_, i) => Math.round((i * (total - 1)) / Math.max(1, count - 1)));
 
-  // Posters come from the encoded files, so they match the frames that replace them pixel for pixel.
-  const full = await firstFrame(join(outDir, dir, outputs.src));
-  const meta = await sharp(full).metadata();
-  await sharp(full).webp(webp).toFile(join(outDir, dir, `${name}.webp`));
-  await sharp(await firstFrame(join(outDir, dir, outputs.half))).webp(webp).toFile(join(outDir, dir, `${name}.half.webp`));
+  const temp = await mkdtemp(join(tmpdir(), 'frames-'));
+  await run('ffmpeg', [
+    '-v', 'error', '-i', input,
+    '-vf', `select='${picks.map((n) => `eq(n\\,${n})`).join('+')}',scale=${width}:-2:flags=lanczos`,
+    '-fps_mode', 'vfr', join(temp, '%03d.png'),
+  ]);
+  const stills = (await readdir(temp)).filter((f) => f.endsWith('.png')).sort();
+
+  const out = join(outDir, dir, name);
+  await rm(out, { recursive: true, force: true });
+  await mkdir(out, { recursive: true });
+  let px = [0, 0];
+  for (let i = 0; i < stills.length; i++) {
+    const still = join(temp, stills[i]);
+    const meta = await sharp(still).metadata();
+    px = [meta.width, meta.height];
+    await sharp(still).webp(frameWebp).toFile(join(out, `${i}.webp`));
+    await sharp(still).resize(Math.round(meta.width / 2), Math.round(meta.height / 2), { kernel: 'lanczos3' }).webp(frameWebp).toFile(join(out, `${i}.half.webp`));
+  }
+  await rm(temp, { recursive: true, force: true });
 
   manifest[`${dir}/${name}`] = {
-    px: [meta.width, meta.height],
+    px,
     alpha: false,
-    src: `/media/${dir}/${name}.webp`,
-    half: `/media/${dir}/${name}.half.webp`,
-    video: { src: `/media/${dir}/${outputs.src}`, half: `/media/${dir}/${outputs.half}` },
+    src: `/media/${dir}/${name}/0.webp`,
+    half: `/media/${dir}/${name}/0.half.webp`,
+    frames: { count: stills.length, dir: `/media/${dir}/${name}` },
   };
-  console.log(`${dir}/${name} ${meta.width}x${meta.height} video`);
+  console.log(`${dir}/${name} ${px[0]}x${px[1]}, ${stills.length} frames`);
+}
+
+// A folder of numbered stills, media/source/<group>/<name>/<i>.png, scrubs like a video: one
+// still per frame, in number order. Stills keep their alpha. All must share one size.
+async function buildStills(dir, name) {
+  const files = (await readdir(join(sourceDir, dir, name))).filter((f) => /^\d+\.(png|jpe?g)$/i.test(f));
+  files.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+  const out = join(outDir, dir, name);
+  await rm(out, { recursive: true, force: true });
+  await mkdir(out, { recursive: true });
+  let px = [0, 0];
+  let alpha = false;
+  for (let i = 0; i < files.length; i++) {
+    const input = join(sourceDir, dir, name, files[i]);
+    const meta = await sharp(input).metadata();
+    if (i > 0 && (meta.width !== px[0] || meta.height !== px[1])) throw new Error(`${dir}/${name}/${files[i]}: stills differ in size`);
+    px = [meta.width, meta.height];
+    alpha ||= Boolean(meta.hasAlpha);
+    await sharp(input).webp(webp).toFile(join(out, `${i}.webp`));
+    await sharp(input).resize(Math.round(meta.width / 2), Math.round(meta.height / 2), { kernel: 'lanczos3' }).webp(webp).toFile(join(out, `${i}.half.webp`));
+  }
+
+  manifest[`${dir}/${name}`] = {
+    px,
+    alpha,
+    src: `/media/${dir}/${name}/0.webp`,
+    half: `/media/${dir}/${name}/0.half.webp`,
+    frames: { count: files.length, dir: `/media/${dir}/${name}` },
+  };
+  console.log(`${dir}/${name} ${px[0]}x${px[1]}, ${files.length} stills`);
 }
 
 async function build(dir) {
@@ -201,6 +233,7 @@ async function build(dir) {
   await mkdir(join(outDir, dir), { recursive: true });
 
   for (const file of entries.filter((f) => f.isFile() && VIDEO.test(f.name)).map((f) => f.name).sort()) await buildVideo(dir, file);
+  for (const sub of entries.filter((e) => e.isDirectory() && e.name !== SCREENS).map((e) => e.name).sort()) await buildStills(dir, sub);
 
   for (const file of files) {
     const name = basename(file, extname(file));
