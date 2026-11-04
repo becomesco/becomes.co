@@ -933,7 +933,6 @@ export const clients: readonly Client[] = [
   { name: 'Kobil', src: '/clients/kobil.svg', width: 2560, height: 800, size: 25 },
   { name: 'NASA', src: '/clients/nasa.svg', width: 2871, height: 800, size: 19 },
   { name: 'National Geographic', src: '/clients/national-geographic.svg', width: 2723, height: 800, size: 23 },
-  { name: 'Pornhub', src: '/clients/pornhub.svg', width: 2499, height: 700, size: 20, slot: 5 },
   { name: 'Red Bull', src: '/clients/redbull.svg', width: 1315, height: 800, size: 30 },
   { name: 'Warner Bros.', src: '/clients/warner-bros.svg', width: 658, height: 800, size: 36 },
   { name: 'Netflix', src: '/clients/netflix.svg', width: 2961, height: 800, size: 20, slot: 0 },
