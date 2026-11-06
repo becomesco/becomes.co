@@ -17,7 +17,7 @@ An Asset drawn in code, not exported: the paper card with its shadow and the Wor
 _Avoid_: sticky, note image
 
 **Screen**:
-A full page of a Work, exported from `media/source/<work>/screens/` (`screens` in `works.ts`). The Work View shows the clicked Asset first, then one section per Screen with the whole page in a frame, then the Work's other Assets together in one collage. Not an Asset: never on Home, not clickable.
+A full page of a Work, exported from `media/source/<work>/screens/` (`screens` in `works.ts`), or a screen recording there that loops on its own instead of scrubbing with scroll. The Work View shows the clicked Asset first, then one section per Screen with the whole page in a frame, then the Work's other Assets together in one collage. Not an Asset: never on Home, not clickable.
 _Avoid_: screenshot, page
 
 **Other**:

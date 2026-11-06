@@ -273,6 +273,264 @@
       }
     ]
   },
+  "fellini/screens/references-views": {
+    "px": [
+      1920,
+      1364
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1920,
+          1364
+        ],
+        "src": "/media/fellini/screens/references-views.webp",
+        "half": "/media/fellini/screens/references-views.webp"
+      }
+    ],
+    "video": "/media/fellini/screens/references-views.mp4"
+  },
+  "fellini/screens/shot-brief": {
+    "px": [
+      1920,
+      1364
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1920,
+          1364
+        ],
+        "src": "/media/fellini/screens/shot-brief.webp",
+        "half": "/media/fellini/screens/shot-brief.webp"
+      }
+    ],
+    "video": "/media/fellini/screens/shot-brief.mp4"
+  },
+  "fellini/screens/shot-chat": {
+    "px": [
+      1920,
+      1364
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          1920,
+          1364
+        ],
+        "src": "/media/fellini/screens/shot-chat.webp",
+        "half": "/media/fellini/screens/shot-chat.webp"
+      }
+    ],
+    "video": "/media/fellini/screens/shot-chat.mp4"
+  },
+  "fellini/screens/reference-single": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/fellini/screens/reference-single.0.webp",
+        "half": "/media/fellini/screens/reference-single.0.half.webp"
+      }
+    ]
+  },
+  "fellini/screens/references-collection": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/fellini/screens/references-collection.0.webp",
+        "half": "/media/fellini/screens/references-collection.0.half.webp"
+      }
+    ]
+  },
+  "fellini/screens/references-experience": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/fellini/screens/references-experience.0.webp",
+        "half": "/media/fellini/screens/references-experience.0.half.webp"
+      }
+    ]
+  },
+  "fellini/screens/references-grid": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/fellini/screens/references-grid.0.webp",
+        "half": "/media/fellini/screens/references-grid.0.half.webp"
+      }
+    ]
+  },
+  "fellini/screens/select-references": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/fellini/screens/select-references.0.webp",
+        "half": "/media/fellini/screens/select-references.0.half.webp"
+      }
+    ]
+  },
+  "fellini/screens/shot-edit": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/fellini/screens/shot-edit.0.webp",
+        "half": "/media/fellini/screens/shot-edit.0.half.webp"
+      }
+    ]
+  },
+  "fellini/screens/shot-generate": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/fellini/screens/shot-generate.0.webp",
+        "half": "/media/fellini/screens/shot-generate.0.half.webp"
+      }
+    ]
+  },
+  "fellini/screens/shot-references": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/fellini/screens/shot-references.0.webp",
+        "half": "/media/fellini/screens/shot-references.0.half.webp"
+      }
+    ]
+  },
+  "fellini/screens/shot-view": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/fellini/screens/shot-view.0.webp",
+        "half": "/media/fellini/screens/shot-view.0.half.webp"
+      }
+    ]
+  },
+  "fellini/screens/timeline-empty": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/fellini/screens/timeline-empty.0.webp",
+        "half": "/media/fellini/screens/timeline-empty.0.half.webp"
+      }
+    ]
+  },
+  "fellini/screens/timeline-options": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/fellini/screens/timeline-options.0.webp",
+        "half": "/media/fellini/screens/timeline-options.0.half.webp"
+      }
+    ]
+  },
+  "fellini/screens/timeline": {
+    "px": [
+      2304,
+      1638
+    ],
+    "tiles": [
+      {
+        "top": 0,
+        "px": [
+          2304,
+          1638
+        ],
+        "src": "/media/fellini/screens/timeline.0.webp",
+        "half": "/media/fellini/screens/timeline.0.half.webp"
+      }
+    ]
+  },
   "getcv/screens/dashboard": {
     "px": [
       2304,

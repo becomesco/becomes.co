@@ -1,3 +1,4 @@
+import { Loops } from './loops';
 import { Scrubs } from './scrubs';
 import { fetchMedia } from './media-cache';
 import type { TextureRef } from './scene/types';
@@ -40,6 +41,8 @@ export function fileAt(ref: TextureRef, level: number): string | null {
 export function pickLevel(ref: TextureRef, devicePx: number): number {
   const ratio = devicePx / (ref.px[0] * 0.5);
   if ('draw' in ref) return Math.min(MAX_DRAW_SCALE, Math.max(1, Math.ceil(ratio / DRAW_STEP - 0.01) * DRAW_STEP));
+  // A looping clip has one size, its poster's.
+  if (ref.video) return 2;
   return ratio <= 1.15 ? 1 : 2;
 }
 
@@ -61,6 +64,7 @@ export class TextureStore {
   readonly empty: GPUBindGroup;
   private emptyTexture: GPUTexture;
   private scrubs: Scrubs;
+  private loops: Loops;
   private now = 0;
 
   constructor(
@@ -70,6 +74,7 @@ export class TextureStore {
     private onLoad: (frames?: number) => void,
   ) {
     this.scrubs = new Scrubs(device, () => onLoad(1));
+    this.loops = new Loops(device, () => onLoad(1));
     this.emptyTexture = device.createTexture({
       size: [1, 1],
       format: 'rgba8unorm',
@@ -92,12 +97,14 @@ export class TextureStore {
     if (entry.texture && 'frames' in ref && ref.frames) {
       this.scrubs.show(ref.key, ref.frames, entry.level, entry.texture, progress);
     }
+    if (entry.texture && 'video' in ref && ref.video) this.loops.show(ref.key, ref.video, entry.texture);
     return entry.bindGroup;
   }
 
-  /** End of a frame: video Assets that were not drawn in it drop their decoded frames. */
+  /** End of a frame: scrubbed videos that were not drawn in it drop their decoded frames, and looping ones pause. */
   settle(): void {
     this.scrubs.settle();
+    this.loops.settle();
   }
 
   prefetch(ref: TextureRef, devicePx: number): void {
@@ -120,6 +127,7 @@ export class TextureStore {
   destroy(): void {
     this.abort.abort();
     this.scrubs.destroy();
+    this.loops.destroy();
     for (const entry of this.entries.values()) entry.texture?.destroy();
     this.entries.clear();
     this.emptyTexture.destroy();
@@ -232,6 +240,7 @@ export class TextureStore {
     for (const entry of candidates) {
       if (this.bytes <= this.budget * 0.8) break;
       this.scrubs.release(entry.ref.key);
+      this.loops.release(entry.ref.key);
       entry.texture?.destroy();
       this.bytes -= entry.bytes;
       entry.texture = null;

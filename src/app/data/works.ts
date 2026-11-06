@@ -28,7 +28,7 @@ export interface NoteAssetDef {
 
 export type AssetDef = MediaAssetDef | NoteAssetDef;
 
-/** A full page from `media/source/<work>/screens/`, shown whole in its own section of the Work View. Not an Asset. */
+/** A full page or a looping recording from `media/source/<work>/screens/`, shown whole in its own section of the Work View. Not an Asset. */
 export interface ScreenDef {
   media: keyof typeof screenMedia;
   /** A tablet screen: sits two to a row on desktop. */
@@ -203,6 +203,125 @@ export const works: readonly Work[] = [
         after: 7,
         text: [
           'Today, more than 4,000 companies run their content on BCMS. Most of the people clicking around in it every day aren’t developers, which was the whole point.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'fellini',
+    name: 'Fellini',
+    headline: 'AI video pre-production for whole teams, from shot list to final cut, with continuity held throughout.',
+    intro: [
+      'Fellini is a collaborative video production app. Picture 20 creatives with 48 hours to make a high-end ad for a global brand: ideas, brand guidelines, characters, locations, light, camera and story, all in one place.',
+      'We were there from day zero, when all that existed was the client’s idea. We turned it into a product, a brand and the way a whole team works inside it.',
+    ],
+    services: ['Concept', 'product strategy', 'workshops', 'branding', 'UX/UI design', 'interaction design'],
+    logo: { src: '/logos/fellini.svg', width: 110, height: 30 },
+    assets: [
+      { media: 'fellini/wordmark', width: 360 },
+      { media: 'fellini/shot-brief', width: 560, frame: true },
+      { media: 'fellini/fellini-camera', width: 320 },
+      { media: 'fellini/prompt-mentions', width: 520 },
+      {
+        note: [
+          'Fellini is a collaborative app for video production.',
+          'Forty creatives, one ad for a global brand, 48 hours. Everything from the first idea to the last shot lives in one place.',
+        ],
+      },
+      { media: 'fellini/brainstorm-sketches', width: 600 },
+      { media: 'fellini/typewriter-green', width: 420 },
+      { media: 'fellini/reference-voiceover' },
+      { media: 'fellini/color-pumpkin', width: 360 },
+      { media: 'fellini/script-raging-bull', width: 320 },
+      { media: 'fellini/reference-collection', width: 400 },
+      {
+        note: [
+          'We joined on day zero, with nothing but the client’s idea and his calls with production studios.',
+          'Brainstorms, interviews and workshops turned it into features, team processes and a business.',
+        ],
+      },
+      { media: 'fellini/olivetti-posters', width: 480 },
+      { media: 'fellini/type-specimen', width: 560 },
+      { media: 'fellini/typewriter-keys', width: 400 },
+      { media: 'fellini/color-dandelion', width: 360 },
+      { media: 'fellini/shot-generate', width: 560, frame: true },
+      { media: 'fellini/reference-cards', width: 520 },
+      { media: 'fellini/fellini-clapper', width: 440 },
+      {
+        note: [
+          'The brand borrows from Olivetti typewriters and from Federico Fellini’s film sets.',
+          'A typed wordmark, paper tones, and colours straight off a Lettera 22.',
+        ],
+      },
+      { media: 'fellini/typewriters-row', width: 440 },
+      { media: 'fellini/palette', width: 520 },
+      { media: 'fellini/color-crystal', width: 360 },
+      { media: 'fellini/typed-memo', width: 440 },
+      { media: 'fellini/prompt-composer', width: 480 },
+      { media: 'fellini/typewriter-blue', width: 380 },
+      { media: 'fellini/reference-video', width: 340 },
+      { media: 'fellini/color-circles', width: 300 },
+      {
+        note: [
+          'References hold the whole team’s taste: characters, locations, scripts, palettes, voiceovers.',
+          'Mention one in a prompt, and every shot stays consistent.',
+        ],
+      },
+      { media: 'fellini/references-views', width: 560, frame: true },
+      { media: 'fellini/type-olivetti', width: 480 },
+      { media: 'fellini/shot-tabs' },
+      { media: 'fellini/color-rifle-green', width: 360 },
+      { media: 'fellini/creating', width: 560 },
+      { media: 'fellini/color-raisin-black', width: 360 },
+      { media: 'fellini/color-gainsboro', width: 360 },
+    ],
+    screens: [
+      { media: 'fellini/screens/timeline-empty' },
+      { media: 'fellini/screens/shot-references' },
+      { media: 'fellini/screens/select-references' },
+      { media: 'fellini/screens/shot-brief' },
+      { media: 'fellini/screens/timeline' },
+      { media: 'fellini/screens/timeline-options' },
+      { media: 'fellini/screens/references-experience' },
+      { media: 'fellini/screens/references-grid' },
+      { media: 'fellini/screens/references-views' },
+      { media: 'fellini/screens/references-collection' },
+      { media: 'fellini/screens/reference-single' },
+      { media: 'fellini/screens/shot-generate' },
+      { media: 'fellini/screens/shot-chat' },
+      { media: 'fellini/screens/shot-edit' },
+      { media: 'fellini/screens/shot-view' },
+    ],
+    story: [
+      {
+        after: 1,
+        text: [
+          'Fellini started as a loose idea and a long list of calls the client had with studios that make ads and short films. We joined on day zero, when nothing else existed yet.',
+        ],
+      },
+      {
+        after: 4,
+        text: [
+          'We ran intensive brainstorms, interviews and workshops with the client, and filled stacks of paper with sketches. Out of them came the core of the product: a project is a timeline of shots, and every shot carries its brief, its references and the people working on it.',
+        ],
+      },
+      {
+        after: 6,
+        text: [
+          'The field was still very young, so there were few patterns to borrow. We designed the processes first: how forty people brainstorm, agree on standards, follow brand guidelines and hand work to each other. Then we turned them into features.',
+          'We gave it a name and a brand too: Fellini, after the director, with a typed wordmark and a palette taken from Olivetti typewriters.',
+        ],
+      },
+      {
+        after: 11,
+        text: [
+          'References are the shared memory of a project: characters, locations, collections, scripts, palettes, links and voiceovers. Experience view lets the team wander through them like a moodboard. Grid view is for finding things fast.',
+        ],
+      },
+      {
+        after: 14,
+        text: [
+          'When a shot is ready, the team writes a prompt and mentions references by name: @Nora, @Arthur, the New York apartment. So the characters, light, camera and look stay the same from one shot to the next, whoever on the team made it.',
         ],
       },
     ],
@@ -982,8 +1101,9 @@ export function assetsOf(work: Work): Asset[] {
 export function screensOf(work: Work): Screen[] {
   return work.screens.map((def) => {
     const entry = screenMedia[def.media];
+    const video = 'video' in entry ? entry.video : undefined;
     const tiles = entry.tiles.map((tile, k) => ({
-      texture: { key: `${def.media}:${k}`, src: tile.src, half: tile.half, px: tile.px as [number, number] },
+      texture: { key: `${def.media}:${k}`, src: tile.src, half: tile.half, px: tile.px as [number, number], video },
       top: tile.top,
       rows: tile.px[1],
     }));

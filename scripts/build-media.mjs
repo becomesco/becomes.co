@@ -5,7 +5,8 @@
 // Videos, and folders of numbered stills at media/source/<group>/<name>/, become
 // public/media/<group>/<name>/<frame>(.half).webp, listed under `frames`.
 // Screens in media/source/<group>/screens/ go to public/media/<group>/screens/<name>.<tile>(.half).webp,
-// listed in src/app/data/screens.json keyed "<group>/screens/<name>".
+// listed in src/app/data/screens.json keyed "<group>/screens/<name>". Videos there loop instead:
+// public/media/<group>/screens/<name>.mp4 with a <name>.webp poster, listed with `video`.
 import { execFile } from 'node:child_process';
 import { readdir, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -275,10 +276,41 @@ async function decodeAt(input, width) {
   return { data, raw: { width: info.width, height: info.height, channels: info.channels } };
 }
 
+// A video Screen loops on its own instead of scrubbing: re-encoded at SCREEN_VIDEO_WIDTH (H.264,
+// no audio, faststart), with its first frame as the poster at the same size, since the clip is
+// copied into the poster's texture as it plays. One tile, so it lays out like any other Screen.
+// Narrower recordings are scaled up to it, or the Work View would show them smaller than the
+// page Screens beside them.
+const SCREEN_VIDEO_WIDTH = 1920;
+
+async function buildScreenVideo(dir, file) {
+  const name = basename(file, extname(file));
+  const input = join(sourceDir, dir, file);
+  const video = join(outDir, dir, `${name}.mp4`);
+  await run('ffmpeg', [
+    '-v', 'error', '-y', '-i', input,
+    '-vf', `scale=${SCREEN_VIDEO_WIDTH}:-2:flags=lanczos`,
+    '-c:v', 'libx264', '-preset', 'slow', '-crf', '23', '-pix_fmt', 'yuv420p',
+    '-movflags', '+faststart', '-an', video,
+  ]);
+  const temp = await mkdtemp(join(tmpdir(), 'poster-'));
+  const still = join(temp, 'poster.png');
+  await run('ffmpeg', ['-v', 'error', '-i', video, '-frames:v', '1', still]);
+  const meta = await sharp(still).metadata();
+  const px = [meta.width, meta.height];
+  await sharp(still).webp(webp).toFile(join(outDir, dir, `${name}.webp`));
+  await rm(temp, { recursive: true, force: true });
+  const poster = `/media/${dir}/${name}.webp`;
+  screens[`${dir}/${name}`] = { px, tiles: [{ top: 0, px, src: poster, half: poster }], video: `/media/${dir}/${name}.mp4` };
+  console.log(`${dir}/${name} ${px[0]}x${px[1]}, video`);
+}
+
 async function buildScreens(dir) {
-  const files = (await readdir(join(sourceDir, dir))).filter((f) => /\.(png|jpe?g)$/i.test(f)).sort();
+  const entries = await readdir(join(sourceDir, dir));
+  const files = entries.filter((f) => /\.(png|jpe?g)$/i.test(f)).sort();
   await rm(join(outDir, dir), { recursive: true, force: true });
   await mkdir(join(outDir, dir), { recursive: true });
+  for (const file of entries.filter((f) => VIDEO.test(f)).sort()) await buildScreenVideo(dir, file);
 
   for (const file of files) {
     const name = basename(file, extname(file));

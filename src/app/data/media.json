@@ -557,6 +557,306 @@
     "src": "/media/brand/glass-mark.webp",
     "half": "/media/brand/glass-mark.half.webp"
   },
+  "fellini/references-views": {
+    "px": [
+      1280,
+      910
+    ],
+    "alpha": false,
+    "src": "/media/fellini/references-views/0.webp",
+    "half": "/media/fellini/references-views/0.half.webp",
+    "frames": {
+      "count": 90,
+      "dir": "/media/fellini/references-views"
+    }
+  },
+  "fellini/shot-brief": {
+    "px": [
+      1280,
+      910
+    ],
+    "alpha": false,
+    "src": "/media/fellini/shot-brief/0.webp",
+    "half": "/media/fellini/shot-brief/0.half.webp",
+    "frames": {
+      "count": 90,
+      "dir": "/media/fellini/shot-brief"
+    }
+  },
+  "fellini/shot-generate": {
+    "px": [
+      1280,
+      910
+    ],
+    "alpha": false,
+    "src": "/media/fellini/shot-generate/0.webp",
+    "half": "/media/fellini/shot-generate/0.half.webp",
+    "frames": {
+      "count": 90,
+      "dir": "/media/fellini/shot-generate"
+    }
+  },
+  "fellini/brainstorm-sketches": {
+    "px": [
+      2048,
+      1605
+    ],
+    "alpha": true,
+    "src": "/media/fellini/brainstorm-sketches.webp",
+    "half": "/media/fellini/brainstorm-sketches.half.webp"
+  },
+  "fellini/color-circles": {
+    "px": [
+      1110,
+      998
+    ],
+    "alpha": true,
+    "src": "/media/fellini/color-circles.webp",
+    "half": "/media/fellini/color-circles.half.webp"
+  },
+  "fellini/color-crystal": {
+    "px": [
+      1203,
+      360
+    ],
+    "alpha": true,
+    "src": "/media/fellini/color-crystal.webp",
+    "half": "/media/fellini/color-crystal.half.webp"
+  },
+  "fellini/color-dandelion": {
+    "px": [
+      1203,
+      360
+    ],
+    "alpha": true,
+    "src": "/media/fellini/color-dandelion.webp",
+    "half": "/media/fellini/color-dandelion.half.webp"
+  },
+  "fellini/color-gainsboro": {
+    "px": [
+      1203,
+      360
+    ],
+    "alpha": true,
+    "src": "/media/fellini/color-gainsboro.webp",
+    "half": "/media/fellini/color-gainsboro.half.webp"
+  },
+  "fellini/color-pumpkin": {
+    "px": [
+      1203,
+      360
+    ],
+    "alpha": true,
+    "src": "/media/fellini/color-pumpkin.webp",
+    "half": "/media/fellini/color-pumpkin.half.webp"
+  },
+  "fellini/color-raisin-black": {
+    "px": [
+      1203,
+      360
+    ],
+    "alpha": true,
+    "src": "/media/fellini/color-raisin-black.webp",
+    "half": "/media/fellini/color-raisin-black.half.webp"
+  },
+  "fellini/color-rifle-green": {
+    "px": [
+      1203,
+      360
+    ],
+    "alpha": true,
+    "src": "/media/fellini/color-rifle-green.webp",
+    "half": "/media/fellini/color-rifle-green.half.webp"
+  },
+  "fellini/creating": {
+    "px": [
+      1800,
+      393
+    ],
+    "alpha": true,
+    "src": "/media/fellini/creating.webp",
+    "half": "/media/fellini/creating.half.webp"
+  },
+  "fellini/fellini-camera": {
+    "px": [
+      858,
+      950
+    ],
+    "alpha": true,
+    "src": "/media/fellini/fellini-camera.webp",
+    "half": "/media/fellini/fellini-camera.half.webp"
+  },
+  "fellini/fellini-clapper": {
+    "px": [
+      1320,
+      818
+    ],
+    "alpha": true,
+    "src": "/media/fellini/fellini-clapper.webp",
+    "half": "/media/fellini/fellini-clapper.half.webp"
+  },
+  "fellini/olivetti-posters": {
+    "px": [
+      1191,
+      912
+    ],
+    "alpha": true,
+    "src": "/media/fellini/olivetti-posters.webp",
+    "half": "/media/fellini/olivetti-posters.half.webp"
+  },
+  "fellini/palette": {
+    "px": [
+      1944,
+      324
+    ],
+    "alpha": true,
+    "src": "/media/fellini/palette.webp",
+    "half": "/media/fellini/palette.half.webp"
+  },
+  "fellini/prompt-composer": {
+    "px": [
+      1350,
+      1024
+    ],
+    "alpha": true,
+    "src": "/media/fellini/prompt-composer.webp",
+    "half": "/media/fellini/prompt-composer.half.webp"
+  },
+  "fellini/prompt-mentions": {
+    "px": [
+      1409,
+      565
+    ],
+    "alpha": true,
+    "src": "/media/fellini/prompt-mentions.webp",
+    "half": "/media/fellini/prompt-mentions.half.webp"
+  },
+  "fellini/reference-cards": {
+    "px": [
+      1342,
+      291
+    ],
+    "alpha": true,
+    "src": "/media/fellini/reference-cards.webp",
+    "half": "/media/fellini/reference-cards.half.webp"
+  },
+  "fellini/reference-collection": {
+    "px": [
+      795,
+      687
+    ],
+    "alpha": true,
+    "src": "/media/fellini/reference-collection.webp",
+    "half": "/media/fellini/reference-collection.half.webp"
+  },
+  "fellini/reference-video": {
+    "px": [
+      650,
+      426
+    ],
+    "alpha": true,
+    "src": "/media/fellini/reference-video.webp",
+    "half": "/media/fellini/reference-video.half.webp"
+  },
+  "fellini/reference-voiceover": {
+    "px": [
+      656,
+      223
+    ],
+    "alpha": true,
+    "src": "/media/fellini/reference-voiceover.webp",
+    "half": "/media/fellini/reference-voiceover.half.webp"
+  },
+  "fellini/script-raging-bull": {
+    "px": [
+      1586,
+      2048
+    ],
+    "alpha": true,
+    "src": "/media/fellini/script-raging-bull.webp",
+    "half": "/media/fellini/script-raging-bull.half.webp"
+  },
+  "fellini/shot-tabs": {
+    "px": [
+      632,
+      80
+    ],
+    "alpha": true,
+    "src": "/media/fellini/shot-tabs.webp",
+    "half": "/media/fellini/shot-tabs.half.webp"
+  },
+  "fellini/type-olivetti": {
+    "px": [
+      1755,
+      755
+    ],
+    "alpha": true,
+    "src": "/media/fellini/type-olivetti.webp",
+    "half": "/media/fellini/type-olivetti.half.webp"
+  },
+  "fellini/type-specimen": {
+    "px": [
+      2048,
+      1365
+    ],
+    "alpha": true,
+    "src": "/media/fellini/type-specimen.webp",
+    "half": "/media/fellini/type-specimen.half.webp"
+  },
+  "fellini/typed-memo": {
+    "px": [
+      1192,
+      513
+    ],
+    "alpha": true,
+    "src": "/media/fellini/typed-memo.webp",
+    "half": "/media/fellini/typed-memo.half.webp"
+  },
+  "fellini/typewriter-blue": {
+    "px": [
+      2048,
+      1678
+    ],
+    "alpha": true,
+    "src": "/media/fellini/typewriter-blue.webp",
+    "half": "/media/fellini/typewriter-blue.half.webp"
+  },
+  "fellini/typewriter-green": {
+    "px": [
+      1728,
+      1296
+    ],
+    "alpha": true,
+    "src": "/media/fellini/typewriter-green.webp",
+    "half": "/media/fellini/typewriter-green.half.webp"
+  },
+  "fellini/typewriter-keys": {
+    "px": [
+      1320,
+      880
+    ],
+    "alpha": true,
+    "src": "/media/fellini/typewriter-keys.webp",
+    "half": "/media/fellini/typewriter-keys.half.webp"
+  },
+  "fellini/typewriters-row": {
+    "px": [
+      1191,
+      893
+    ],
+    "alpha": true,
+    "src": "/media/fellini/typewriters-row.webp",
+    "half": "/media/fellini/typewriters-row.half.webp"
+  },
+  "fellini/wordmark": {
+    "px": [
+      1668,
+      457
+    ],
+    "alpha": true,
+    "src": "/media/fellini/wordmark.webp",
+    "half": "/media/fellini/wordmark.half.webp"
+  },
   "getcv/application-preview": {
     "px": [
       2048,

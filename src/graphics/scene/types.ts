@@ -13,6 +13,8 @@ export interface FileTexture extends TextureBase {
    * and `${dir}/${i}.half.webp` (1x). Frame 0 is `src` and `half`.
    */
   frames?: { count: number; dir: string };
+  /** A clip that loops on its own while drawn, copied into the poster's texture: `src` is its first frame, at its size. */
+  video?: string;
 }
 
 /** Rows of clear pixels between the two layers of a `shadowed` texture. */
