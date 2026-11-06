@@ -95,119 +95,6 @@ export const RESERVED_SLUGS = new Set(['about', 'contact']);
 
 export const works: readonly Work[] = [
   {
-    slug: 'bcms',
-    name: 'BCMS',
-    headline: 'Branded, designed and built a headless CMS thousands of companies run on.',
-    intro: [
-      'BCMS is a headless CMS. We built the brand, the web app, the docs and thebcms.com on one design system.',
-      'Editors model content in the browser, developers query an API with generated TypeScript types, and open-source starters cover the common frameworks.',
-    ],
-    services: ['Product strategy', 'branding', 'UX/UI design', 'development', 'launch'],
-    url: 'https://thebcms.com',
-    logo: { src: '/logos/bcms.svg', width: 32, height: 32 },
-    assets: [
-      { media: 'bcms/code-editor', width: 420 },
-      { media: 'bcms/dashboard', width: 560, frame: true },
-      { media: 'bcms/properties-panel', width: 320 },
-      { media: 'bcms/upload-dropzone', width: 520 },
-      { media: 'bcms/invite-row', width: 480 },
-      {
-        note: [
-          'We branded, designed and built BCMS, a headless CMS.',
-          'Web app, docs and thebcms.com all came from one design system. Thousands of companies run content through it.',
-        ],
-      },
-      { media: 'bcms/upload-queue', width: 440 },
-      { media: 'bcms/entry-nested', width: 520 },
-      { media: 'bcms/code-snippet', width: 560 },
-      { media: 'bcms/login', width: 280, frame: true },
-      { media: 'bcms/confirm-modal', width: 480 },
-      { media: 'bcms/media-grid', width: 520 },
-      {
-        note: [
-          'Editors model templates in the browser. There is no schema file in a repo.',
-          'You get 10+ field types, reusable groups, and widgets you can drop into rich text.',
-        ],
-      },
-      { media: 'bcms/shot-marketing', width: 600, frame: true },
-      { media: 'bcms/kanban', width: 560, frame: true },
-      { media: 'bcms/shot-comments', width: 300, frame: true },
-      { media: 'bcms/docs-properties', width: 520 },
-      { media: 'bcms/shot-editor', width: 480, frame: true },
-      { media: 'bcms/editor-field', width: 480 },
-      { media: 'bcms/editor-field-alt', width: 480 },
-      { media: 'bcms/shot-docs', width: 560, frame: true },
-      { media: 'bcms/brand-glow', width: 420 },
-      { media: 'bcms/shot-toolbar', width: 400, frame: true },
-      { media: 'bcms/shot-chrome', width: 440, frame: true },
-      {
-        note: [
-          'Clients publish with a media library, nested folders, entry statuses and kanban.',
-          'Developers query the API and import TypeScript types that BCMS generates from those templates.',
-        ],
-      },
-      { media: 'bcms/widget-entry', width: 360 },
-      { media: 'bcms/inputs-card', width: 360 },
-      { media: 'bcms/groups-list', width: 360 },
-      { media: 'bcms/media-manager', width: 360 },
-      { media: 'bcms/next-integration', width: 360 },
-      { media: 'bcms/starter-portfolio', width: 340 },
-      { media: 'bcms/starter-jobs', width: 340 },
-      { media: 'bcms/starter-recipes', width: 340 },
-      { media: 'bcms/starter-shop', width: 340 },
-      { media: 'bcms/starter-restaurant', width: 340 },
-      { media: 'bcms/starter-podcast', width: 340 },
-      {
-        note: [
-          'We shipped open-source starters for Next, Nuxt, Astro, Gatsby or Svelte, with the API already wired.',
-          'There are finished sites for blogs, shops, job boards, recipes, podcasts...',
-        ],
-      },
-      { media: 'bcms/starter-stack', width: 400 },
-      { media: 'bcms/lock', width: 280 },
-      { media: 'bcms/history', width: 360 },
-    ],
-    screens: [
-      { media: 'bcms/screens/dashboard' },
-      { media: 'bcms/screens/editor' },
-      { media: 'bcms/screens/editor-light' },
-      { media: 'bcms/screens/editor-2' },
-      { media: 'bcms/screens/media' },
-      { media: 'bcms/screens/kanban' },
-      { media: 'bcms/screens/comments' },
-      { media: 'bcms/screens/reorder' },
-      { media: 'bcms/screens/color-picker' },
-    ],
-    story: [
-      {
-        after: 1,
-        text: [
-          'We started BCMS in 2019. Dev tools have a long tradition of being badly designed and barely thought through, and a CMS has less excuse than most: at the end of the day, it’s used by content writers, marketers and founders, not developers.',
-          'We knew content inside out, and we like tools that feel good in a browser. So we built the CMS we wanted to use.',
-        ],
-      },
-      {
-        after: 3,
-        text: [
-          'The brand, the web app, the docs and thebcms.com all come from one design system. Editors model content in the browser, with no schema file in a repo, and developers import TypeScript types generated from the same templates.',
-        ],
-      },
-      {
-        after: 5,
-        text: [
-          'Along the way, BCMS picked up ideas other CMSs didn’t have: widgets inside rich text, a proper file system, images transformed on the fly, its own take on translations, functions and cron jobs.',
-          'More are on the way ;)',
-        ],
-      },
-      {
-        after: 7,
-        text: [
-          'Today, more than 4,000 companies run their content on BCMS. Most of the people clicking around in it every day aren’t developers, which was the whole point.',
-        ],
-      },
-    ],
-  },
-  {
     slug: 'fellini',
     name: 'Fellini',
     headline: 'AI video pre-production for whole teams, from shot list to final cut, with continuity held throughout.',
@@ -411,184 +298,6 @@ export const works: readonly Work[] = [
     ],
   },
   {
-    slug: 'milmedic',
-    name: 'Milmedic',
-    headline: 'A leading ophthalmology clinic, modernised. Bookings went through the roof.',
-    intro: [
-      'Milmedic is an ophthalmology clinic. We moved them off an old WordPress site to a new multilingual one, and tidied up their digital branding on the way.',
-      'Every service and condition has its own page in each language, with online vision tests and a direct path to booking.',
-    ],
-    services: ['Digital branding', 'UX/UI design', 'development', 'migration', 'launch'],
-    url: 'https://www.milmedic.co.rs/en',
-    logo: { src: '/logos/milmedic.svg', width: 47, height: 76 },
-    assets: [
-      { media: 'milmedic/hero-desktop' },
-      { media: 'milmedic/hero', width: 560, rounded: true },
-      { media: 'milmedic/hero-mobile', width: 320, frame: true },
-      { media: 'milmedic/menu-mobile', width: 300 },
-      { media: 'milmedic/why-choose', width: 600 },
-      { media: 'milmedic/icon-eye', width: 120, frame: true },
-      {
-        note: [
-          'We designed and built a multilingual website for Milmedic, an ophthalmology clinic.',
-          'It walks patients to the right exam, or to a vision test they can take online. Scheduled appointments went up.',
-        ],
-      },
-      { media: 'milmedic/photo-autorefractor', width: 400 },
-      { media: 'milmedic/card-eye-exam', width: 280 },
-      { media: 'milmedic/card-laser', width: 280 },
-      { media: 'milmedic/test-color', width: 300 },
-      { media: 'milmedic/icon-trial-frame', width: 120, frame: true },
-      { media: 'milmedic/card-keratoconus' },
-      { media: 'milmedic/test-astigmatism', width: 200 },
-      {
-        note: [
-          'Every service and eye condition has its own page, in each language.',
-          'Search traffic spiked after launch, and the new site converts several times better than the old one!',
-        ],
-      },
-      { media: 'milmedic/menu-conditions', width: 640 },
-      { media: 'milmedic/photo-exam', width: 480, frame: true },
-      { media: 'milmedic/card-diagnosed', width: 280 },
-      { media: 'milmedic/icon-screen', width: 120, frame: true },
-      { media: 'milmedic/test-acuity-result', width: 300 },
-      { media: 'milmedic/icon-child', width: 120, frame: true },
-      { media: 'milmedic/brand-palette' },
-      {
-        note: [
-          'We helped them migrate off an old WordPress system.',
-          'Along the way we shaped up their digital branding.',
-        ],
-      },
-      { media: 'milmedic/menu-services', width: 620 },
-      { media: 'milmedic/card-second-opinion', width: 280 },
-      { media: 'milmedic/test-astigmatism-pass', width: 200 },
-      { media: 'milmedic/icon-report', width: 120, frame: true },
-      { media: 'milmedic/icon-tumor', width: 120, frame: true },
-    ],
-    screens: [
-      { media: 'milmedic/screens/home' },
-      { media: 'milmedic/screens/exams' },
-      { media: 'milmedic/screens/prices' },
-      { media: 'milmedic/screens/rle' },
-      { media: 'milmedic/screens/about' },
-      { media: 'milmedic/screens/team' },
-      { media: 'milmedic/screens/contact' },
-      { media: 'milmedic/screens/privacy' },
-    ],
-    story: [
-      {
-        after: 1,
-        text: [
-          'Milmedic is one of the leading eye clinics in Serbia, and their old WordPress site didn’t show it. We moved them to a new one in Serbian and English, and tidied up their digital branding on the way.',
-        ],
-      },
-      {
-        after: 2,
-        text: [
-          'Moving a clinic’s website is mostly about not losing anyone on the way. We consolidated the URL structure and pointed every old address to its new home, about 40 of them, so patients and Google both kept finding the right page.',
-        ],
-      },
-      {
-        after: 4,
-        text: [
-          'We also built online vision tests, the first of their kind in Serbia. Patients check their sharpness, contrast, colour vision and the Amsler grid, one eye at a time, then book the exam they need.',
-        ],
-      },
-      {
-        after: 6,
-        text: [
-          'In the months after launch, Google showed the site 55% more often and clicks went up 22%, compared with the same stretch before. Rankings held steady through the move, and scheduled appointments went up.',
-        ],
-      },
-    ],
-  },
-  {
-    slug: 'heroic-rankings',
-    name: 'Heroic Rankings',
-    headline: 'A brand scaled for the web, and a website turned into a truly heroic experience.',
-    intro: [
-      'Heroic Rankings is an SEO agency. We unified their brand across pages, cards and campaigns, then designed and built a fast website.',
-      'The site is also their test bed: URL structures and pages can move freely for SEO experiments without costing speed.',
-    ],
-    services: ['Branding', 'UX/UI design', 'development', 'launch'],
-    url: 'https://heroicrankings.com',
-    logo: { src: '/logos/heroic-rankings.svg', width: 108.416, height: 30 },
-    assets: [
-      { media: 'heroic-rankings/statue-card' },
-      { media: 'heroic-rankings/laptop', cut: ['left'] },
-      { media: 'heroic-rankings/growth' },
-      { media: 'heroic-rankings/hand', width: 148, cut: ['top'] },
-      { media: 'heroic-rankings/statue', cut: ['right'] },
-      {
-        note: [
-          'We unified the Heroic Rankings brand, so every page, card and campaign reads as one.',
-          'Then we built a fast website, ready to scale in many different directions.',
-        ],
-      },
-      { media: 'heroic-rankings/statue-pair' },
-      { media: 'heroic-rankings/hands-growth' },
-      { media: 'heroic-rankings/card-support' },
-      { media: 'heroic-rankings/chart-rankings', cut: ['bottom'] },
-      { media: 'heroic-rankings/badge-nps' },
-      { media: 'heroic-rankings/brands', width: 600, frame: true },
-      { media: 'heroic-rankings/bust', width: 400 },
-      { media: 'heroic-rankings/badge-google', width: 300 },
-      {
-        note: [
-          'For an SEO agency, the site doubles as a lab.',
-          'We helped them run a lot of SEO experiments, trying different URL structures and moving pages around freely.',
-        ],
-      },
-      { media: 'heroic-rankings/services-grid', width: 600, frame: true },
-      { media: 'heroic-rankings/partner-cloudways', width: 180 },
-      { media: 'heroic-rankings/hands-reach', width: 420 },
-      { media: 'heroic-rankings/form-partnership', width: 320 },
-      { media: 'heroic-rankings/partner-entrepreneur', width: 180 },
-      { media: 'heroic-rankings/statue-stats' },
-      {
-        note: [
-          'None of the experiments cost speed or scalability.',
-          'The site stays fast, and keeps growing whichever structure wins.',
-        ],
-      },
-      { media: 'heroic-rankings/badge-hubspot', width: 300 },
-      { media: 'heroic-rankings/certifications', width: 600, frame: true },
-      { media: 'heroic-rankings/partner-envato', width: 180 },
-      { media: 'heroic-rankings/hands-raised', width: 420 },
-      { media: 'heroic-rankings/partner-serpstat', width: 180 },
-    ],
-    screens: [
-      { media: 'heroic-rankings/screens/home' },
-      { media: 'heroic-rankings/screens/seo-tech' },
-      { media: 'heroic-rankings/screens/seo-local' },
-      { media: 'heroic-rankings/screens/case-affinda' },
-      { media: 'heroic-rankings/screens/partnership' },
-      { media: 'heroic-rankings/screens/team' },
-      { media: 'heroic-rankings/screens/contact' },
-    ],
-    story: [
-      {
-        after: 1,
-        text: [
-          'Heroic Rankings is an SEO agency, so their own website gets judged harder than most. We started with the brand, and unified it so every page, card and campaign reads as one.',
-        ],
-      },
-      {
-        after: 3,
-        text: [
-          'Then we built a site that doubles as their lab. With BCMS behind it, the team structures and restructures pages and URLs themselves, runs their own experiments and draws their own conclusions, without breaking anything.',
-        ],
-      },
-      {
-        after: 5,
-        text: [
-          'Technical SEO was the brief, not a bonus. Lighthouse gives the site a perfect 100 for SEO, pages load fast, and nothing jumps around while they do.',
-        ],
-      },
-    ],
-  },
-  {
     slug: 'videotoflip',
     name: 'Video to Flip',
     headline: 'Playful on the surface, a beast underneath. Branded and built from the ground up.',
@@ -694,6 +403,91 @@ export const works: readonly Work[] = [
     ],
   },
   {
+    slug: 'heroic-rankings',
+    name: 'Heroic Rankings',
+    headline: 'A brand scaled for the web, and a website turned into a truly heroic experience.',
+    intro: [
+      'Heroic Rankings is an SEO agency. We unified their brand across pages, cards and campaigns, then designed and built a fast website.',
+      'The site is also their test bed: URL structures and pages can move freely for SEO experiments without costing speed.',
+    ],
+    services: ['Branding', 'UX/UI design', 'development', 'launch'],
+    url: 'https://heroicrankings.com',
+    logo: { src: '/logos/heroic-rankings.svg', width: 108.416, height: 30 },
+    assets: [
+      { media: 'heroic-rankings/statue-card' },
+      { media: 'heroic-rankings/laptop', cut: ['left'] },
+      { media: 'heroic-rankings/growth' },
+      { media: 'heroic-rankings/hand', width: 148, cut: ['top'] },
+      { media: 'heroic-rankings/statue', cut: ['right'] },
+      {
+        note: [
+          'We unified the Heroic Rankings brand, so every page, card and campaign reads as one.',
+          'Then we built a fast website, ready to scale in many different directions.',
+        ],
+      },
+      { media: 'heroic-rankings/statue-pair' },
+      { media: 'heroic-rankings/hands-growth' },
+      { media: 'heroic-rankings/card-support' },
+      { media: 'heroic-rankings/chart-rankings', cut: ['bottom'] },
+      { media: 'heroic-rankings/badge-nps' },
+      { media: 'heroic-rankings/brands', width: 600, frame: true },
+      { media: 'heroic-rankings/bust', width: 400 },
+      { media: 'heroic-rankings/badge-google', width: 300 },
+      {
+        note: [
+          'For an SEO agency, the site doubles as a lab.',
+          'We helped them run a lot of SEO experiments, trying different URL structures and moving pages around freely.',
+        ],
+      },
+      { media: 'heroic-rankings/services-grid', width: 600, frame: true },
+      { media: 'heroic-rankings/partner-cloudways', width: 180 },
+      { media: 'heroic-rankings/hands-reach', width: 420 },
+      { media: 'heroic-rankings/form-partnership', width: 320 },
+      { media: 'heroic-rankings/partner-entrepreneur', width: 180 },
+      { media: 'heroic-rankings/statue-stats' },
+      {
+        note: [
+          'None of the experiments cost speed or scalability.',
+          'The site stays fast, and keeps growing whichever structure wins.',
+        ],
+      },
+      { media: 'heroic-rankings/badge-hubspot', width: 300 },
+      { media: 'heroic-rankings/certifications', width: 600, frame: true },
+      { media: 'heroic-rankings/partner-envato', width: 180 },
+      { media: 'heroic-rankings/hands-raised', width: 420 },
+      { media: 'heroic-rankings/partner-serpstat', width: 180 },
+    ],
+    screens: [
+      { media: 'heroic-rankings/screens/home' },
+      { media: 'heroic-rankings/screens/seo-tech' },
+      { media: 'heroic-rankings/screens/seo-local' },
+      { media: 'heroic-rankings/screens/case-affinda' },
+      { media: 'heroic-rankings/screens/partnership' },
+      { media: 'heroic-rankings/screens/team' },
+      { media: 'heroic-rankings/screens/contact' },
+    ],
+    story: [
+      {
+        after: 1,
+        text: [
+          'Heroic Rankings is an SEO agency, so their own website gets judged harder than most. We started with the brand, and unified it so every page, card and campaign reads as one.',
+        ],
+      },
+      {
+        after: 3,
+        text: [
+          'Then we built a site that doubles as their lab. With BCMS behind it, the team structures and restructures pages and URLs themselves, runs their own experiments and draws their own conclusions, without breaking anything.',
+        ],
+      },
+      {
+        after: 5,
+        text: [
+          'Technical SEO was the brief, not a bonus. Lighthouse gives the site a perfect 100 for SEO, pages load fast, and nothing jumps around while they do.',
+        ],
+      },
+    ],
+  },
+  {
     slug: 'basket',
     name: 'Basket',
     headline: 'Ordering healthy snacks, made fun and sophisticated on top of an already fine brand.',
@@ -777,6 +571,119 @@ export const works: readonly Work[] = [
         text: [
           'We connected checkout directly to card payments from Banca Intesa, part of Intesa Sanpaolo. That is unusual for a small shop on the local market, and it lets customers pay by card the way they are used to.',
           'A small shop, running on the kind of system usually built for much bigger ones.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'bcms',
+    name: 'BCMS',
+    headline: 'Branded, designed and built a headless CMS thousands of companies run on.',
+    intro: [
+      'BCMS is a headless CMS. We built the brand, the web app, the docs and thebcms.com on one design system.',
+      'Editors model content in the browser, developers query an API with generated TypeScript types, and open-source starters cover the common frameworks.',
+    ],
+    services: ['Product strategy', 'branding', 'UX/UI design', 'development', 'launch'],
+    url: 'https://thebcms.com',
+    logo: { src: '/logos/bcms.svg', width: 32, height: 32 },
+    assets: [
+      { media: 'bcms/code-editor', width: 420 },
+      { media: 'bcms/dashboard', width: 560, frame: true },
+      { media: 'bcms/properties-panel', width: 320 },
+      { media: 'bcms/upload-dropzone', width: 520 },
+      { media: 'bcms/invite-row', width: 480 },
+      {
+        note: [
+          'We branded, designed and built BCMS, a headless CMS.',
+          'Web app, docs and thebcms.com all came from one design system. Thousands of companies run content through it.',
+        ],
+      },
+      { media: 'bcms/upload-queue', width: 440 },
+      { media: 'bcms/entry-nested', width: 520 },
+      { media: 'bcms/code-snippet', width: 560 },
+      { media: 'bcms/login', width: 280, frame: true },
+      { media: 'bcms/confirm-modal', width: 480 },
+      { media: 'bcms/media-grid', width: 520 },
+      {
+        note: [
+          'Editors model templates in the browser. There is no schema file in a repo.',
+          'You get 10+ field types, reusable groups, and widgets you can drop into rich text.',
+        ],
+      },
+      { media: 'bcms/shot-marketing', width: 600, frame: true },
+      { media: 'bcms/kanban', width: 560, frame: true },
+      { media: 'bcms/shot-comments', width: 300, frame: true },
+      { media: 'bcms/docs-properties', width: 520 },
+      { media: 'bcms/shot-editor', width: 480, frame: true },
+      { media: 'bcms/editor-field', width: 480 },
+      { media: 'bcms/editor-field-alt', width: 480 },
+      { media: 'bcms/shot-docs', width: 560, frame: true },
+      { media: 'bcms/brand-glow', width: 420 },
+      { media: 'bcms/shot-toolbar', width: 400, frame: true },
+      { media: 'bcms/shot-chrome', width: 440, frame: true },
+      {
+        note: [
+          'Clients publish with a media library, nested folders, entry statuses and kanban.',
+          'Developers query the API and import TypeScript types that BCMS generates from those templates.',
+        ],
+      },
+      { media: 'bcms/widget-entry', width: 360 },
+      { media: 'bcms/inputs-card', width: 360 },
+      { media: 'bcms/groups-list', width: 360 },
+      { media: 'bcms/media-manager', width: 360 },
+      { media: 'bcms/next-integration', width: 360 },
+      { media: 'bcms/starter-portfolio', width: 340 },
+      { media: 'bcms/starter-jobs', width: 340 },
+      { media: 'bcms/starter-recipes', width: 340 },
+      { media: 'bcms/starter-shop', width: 340 },
+      { media: 'bcms/starter-restaurant', width: 340 },
+      { media: 'bcms/starter-podcast', width: 340 },
+      {
+        note: [
+          'We shipped open-source starters for Next, Nuxt, Astro, Gatsby or Svelte, with the API already wired.',
+          'There are finished sites for blogs, shops, job boards, recipes, podcasts...',
+        ],
+      },
+      { media: 'bcms/starter-stack', width: 400 },
+      { media: 'bcms/lock', width: 280 },
+      { media: 'bcms/history', width: 360 },
+    ],
+    screens: [
+      { media: 'bcms/screens/dashboard' },
+      { media: 'bcms/screens/editor' },
+      { media: 'bcms/screens/editor-light' },
+      { media: 'bcms/screens/editor-2' },
+      { media: 'bcms/screens/media' },
+      { media: 'bcms/screens/kanban' },
+      { media: 'bcms/screens/comments' },
+      { media: 'bcms/screens/reorder' },
+      { media: 'bcms/screens/color-picker' },
+    ],
+    story: [
+      {
+        after: 1,
+        text: [
+          'We started BCMS in 2019. Dev tools have a long tradition of being badly designed and barely thought through, and a CMS has less excuse than most: at the end of the day, it’s used by content writers, marketers and founders, not developers.',
+          'We knew content inside out, and we like tools that feel good in a browser. So we built the CMS we wanted to use.',
+        ],
+      },
+      {
+        after: 3,
+        text: [
+          'The brand, the web app, the docs and thebcms.com all come from one design system. Editors model content in the browser, with no schema file in a repo, and developers import TypeScript types generated from the same templates.',
+        ],
+      },
+      {
+        after: 5,
+        text: [
+          'Along the way, BCMS picked up ideas other CMSs didn’t have: widgets inside rich text, a proper file system, images transformed on the fly, its own take on translations, functions and cron jobs.',
+          'More are on the way ;)',
+        ],
+      },
+      {
+        after: 7,
+        text: [
+          'Today, more than 4,000 companies run their content on BCMS. Most of the people clicking around in it every day aren’t developers, which was the whole point.',
         ],
       },
     ],
@@ -876,6 +783,99 @@ export const works: readonly Work[] = [
         after: 11,
         text: [
           'Daily challenges, levels and badges turn chapters into progress, so kids come back for the next page the way they’d come back to a game.',
+        ],
+      },
+    ],
+  },
+  {
+    slug: 'milmedic',
+    name: 'Milmedic',
+    headline: 'A leading ophthalmology clinic, modernised. Bookings went through the roof.',
+    intro: [
+      'Milmedic is an ophthalmology clinic. We moved them off an old WordPress site to a new multilingual one, and tidied up their digital branding on the way.',
+      'Every service and condition has its own page in each language, with online vision tests and a direct path to booking.',
+    ],
+    services: ['Digital branding', 'UX/UI design', 'development', 'migration', 'launch'],
+    url: 'https://www.milmedic.co.rs/en',
+    logo: { src: '/logos/milmedic.svg', width: 47, height: 76 },
+    assets: [
+      { media: 'milmedic/hero-desktop' },
+      { media: 'milmedic/hero', width: 560, rounded: true },
+      { media: 'milmedic/hero-mobile', width: 320, frame: true },
+      { media: 'milmedic/menu-mobile', width: 300 },
+      { media: 'milmedic/why-choose', width: 600 },
+      { media: 'milmedic/icon-eye', width: 120, frame: true },
+      {
+        note: [
+          'We designed and built a multilingual website for Milmedic, an ophthalmology clinic.',
+          'It walks patients to the right exam, or to a vision test they can take online. Scheduled appointments went up.',
+        ],
+      },
+      { media: 'milmedic/photo-autorefractor', width: 400 },
+      { media: 'milmedic/card-eye-exam', width: 280 },
+      { media: 'milmedic/card-laser', width: 280 },
+      { media: 'milmedic/test-color', width: 300 },
+      { media: 'milmedic/icon-trial-frame', width: 120, frame: true },
+      { media: 'milmedic/card-keratoconus' },
+      { media: 'milmedic/test-astigmatism', width: 200 },
+      {
+        note: [
+          'Every service and eye condition has its own page, in each language.',
+          'Search traffic spiked after launch, and the new site converts several times better than the old one!',
+        ],
+      },
+      { media: 'milmedic/menu-conditions', width: 640 },
+      { media: 'milmedic/photo-exam', width: 480, frame: true },
+      { media: 'milmedic/card-diagnosed', width: 280 },
+      { media: 'milmedic/icon-screen', width: 120, frame: true },
+      { media: 'milmedic/test-acuity-result', width: 300 },
+      { media: 'milmedic/icon-child', width: 120, frame: true },
+      { media: 'milmedic/brand-palette' },
+      {
+        note: [
+          'We helped them migrate off an old WordPress system.',
+          'Along the way we shaped up their digital branding.',
+        ],
+      },
+      { media: 'milmedic/menu-services', width: 620 },
+      { media: 'milmedic/card-second-opinion', width: 280 },
+      { media: 'milmedic/test-astigmatism-pass', width: 200 },
+      { media: 'milmedic/icon-report', width: 120, frame: true },
+      { media: 'milmedic/icon-tumor', width: 120, frame: true },
+    ],
+    screens: [
+      { media: 'milmedic/screens/home' },
+      { media: 'milmedic/screens/exams' },
+      { media: 'milmedic/screens/prices' },
+      { media: 'milmedic/screens/rle' },
+      { media: 'milmedic/screens/about' },
+      { media: 'milmedic/screens/team' },
+      { media: 'milmedic/screens/contact' },
+      { media: 'milmedic/screens/privacy' },
+    ],
+    story: [
+      {
+        after: 1,
+        text: [
+          'Milmedic is one of the leading eye clinics in Serbia, and their old WordPress site didn’t show it. We moved them to a new one in Serbian and English, and tidied up their digital branding on the way.',
+        ],
+      },
+      {
+        after: 2,
+        text: [
+          'Moving a clinic’s website is mostly about not losing anyone on the way. We consolidated the URL structure and pointed every old address to its new home, about 40 of them, so patients and Google both kept finding the right page.',
+        ],
+      },
+      {
+        after: 4,
+        text: [
+          'We also built online vision tests, the first of their kind in Serbia. Patients check their sharpness, contrast, colour vision and the Amsler grid, one eye at a time, then book the exam they need.',
+        ],
+      },
+      {
+        after: 6,
+        text: [
+          'In the months after launch, Google showed the site 55% more often and clicks went up 22%, compared with the same stretch before. Rankings held steady through the move, and scheduled appointments went up.',
         ],
       },
     ],
