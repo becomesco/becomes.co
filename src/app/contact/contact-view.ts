@@ -176,10 +176,12 @@ export class ContactView implements View {
       this.closedH = 0;
       this.openH = 0;
       this.extra = 0;
+      this.expandStyle = '';
       const submit = this.form.querySelector<HTMLButtonElement>('button[type="submit"]');
       if (submit) submit.disabled = false;
       this.setStatus('', false);
       this.paintExpand(0);
+      this.layout();
     }
   }
 
