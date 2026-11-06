@@ -225,6 +225,7 @@ export const works: readonly Work[] = [
     url: 'https://pyure.ai',
     logo: { src: '/logos/pyure.svg', width: 103, height: 26 },
     assets: [
+      { media: 'pyure/glass-terrariums', width: 560, frame: true },
       { media: 'pyure/hero-copy', width: 560, frame: true },
       { media: 'pyure/nav-bar', width: 480 },
       { media: 'pyure/headline', width: 400 },
@@ -241,7 +242,6 @@ export const works: readonly Work[] = [
       { media: 'pyure/book-demo', width: 520, cut: ['right'] },
       { media: 'pyure/glass-maze', width: 360, frame: true },
       { media: 'pyure/copy-measure', width: 360 },
-      { media: 'pyure/glass-terrariums', width: 560, frame: true },
       { media: 'pyure/moss-path', width: 360, frame: true },
       { media: 'pyure/copy-esg', width: 360 },
       {
