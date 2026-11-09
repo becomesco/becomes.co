@@ -49,6 +49,9 @@ export class Morph {
     s.image = lerp(a.image, to.image, t);
     s.hover = lerp(a.hover, to.hover, t);
     s.lift = lerp(a.lift, to.lift, t);
+    s.shadowScale = lerp(a.shadowScale, to.shadowScale, t);
+    s.shadowDrop = lerp(a.shadowDrop, to.shadowDrop, t);
+    s.shadowBlur = lerp(a.shadowBlur, to.shadowBlur, t);
     s.rotation = lerp(a.rotation, to.rotation, t);
     s.fade = t < 0.5 ? a.fade : to.fade;
     // A soft arc through the move so the Asset feels carried, not slid.

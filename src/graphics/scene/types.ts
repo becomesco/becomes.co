@@ -71,6 +71,13 @@ export interface Sprite {
   zoom: number;
   /** Strength of a `shadowed` texture's shadow, 0 to 1: lower presses the Asset flat. */
   lift: number;
+  /**
+   * Where a `shadowed` texture's shadow lies against the image, for paper raised off the surface:
+   * its size about the image center (1 as drawn), how far down it falls in px, and extra blur in px.
+   */
+  shadowScale: number;
+  shadowDrop: number;
+  shadowBlur: number;
   /** Turn about the outer rect's center, radians, clockwise on screen. */
   rotation: number;
 }
@@ -133,6 +140,9 @@ export function createSprite(id: string, texture: TextureRef | null): Sprite {
     focusY: 0,
     zoom: 1,
     lift: 1,
+    shadowScale: 1,
+    shadowDrop: 0,
+    shadowBlur: 0,
     rotation: 0,
   };
 }

@@ -25,6 +25,7 @@ struct Sprite {
   extra: vec4f,  // bend px, has texture, border px, image opacity
   motion: vec4f, // image zoom, rotation radians about the rect center, zoom focus x, y (-1..1 across the image)
   layer: vec4f,  // shadow strength 0..1, shadowed texture (image above, shadow below), under glass, quad reach px
+  shadow: vec4f, // shadow scale against the image, drop px, extra blur px, unused
 };
 
 @group(0) @binding(0) var<uniform> frame: Frame;
@@ -38,6 +39,8 @@ const PAD: f32 = 1.5;
 
 /** Clear rows between the layers of a shadowed texture; LAYER_GAP in scene/types.ts. */
 const LAYER_GAP: f32 = 4.0;
+/** Taps for a shadow softened by `Sprite.shadowBlur`. */
+const SHADOW_TAPS: u32 = 12u;
 
 // Glass. The reach of the bend, swirl and blur together stays under GLASS_REACH in pipelines.ts.
 /** Lens strength, css px²: how far the slope of the glass bends what is behind it towards the text. */
@@ -112,8 +115,34 @@ fn sampleImage(s: Sprite, uv: vec2f) -> vec4f {
   let rows = f32(textureDimensions(image).y);
   let layer = (rows - LAYER_GAP) * 0.5;
   let top = textureSampleLevel(image, linearSampler, vec2f(st.x, st.y * layer / rows), 0.0);
-  let shadow = textureSampleLevel(image, linearSampler, vec2f(st.x, (layer + LAYER_GAP + st.y * layer) / rows), 0.0);
-  return top + shadow * clamp(s.layer.x, 0.0, 1.0) * (1.0 - top.a);
+
+  // The shadow stays on the surface while the paper rises: placed apart from the image and softened.
+  let px = 1.0 / max(s.inner.zw, vec2f(1.0));
+  let su = (uv - 0.5) / max(s.shadow.x, 0.01) + 0.5 - vec2f(0.0, s.shadow.y * px.y);
+  var shadow = vec4f(0.0);
+  if (s.shadow.z < 0.05) {
+    shadow = shadowTexel(su, layer, rows);
+  } else {
+    for (var i = 0u; i < SHADOW_TAPS; i++) {
+      let t = (f32(i) + 0.5) / f32(SHADOW_TAPS);
+      let a = f32(i) * GOLDEN_ANGLE;
+      shadow += shadowTexel(su + vec2f(cos(a), sin(a)) * sqrt(t) * s.shadow.z * px, layer, rows);
+    }
+    shadow /= f32(SHADOW_TAPS);
+  }
+  // The drawn shadow is cut off at the frame; once it falls further, ease it out there instead.
+  let edge = max(s.shadow.z * 2.0 * px, vec2f(1e-4));
+  let inside = smoothstep(vec2f(0.0), edge, st) * smoothstep(vec2f(0.0), edge, 1.0 - st);
+  let fade = select(1.0, inside.x * inside.y, s.shadow.z >= 0.05);
+  return top + shadow * fade * clamp(s.layer.x, 0.0, 1.0) * (1.0 - top.a);
+}
+
+/** The shadow layer at `uv` across it; clear outside it, so a shrunk shadow doesn't smear its edge texels. */
+fn shadowTexel(uv: vec2f, layer: f32, rows: f32) -> vec4f {
+  if (any(uv < vec2f(0.0)) || any(uv > vec2f(1.0))) {
+    return vec4f(0.0);
+  }
+  return textureSampleLevel(image, linearSampler, vec2f(uv.x, (layer + LAYER_GAP + uv.y * layer) / rows), 0.0);
 }
 
 fn edgeFade(uv: vec2f, fade: vec4f) -> f32 {

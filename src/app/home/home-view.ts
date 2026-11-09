@@ -24,6 +24,15 @@ const HOVER_STIFFNESS = 70;
 const HOVER_DAMPING = 16;
 /** How far an Asset grows at full hover. */
 const HOVER_SCALE = 0.05;
+/**
+ * A Note's shadow at full hover: the paper rises towards the camera, so its shadow stays on the
+ * surface, grows less than the paper, falls further below it, softens and fades. Drop and blur
+ * are shares of the Asset's height.
+ */
+const HOVER_SHADOW_GROW = 0.03;
+const HOVER_SHADOW_DROP = 0.018;
+const HOVER_SHADOW_BLUR = 0.02;
+const HOVER_SHADOW_FADE = 0.2;
 /** Share of the cursor's offset from a hovered Asset's center that the Asset drifts towards it, capped in px. */
 const FOLLOW = 0.08;
 const FOLLOW_MAX = 18;
@@ -876,7 +885,10 @@ export class HomeView implements View {
       sprite.iy = y;
     }
     sprite.hover = hover;
-    sprite.lift = this.press.lift;
+    sprite.lift = this.press.lift * (1 - HOVER_SHADOW_FADE * hover);
+    sprite.shadowScale = (1 + HOVER_SHADOW_GROW * hover) / (1 + HOVER_SCALE * hover);
+    sprite.shadowDrop = HOVER_SHADOW_DROP * hover * p.h;
+    sprite.shadowBlur = HOVER_SHADOW_BLUR * hover * p.h;
     sprite.opacity = 1;
     sprite.image = 1;
     return sprite;
