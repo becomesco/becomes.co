@@ -13,6 +13,7 @@ import { assetsOf, works } from './data/works';
 import { HomeView } from './home/home-view';
 import { Morph } from './morph';
 import { Router, type Route } from './router';
+import { OG_TURN, ogCapture, type OgBridge } from './og';
 import { applyRouteMeta } from './site';
 import type { AppContext, DrawList, NavigationIntent, View, ViewName } from './view';
 import { WorkView } from './work/work-view';
@@ -79,7 +80,7 @@ export class App {
       invalidate: (frames) => this.scheduler.wake(frames),
       onBackendChange: (kind) => document.documentElement.classList.toggle('no-webgpu', kind === 'dom'),
     });
-    engine.then(
+    const attaching = engine.then(
       (created) => this.loader.attach(created),
       () => undefined,
     );
@@ -132,13 +133,44 @@ export class App {
     this.router = new Router(this.onRoute);
     this.router.start();
     this.ready = true;
-    const media = this.engine.preload(this.home.preloads(), (share) =>
-      this.loader.setProgress(lerp(MEDIA_FROM, 1, share)),
-    );
-    const timeout = new Promise((resolve) => setTimeout(resolve, MEDIA_WAIT * 1000));
-    void Promise.race([media, timeout]).then(() => this.loader.setProgress(1));
+    if (ogCapture && this.current === this.home) {
+      await attaching;
+      this.openOg();
+    } else {
+      const media = this.engine.preload(this.home.preloads(), (share) =>
+        this.loader.setProgress(lerp(MEDIA_FROM, 1, share)),
+      );
+      const timeout = new Promise((resolve) => setTimeout(resolve, MEDIA_WAIT * 1000));
+      void Promise.race([media, timeout]).then(() => this.loader.setProgress(1));
+    }
     if (import.meta.env.DEV) (window as unknown as { __app: App }).__app = this;
     this.wake();
+  }
+
+  /** Landing manifesto at rest, Glass mark turning once per `OG_TURN` seconds. */
+  private openOg(): void {
+    this.home.skipIntro();
+    this.home.scroll.enabled = false;
+    this.loader.holdLanding(OG_TURN);
+    this.chrome.reveal();
+    this.chromeIn = true;
+    const bridge: OgBridge = {
+      ready: false,
+      period: OG_TURN,
+      seek: (time) => {
+        this.loader.seekLoop(time);
+        this.wake();
+      },
+    };
+    window.__og = bridge;
+    let frames = 0;
+    const arm = (): void => {
+      frames++;
+      this.wake();
+      if (frames < 6) requestAnimationFrame(arm);
+      else bridge.ready = this.loader.liveMark;
+    };
+    requestAnimationFrame(arm);
   }
 
   private wake = (): void => {

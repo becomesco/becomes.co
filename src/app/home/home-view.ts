@@ -14,6 +14,7 @@ import { clamp, damp, easeOutCubic, lerp, saturate, smoothstep } from '../../uti
 import { clientTexture } from '../client';
 import { assetsOf, clients, others, textureFor, works, type Asset, type Client, type Work } from '../data/works';
 import { NotePress } from '../note';
+import { ogCapture } from '../og';
 import type { AppContext, DrawList, View } from '../view';
 import { computeLayout, type HomeLayout, type Placement, type SectionInput } from './layout';
 import { OTHER_IMAGE_RADIUS, OTHER_INSET, OTHER_RADIUS } from './other';
@@ -441,6 +442,23 @@ export class HomeView implements View {
     if (this.introClock === -Infinity) this.introClock = 0;
   }
 
+  /** Manifesto at rest, as if the Loader had already handed over. */
+  skipIntro(): void {
+    this.armed = false;
+    this.introClock = Infinity;
+    this.landed = 1;
+    this.landedStyle = '';
+    if (this.words[0]) this.words[0].style.opacity = '';
+    for (const line of this.lines) {
+      line.spring.set(0);
+      line.style = '';
+      for (const word of line.words) {
+        word.style.transform = '';
+        word.style.opacity = '';
+      }
+    }
+  }
+
   setLanded(value: number): void {
     this.landed = value;
   }
@@ -655,7 +673,7 @@ export class HomeView implements View {
 
   draw(out: DrawList): void {
     const layout = this.layoutState;
-    if (!layout || this.presence <= 0.001) return;
+    if (!layout || this.presence <= 0.001 || ogCapture) return;
     for (const p of this.visible) {
       const sprite = this.sprites.get(p.index);
       if (!sprite || sprite.id === this.hidden || this.departing.has(p.index)) continue;

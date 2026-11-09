@@ -1163,6 +1163,23 @@ a {
   transform: none;
 }
 
+html.og-capture,
+html.og-capture body {
+  overflow: hidden;
+  cursor: none;
+}
+
+html.og-capture .loader,
+html.og-capture .home-cta {
+  display: none;
+}
+
+html.og-capture .chrome > * {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

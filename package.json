@@ -9,10 +9,12 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "media": "node scripts/build-media.mjs",
-    "fonts": "node scripts/build-fonts.mjs"
+    "fonts": "node scripts/build-fonts.mjs",
+    "og": "node scripts/capture-og.mjs"
   },
   "devDependencies": {
     "@webgpu/types": "^0.1.60",
+    "playwright": "^1.65.0",
     "sharp": "^0.34.0",
     "typescript": "^5.8.0",
     "vite": "^7.0.0",

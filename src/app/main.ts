@@ -1,5 +1,8 @@
 import '../styles/global.css';
 import { App } from './lifecycle';
+import { ogCapture } from './og';
+
+if (ogCapture) document.documentElement.classList.add('og-capture');
 
 const app = new App();
 app.start().catch((error) => {

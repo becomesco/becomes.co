@@ -223,6 +223,11 @@ export class Loader {
   /** The intro is over but the Glass mark stays, for About and, once the intro has played, Home. */
   private resting = false;
   private onHome = false;
+  /** Seconds for one full turn over the landing; 0 leaves the usual sway. */
+  private loopPeriod = 0;
+  private loopClock = 0;
+  /** Capture holds the clock; the live `?og` preview lets it run. */
+  private loopFrozen = false;
   private phase: Phase;
   private target = 0;
   private start = -1;
@@ -267,9 +272,53 @@ export class Loader {
     return !this.finished;
   }
 
+  get liveMark(): boolean {
+    return this.markSource === 'glass';
+  }
+
   /** Skip the intro (direct entry to a non-Home View). */
   dismiss(): void {
     this.finish(false);
+  }
+
+  /**
+   * Landing at rest, Glass mark face-on, then a constant-speed turn of `period` seconds with no
+   * scale change, so a recording of one period loops. Inner light and glint stay put, so they
+   * don't seam.
+   */
+  holdLanding(period: number): void {
+    const pose = this.pose;
+    pose.yaw = 0;
+    pose.pitch = 0;
+    pose.scale = 1;
+    pose.opacity = 1;
+    pose.glint = 0.35;
+    pose.ground = 1;
+    pose.edge = 2;
+    pose.panel = 0;
+    pose.light = 0;
+    pose.word = 1;
+    pose.aim = 0;
+    pose.approach = 0;
+    pose.flow = 2.4;
+    pose.x = 0;
+    pose.y = 0;
+    pose.scene = 0;
+    this.landed = 1;
+    this.wordAlpha = 0;
+    this.handoffTime = 0;
+    this.loopPeriod = period;
+    this.loopClock = 0;
+    this.loopFrozen = false;
+    this.finish(true);
+  }
+
+  /** Put the turn at `time` seconds and keep it there until the next seek or the loop is released. */
+  seekLoop(time: number): void {
+    if (!this.loopPeriod) return;
+    this.loopClock = ((time % this.loopPeriod) + this.loopPeriod) % this.loopPeriod;
+    this.loopFrozen = true;
+    this.applyLoopPose();
   }
 
   setProgress(value: number): void {
@@ -732,6 +781,11 @@ export class Loader {
 
   /** Resting: eases Home's way out, and keeps the sway and the inner light going while the live mark is on screen. */
   private drift(frame: FrameTime): boolean {
+    if (this.loopPeriod) {
+      if (!this.loopFrozen) this.loopClock = (this.loopClock + frame.dt) % this.loopPeriod;
+      this.applyLoopPose();
+      return true;
+    }
     const moving = this.follow(frame.dt);
     if (this.reduced || this.markSource !== 'glass') return moving;
     if (this.onHome) {
@@ -742,6 +796,26 @@ export class Loader {
       this.pose.flow += FLOW_REST * frame.dt;
     }
     return moving || this.shown > 0.002;
+  }
+
+  /** One full turn, linear in time, scale and pitch held, so frame 0 matches frame `period`. */
+  private applyLoopPose(): void {
+    const pose = this.pose;
+    pose.yaw = (this.loopClock / this.loopPeriod) * Math.PI * 2;
+    pose.pitch = 0;
+    pose.scale = 1;
+    pose.opacity = 1;
+    pose.glint = 0.35;
+    pose.ground = 1;
+    pose.edge = 2;
+    pose.panel = 0;
+    pose.light = 0;
+    pose.word = 1;
+    pose.aim = 0;
+    pose.approach = 0;
+    pose.x = 0;
+    pose.y = 0;
+    pose.scene = 0;
   }
 
   private showPoster(): void {
