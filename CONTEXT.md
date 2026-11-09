@@ -32,7 +32,7 @@ _Avoid_: page (use View for scene state; URL for the path)
 The `/` View: loader, landing manifesto, then virtual scroll through Works. Scrolling Home does not change the URL.
 
 **About**:
-The `/about` View. GPU for the transition and experimental visuals; readable copy in the browser layer.
+The `/about` View. GPU for the transition and experimental visuals; readable copy in the browser layer. Closes with studio photos (`media/source/about/life-*`) in the same collage that closes a Work View. They are not Assets.
 
 **Contact**:
 The `/contact` View. Native HTML form; GPU for background and transition only.

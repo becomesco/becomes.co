@@ -1,4 +1,76 @@
 {
+  "about/life-booth": {
+    "px": [
+      1024,
+      768
+    ],
+    "alpha": false,
+    "src": "/media/about/life-booth.webp",
+    "half": "/media/about/life-booth.half.webp"
+  },
+  "about/life-break": {
+    "px": [
+      682,
+      1024
+    ],
+    "alpha": false,
+    "src": "/media/about/life-break.webp",
+    "half": "/media/about/life-break.half.webp"
+  },
+  "about/life-coffee": {
+    "px": [
+      682,
+      1024
+    ],
+    "alpha": false,
+    "src": "/media/about/life-coffee.webp",
+    "half": "/media/about/life-coffee.half.webp"
+  },
+  "about/life-lisbon": {
+    "px": [
+      768,
+      1024
+    ],
+    "alpha": false,
+    "src": "/media/about/life-lisbon.webp",
+    "half": "/media/about/life-lisbon.half.webp"
+  },
+  "about/life-monitors": {
+    "px": [
+      682,
+      1024
+    ],
+    "alpha": false,
+    "src": "/media/about/life-monitors.webp",
+    "half": "/media/about/life-monitors.half.webp"
+  },
+  "about/life-pairing": {
+    "px": [
+      682,
+      1024
+    ],
+    "alpha": false,
+    "src": "/media/about/life-pairing.webp",
+    "half": "/media/about/life-pairing.half.webp"
+  },
+  "about/life-pool": {
+    "px": [
+      681,
+      1024
+    ],
+    "alpha": false,
+    "src": "/media/about/life-pool.webp",
+    "half": "/media/about/life-pool.half.webp"
+  },
+  "about/life-window": {
+    "px": [
+      682,
+      1024
+    ],
+    "alpha": false,
+    "src": "/media/about/life-window.webp",
+    "half": "/media/about/life-window.half.webp"
+  },
   "about/photo-desk": {
     "px": [
       1080,

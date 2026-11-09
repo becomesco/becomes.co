@@ -4,10 +4,40 @@ import { VirtualScroll } from '../../core/scroll';
 import { createSprite, type Sprite, type TextureRef } from '../../graphics/scene/types';
 import type { MarkSpot } from '../../ui/overlays/loader';
 import { clamp, easeOutCubic, saturate } from '../../utils/math';
+import { hashString } from '../../utils/random';
+import { LAND_TURN, layoutCollage, type Placement } from '../collage';
 import { clients, textureFor } from '../data/works';
 import { createGrid } from '../home/grid';
+import { OTHER_IMAGE_RADIUS, OTHER_INSET, OTHER_RADIUS } from '../home/other';
 import { NotePress, noteTexture } from '../note';
 import type { AppContext, DrawList, View } from '../view';
+
+/** Studio life under the composition, in the same collage that closes a Work View. */
+const LIFE = [
+  'about/life-lisbon',
+  'about/life-booth',
+  'about/life-pool',
+  'about/life-coffee',
+  'about/life-window',
+  'about/life-monitors',
+  'about/life-break',
+  'about/life-pairing',
+] as const;
+
+interface Magnet {
+  texture: TextureRef;
+  sprite: Sprite;
+  place: Placement;
+}
+
+function magnet(key: (typeof LIFE)[number]): Magnet {
+  const texture = textureFor(key);
+  const sprite = createSprite(`about:${key}`, texture);
+  sprite.card = 1;
+  sprite.radius = OTHER_RADIUS;
+  sprite.innerRadius = OTHER_IMAGE_RADIUS;
+  return { texture, sprite, place: { x: 0, y: 0, w: 0, h: 0, ix: 0, iy: 0, iw: 0, ih: 0, tilt: 0, delay: 0 } };
+}
 
 interface Piece {
   texture: TextureRef;
@@ -63,6 +93,9 @@ export class AboutView implements View, MarkSpot {
     piece(textureFor('about/photo-terrace'), 1075, 545, 330, true, 0.85, 0.4),
     piece(noteTexture('about/note', NOTE), 667, -34, 264, false, 0.45, 0.5),
   ];
+  private magnets = LIFE.map(magnet);
+  /** `magnets` in draw order. */
+  private drawnMagnets: Magnet[] = this.magnets;
   private press = new NotePress();
   private px = new Spring(0, 60, 14);
   private py = new Spring(0, 60, 14);
@@ -101,6 +134,8 @@ export class AboutView implements View, MarkSpot {
     const { width: vw, height: vh, reducedMotion } = this.ctx.viewport.state;
     this.content.style.transform = 'none';
     this.contentStyle = '';
+    const grid = createGrid(vw);
+    const section = clamp(vw * 0.06, 32, 96);
     let bottom = vh;
 
     if (vw >= 900 && vh >= 560) {
@@ -115,12 +150,12 @@ export class AboutView implements View, MarkSpot {
         const cx = (p.x + p.w / 2) * sx;
         const cy = vh / 2 + (p.y + (p.w * ph) / pw / 2 - 512) * sy;
         p.base = { x: cx - w / 2, y: cy - h / 2, w, h };
+        bottom = Math.max(bottom, p.base.y + h);
       }
       this.copy.classList.remove('about__copy--flow');
     } else {
       // Narrow screens: copy first, then the photos in a single column.
       this.copy.classList.add('about__copy--flow');
-      const grid = createGrid(vw);
       let y = this.copy.offsetTop + this.copy.offsetHeight + 48;
       const order = [3, 5, 2, 4, 1, 0];
       const W = vw - grid.margin * 2;
@@ -133,9 +168,20 @@ export class AboutView implements View, MarkSpot {
         p.base = { x, y, w, h };
         y += h + grid.gutter * 2;
       }
-      bottom = y + 40;
+      bottom = y;
     }
-    bottom = Math.max(bottom, this.copy.offsetTop + this.copy.offsetHeight + 40);
+    bottom = Math.max(bottom, this.copy.offsetTop + this.copy.offsetHeight) + section;
+
+    const W = vw - grid.margin * 2;
+    const designs = this.magnets.map(({ texture: { px } }) => {
+      const width = px[0] / 2;
+      return { width, height: (width - OTHER_INSET * 2) * (px[1] / px[0]) + OTHER_INSET * 2, px, frame: true, note: false };
+    });
+    const collage = layoutCollage(designs, grid.margin, bottom, W, vw, vh, grid.gutter, hashString('about'));
+    this.magnets.forEach((m, i) => (m.place = collage.placements[i]));
+    this.drawnMagnets = collage.order.map((i) => this.magnets[i]);
+    bottom += collage.height + clamp(vw * 0.08, 60, 140);
+
     this.scroll.setEase(reducedMotion ? 60 : 9);
     this.scroll.setMax(bottom - vh);
   }
@@ -188,6 +234,29 @@ export class AboutView implements View, MarkSpot {
       if (sprite.y > vh * 2) sprite.opacity = 0;
     }
 
+    const timeIn = reducedMotion ? 1 : saturate((t - 0.45) / 0.7);
+    if (timeIn < 1) active = true;
+    for (const { texture, sprite, place } of this.magnets) {
+      const screenTop = place.y - s;
+      const scrollIn = saturate((vh - screenTop - place.delay) / (vh * 0.2));
+      const reveal = easeOutCubic(Math.min(scrollIn, timeIn));
+      const dy = (1 - reveal) * 48 - s;
+      sprite.x = place.x;
+      sprite.y = place.y + dy;
+      sprite.w = place.w;
+      sprite.h = place.h;
+      sprite.ix = place.ix;
+      sprite.iy = place.iy + dy;
+      sprite.iw = place.iw;
+      sprite.ih = place.ih;
+      sprite.rotation = place.tilt * (1 + (1 - reveal) * LAND_TURN);
+      sprite.opacity = reveal * this.presence;
+      sprite.lift = this.press.lift;
+      if (screenTop < vh * 2 && screenTop + place.h > -vh) this.ctx.engine.prefetch(texture, place.iw);
+      sprite.image = this.ctx.engine.appear(texture);
+      if (sprite.image < 1 && screenTop < vh && screenTop + place.h > 0) active = true;
+    }
+
     const mark = this.pieces[0];
     const reveal = reducedMotion ? 1 : easeOutCubic(saturate((t - mark.delay) / 0.9));
     this.markFrame.x = mark.sprite.x + mark.sprite.w / 2;
@@ -202,6 +271,12 @@ export class AboutView implements View, MarkSpot {
     for (const p of this.pieces) {
       if (p === this.pieces[0] && this.markLive) continue;
       out.sprites.push(p.sprite);
+    }
+    const vh = this.ctx.viewport.state.height;
+    for (const { sprite } of this.drawnMagnets) {
+      const swing = (sprite.w + sprite.h) * 0.5 * Math.abs(Math.sin(sprite.rotation));
+      if (sprite.y - swing > vh || sprite.y + sprite.h + swing < 0) continue;
+      out.sprites.push(sprite);
     }
   }
 

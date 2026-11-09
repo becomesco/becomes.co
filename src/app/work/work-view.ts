@@ -1,8 +1,9 @@
 import type { FrameTime } from '../../core/scheduler';
 import { VirtualScroll } from '../../core/scroll';
 import { createSprite, NO_FADE, type EdgeFade, type Sprite, type TextureRef } from '../../graphics/scene/types';
-import { clamp, easeOutCubic, lerp, saturate } from '../../utils/math';
-import { createRandom, hashString, range } from '../../utils/random';
+import { clamp, easeOutCubic, saturate } from '../../utils/math';
+import { hashString } from '../../utils/random';
+import { LAND_TURN, layoutCollage, MAX_UPSCALE } from '../collage';
 import { assetsOf, screensOf, type Asset, type Screen, type Work } from '../data/works';
 import { createGrid } from '../home/grid';
 import { OTHER_IMAGE_RADIUS, OTHER_INSET, OTHER_RADIUS } from '../home/other';
@@ -55,24 +56,8 @@ interface Story {
 }
 
 const CUT_FADE = 0.14;
-/** Largest display size relative to the design size; beyond this the 2x export goes soft. */
-const MAX_UPSCALE = 1.3;
 /** Widest a Screen's page is shown, CSS px. */
 const SCREEN_WIDTH = 1180;
-/** Share of the collage the magnets cover; the rest is fridge showing between them. */
-const COLLAGE_FILL = 0.66;
-/** Shortest collage, share of the viewport. */
-const COLLAGE_MIN = 0.8;
-/** Positions tried per magnet; the one with the least overlap and the most room around it wins. */
-const COLLAGE_TRIES = 260;
-/** Widest a Note gets in the collage, share of the content width, so its copy stays readable. */
-const NOTE_SHARE = 0.62;
-/** Largest magnet turn in degrees, for small and large magnets. */
-const TILT_SMALL = 7;
-const TILT_LARGE = 2;
-/** How much further a magnet is turned as it lands, as a multiple of its resting turn. */
-const LAND_TURN = 2.2;
-const DEG = Math.PI / 180;
 
 function cardFade(asset: Asset): EdgeFade {
   if (!asset.cut.size) return NO_FADE;
@@ -111,20 +96,6 @@ function createCard(kind: Kind, id: string, texture: TextureRef | null, asset: A
     tilt: 0,
     delay: 0,
   };
-}
-
-/** Area two rects share. */
-function overlap(ax: number, ay: number, aw: number, ah: number, bx: number, by: number, bw: number, bh: number): number {
-  const w = Math.min(ax + aw, bx + bw) - Math.max(ax, bx);
-  const h = Math.min(ay + ah, by + bh) - Math.max(ay, by);
-  return w > 0 && h > 0 ? w * h : 0;
-}
-
-/** Distance between two rects' edges; 0 when they touch or overlap. */
-function clearance(ax: number, ay: number, aw: number, ah: number, bx: number, by: number, bw: number, bh: number): number {
-  const dx = Math.max(0, bx - (ax + aw), ax - (bx + bw));
-  const dy = Math.max(0, by - (ay + ah), ay - (by + bh));
-  return Math.hypot(dx, dy);
 }
 
 export class WorkView implements View {
@@ -426,84 +397,12 @@ export class WorkView implements View {
     strip.h = Math.min(bottom + reach, card.iy + dy + card.ih) - strip.y;
   }
 
-  /**
-   * Places magnets in a `W` wide band at `top`, and returns its height. Sized so together they
-   * cover COLLAGE_FILL of the band; largest first, each where it overlaps the others least and,
-   * among spots that are clear, the one with the most room around it.
-   */
+  /** Places magnets in a `W` wide band at `top`, and returns its height. */
   private collage(cards: Card[], left: number, top: number, W: number, vw: number, vh: number, gap: number): number {
-    const random = createRandom(this.seed);
-    const base = clamp(0.25 + (vw / 1440) * 0.75, 0.42, 1.15);
-    const sizes = cards.map((card) => {
-      const asset = card.asset!;
-      const scale = asset.note ? Math.max(base, Math.min(1, (W * NOTE_SHARE) / asset.width)) : base;
-      return { card, scale };
-    });
-    const area = (k: number) =>
-      sizes.reduce((sum, { card, scale }) => sum + card.asset!.width * card.asset!.height * (scale * k) ** 2, 0);
-    // A few magnets grow to fill the shortest band, as far as their exports stay sharp.
-    const grow = clamp(Math.sqrt((vh * COLLAGE_MIN * COLLAGE_FILL * W) / Math.max(1, area(1))), 1, MAX_UPSCALE / base);
-
-    const items = sizes.map(({ card, scale }) => {
-      const asset = card.asset!;
-      const [pw, ph] = asset.texture.px;
-      const inset = asset.frame ? OTHER_INSET : 0;
-      let w = Math.min(asset.width * scale * grow, W * 0.9);
-      if (asset.note) w = Math.min(w, Math.max(asset.width * scale, W * NOTE_SHARE));
-      const iw = w - inset * 2;
-      const ih = (iw * ph) / pw;
-      const h = ih + inset * 2;
-      const size = Math.max(w, h);
-      const tilt = range(random, -1, 1) * lerp(TILT_SMALL, TILT_LARGE, saturate((size - 160) / 520)) * DEG;
-      const cos = Math.abs(Math.cos(tilt));
-      const sin = Math.abs(Math.sin(tilt));
-      // Turned bounds, with half a gutter of room on every side.
-      const bw = w * cos + h * sin + gap;
-      const bh = w * sin + h * cos + gap;
-      return { card, w, h, iw, ih, inset, tilt, bw, bh, bx: 0, by: 0 };
-    });
-    const covered = items.reduce((sum, it) => sum + it.bw * it.bh, 0);
-    const H = Math.max(vh * COLLAGE_MIN, covered / (W * COLLAGE_FILL), ...items.map((it) => it.bh));
-
-    const order = items.slice().sort((a, b) => b.bw * b.bh - a.bw * a.bh);
-    const placed: typeof items = [];
-    for (const it of order) {
-      let best = Infinity;
-      for (let k = 0; k < COLLAGE_TRIES; k++) {
-        const x = range(random, 0, Math.max(0, W + gap - it.bw)) - gap / 2;
-        const y = range(random, 0, Math.max(0, H - it.bh));
-        let hit = 0;
-        let room = Infinity;
-        for (const p of placed) {
-          hit += overlap(x, y, it.bw, it.bh, p.bx, p.by, p.bw, p.bh);
-          room = Math.min(room, clearance(x, y, it.bw, it.bh, p.bx, p.by, p.bw, p.bh));
-        }
-        const score = hit / (it.bw * it.bh) - Math.min(room, W) / W;
-        if (score < best) {
-          best = score;
-          it.bx = x;
-          it.by = y;
-        }
-      }
-      placed.push(it);
-    }
-
-    const height = Math.max(...items.map((it) => it.by + it.bh)) - gap / 2;
-    for (const it of items) {
-      const { card } = it;
-      card.w = it.w;
-      card.h = it.h;
-      card.x = left + it.bx + (it.bw - it.w) / 2;
-      card.y = top + it.by + (it.bh - it.h) / 2;
-      card.iw = it.iw;
-      card.ih = it.ih;
-      card.ix = card.x + it.inset;
-      card.iy = card.y + it.inset;
-      card.tilt = it.tilt;
-      card.delay = range(random, 0, vh * 0.12);
-    }
-    // Drawn in placing order, so smaller magnets sit on top of the larger ones they overlap.
-    this.drawn = [...this.cards.filter((c) => c.kind !== 'magnet'), ...order.map((it) => it.card)];
+    const magnets = cards.map(({ asset }) => ({ width: asset!.width, height: asset!.height, px: asset!.texture.px, frame: asset!.frame, note: asset!.note }));
+    const { placements, order, height } = layoutCollage(magnets, left, top, W, vw, vh, gap, this.seed);
+    cards.forEach((card, i) => Object.assign(card, placements[i]));
+    this.drawn = [...this.cards.filter((c) => c.kind !== 'magnet'), ...order.map((i) => cards[i])];
     return height;
   }
 
