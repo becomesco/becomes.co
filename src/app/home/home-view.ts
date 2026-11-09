@@ -24,6 +24,12 @@ const HOVER_STIFFNESS = 70;
 const HOVER_DAMPING = 16;
 /** How far an Asset grows at full hover. */
 const HOVER_SCALE = 0.05;
+/** Share of the cursor's offset from a hovered Asset's center that the Asset drifts towards it, capped in px. */
+const FOLLOW = 0.08;
+const FOLLOW_MAX = 18;
+/** Follow spring: soft and slightly underdamped (ζ ≈ 0.7), so the Asset trails the cursor and settles with a little give. */
+const FOLLOW_STIFFNESS = 40;
+const FOLLOW_DAMPING = 9;
 /** Seconds an Asset takes to scale and fade in once it comes on screen. */
 const REVEAL_TIME = 0.5;
 /** Scale an Asset reveals from. */
@@ -331,6 +337,8 @@ export class HomeView implements View {
   private layoutState: HomeLayout | null = null;
   private sprites = new Map<number, Sprite>();
   private hover = new Map<number, Spring>();
+  /** Each placement's drift towards the cursor, px. */
+  private follow = new Map<number, { x: Spring; y: Spring }>();
   private hovered = -1;
   /** Reveal progress, 0 to 1, of each placement on screen; dropped once it leaves, so it reveals again next time. */
   private reveal = new Map<number, number>();
@@ -533,6 +541,7 @@ export class HomeView implements View {
     this.settle();
     this.sprites.clear();
     this.hover.clear();
+    this.follow.clear();
     this.reveal.clear();
     this.revealInstant = previous !== null;
     this.lastPrefetch = Number.NaN;
@@ -589,9 +598,23 @@ export class HomeView implements View {
       const eased = easeOutCubic(reveal);
       const sprite = this.place(p, s, vh, spring.value, reducedMotion ? 1 : lerp(REVEAL_SCALE, 1, eased));
       sprite.opacity *= eased;
+
+      let follow = this.follow.get(p.index);
+      if (!follow) {
+        follow = { x: new Spring(0, FOLLOW_STIFFNESS, FOLLOW_DAMPING), y: new Spring(0, FOLLOW_STIFFNESS, FOLLOW_DAMPING) };
+        this.follow.set(p.index, follow);
+      }
+      const drift = p.index === hovered && !reducedMotion;
+      follow.x.target = drift ? clamp((pointer.x - sprite.x - sprite.w / 2) * FOLLOW, -FOLLOW_MAX, FOLLOW_MAX) : 0;
+      follow.y.target = drift ? clamp((pointer.y - sprite.y - sprite.h / 2) * FOLLOW, -FOLLOW_MAX, FOLLOW_MAX) : 0;
+      if (follow.x.update(frame.dt)) active = true;
+      if (follow.y.update(frame.dt)) active = true;
+
       const drop = this.departing.get(p.index)?.spring.value ?? 0;
-      sprite.y += drop;
-      sprite.iy += drop;
+      sprite.x += follow.x.value;
+      sprite.ix += follow.x.value;
+      sprite.y += follow.y.value + drop;
+      sprite.iy += follow.y.value + drop;
     }
     for (const index of this.reveal.keys()) if (!this.revealSeen.has(index)) this.reveal.delete(index);
     this.revealInstant = false;
